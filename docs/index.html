@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Digital Britannia Viewer</title>
+<meta name="description" content="Unofficial web viewer for the Roman Roads Research Association's Digital Britannia v1 dataset: Roman roads, forts, camps, settlements and milestones over LiDAR, historic OS maps and aerial imagery.">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1d1d1f;
+    --muted: #5f6368;
+    --line: #dadce0;
+    --panel: rgba(255,255,255,0.97);
+    --accent: #9d0014;
+    --chip: #f1f3f4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17181a; --fg: #e8eaed; --muted: #9aa0a6; --line: #3c4043;
+      --panel: rgba(32,33,36,0.97); --accent: #ff6b7a; --chip: #2a2b2e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17181a; --fg: #e8eaed; --muted: #9aa0a6; --line: #3c4043;
+    --panel: rgba(32,33,36,0.97); --accent: #ff6b7a; --chip: #2a2b2e;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
+    font: 13px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #map { position: absolute; inset: 0; }
+
+  #panel { position: absolute; top: 10px; left: 10px; bottom: 10px; width: 320px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.15); display: flex; flex-direction: column;
+    z-index: 2; overflow: hidden; }
+  #panel header { padding: 12px 14px 8px; border-bottom: 1px solid var(--line); }
+  #panel h1 { margin: 0; font-size: 16px; }
+  .unofficial { display: inline-block; margin-top: 4px; padding: 1px 7px; font-size: 11px;
+    border-radius: 9px; background: var(--accent); color: #fff; font-weight: 600; }
+  #panel .scroll { overflow-y: auto; padding: 8px 14px 14px; flex: 1; }
+  #toggle-panel { display: none; }
+  section { border-bottom: 1px solid var(--line); padding: 8px 0; }
+  section:last-child { border-bottom: 0; }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+    margin: 2px 0 6px; }
+  label.row { display: flex; align-items: center; gap: 6px; padding: 2px 0; cursor: pointer; }
+  .sub { padding-left: 22px; }
+  input[type=range] { width: 100%; }
+  .slider-row { display: flex; align-items: center; gap: 8px; padding-left: 22px; }
+  .slider-row input { flex: 1; }
+  .slider-row output { width: 34px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  select, input[type=search] { width: 100%; padding: 6px 8px; border: 1px solid var(--line);
+    border-radius: 6px; background: var(--bg); color: var(--fg); font: inherit; }
+  .note { color: var(--muted); font-size: 11px; }
+
+  #search-wrap { position: relative; }
+  #results { position: absolute; left: 0; right: 0; top: 100%; margin-top: 2px; z-index: 5;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 6px; max-height: 300px;
+    overflow-y: auto; display: none; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+  #results div { padding: 6px 8px; cursor: pointer; border-bottom: 1px solid var(--line); }
+  #results div:last-child { border-bottom: 0; }
+  #results div:hover, #results div.active { background: var(--chip); }
+  #results small { color: var(--muted); display: block; }
+
+  #period-label { font-weight: 600; }
+  .legend-item { display: flex; align-items: center; gap: 8px; padding: 1px 0; }
+  .swatch-line { width: 30px; height: 0; border-top: 3px solid var(--accent); flex: none; }
+  .swatch-dot { width: 11px; height: 11px; border-radius: 50%; border: 1px solid #333; flex: none; margin: 0 9px; }
+
+  .maplibregl-popup-content { max-width: 360px; max-height: 360px; overflow-y: auto;
+    background: var(--bg); color: var(--fg); padding: 10px 12px; }
+  .maplibregl-popup-tip { border-top-color: var(--bg) !important; border-bottom-color: var(--bg) !important; }
+  .popup h3 { margin: 0 0 6px; font-size: 14px; }
+  .popup table { border-collapse: collapse; width: 100%; font-size: 12px; }
+  .popup td { border-top: 1px solid var(--line); padding: 3px 4px; vertical-align: top; }
+  .popup td:first-child { color: var(--muted); width: 38%; }
+  .popup a { color: var(--accent); word-break: break-all; }
+  .popup .route-btn { margin-top: 6px; }
+
+  #credit { font-size: 11px; color: var(--muted); }
+  #credit a { color: inherit; }
+
+  @media (max-width: 700px) {
+    #panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; max-height: 55%;
+      border-radius: 10px 10px 0 0; background: var(--bg); }
+    #panel.collapsed .scroll { display: none; }
+    #toggle-panel { display: inline-block; float: right; border: 1px solid var(--line);
+      background: var(--chip); color: var(--fg); border-radius: 6px; padding: 2px 8px; }
+    .maplibregl-ctrl-bottom-right, .maplibregl-ctrl-bottom-left { bottom: 64px; }
+  }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<aside id="panel">
+  <header>
+    <button id="toggle-panel" aria-label="Toggle panel">☰</button>
+    <h1>Digital Britannia</h1>
+    <span class="unofficial">UNOFFICIAL VIEWER</span>
+  </header>
+  <div class="scroll">
+
+    <section>
+      <div id="search-wrap">
+        <input id="search" type="search" placeholder="Search place, Roman name or road (e.g. RR2)" autocomplete="off">
+        <div id="results"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Base map</h2>
+      <label class="row"><input type="radio" name="base" value="light" checked> Light grey (Esri)</label>
+      <label class="row"><input type="radio" name="base" value="dark"> Dark grey (Esri)</label>
+      <label class="row"><input type="radio" name="base" value="osm"> OpenStreetMap</label>
+    </section>
+
+    <section>
+      <h2>Underlays</h2>
+      <label class="row"><input type="checkbox" id="u-lidar" checked> LiDAR hillshade <span class="note">(England, EA 1 m)</span></label>
+      <div class="slider-row"><input type="range" id="o-lidar" min="0" max="100" value="60"><output id="o-lidar-v">60%</output></div>
+
+      <label class="row"><input type="checkbox" id="u-hist"> Historic OS maps <span class="note">(NLS)</span></label>
+      <div class="sub">
+        <select id="hist-edition">
+          <option value="6inchsecond">6-inch 2nd ed. (GB, c.1890–1910s)</option>
+          <option value="6inchfirst">6-inch 1st ed. (Scotland only)</option>
+          <option value="britain10knatgrid">1:10,560 National Grid (GB, 1950s+)</option>
+          <option value="newpopular">One-inch New Popular (1940s)</option>
+        </select>
+      </div>
+      <div class="slider-row"><input type="range" id="o-hist" min="0" max="100" value="80"><output id="o-hist-v">80%</output></div>
+
+      <label class="row"><input type="checkbox" id="u-aerial"> Aerial imagery <span class="note">(Esri)</span></label>
+      <div class="slider-row"><input type="range" id="o-aerial" min="0" max="100" value="100"><output id="o-aerial-v">100%</output></div>
+    </section>
+
+    <section>
+      <h2>Roads</h2>
+      <label class="row"><input type="checkbox" id="l-roads" checked> Show roads</label>
+      <label class="row sub"><input type="checkbox" id="l-conf0"> Include "no evidence" segments</label>
+      <label class="row sub"><input type="checkbox" id="l-labels" checked> Margary numbers</label>
+    </section>
+
+    <section>
+      <h2>Sites</h2>
+      <label class="row"><input type="checkbox" id="l-military" checked> Military installations</label>
+      <label class="row"><input type="checkbox" id="l-camps" checked> Temporary camps</label>
+      <label class="row"><input type="checkbox" id="l-settlement" checked> Settlements</label>
+      <label class="row"><input type="checkbox" id="l-milestones" checked> Milestones</label>
+      <label class="row"><input type="checkbox" id="l-milecastles" checked> Hadrian's Wall milecastles</label>
+      <label class="row"><input type="checkbox" id="l-walls" checked> Walls, ditches &amp; vallum</label>
+      <label class="row" style="margin-top:4px"><input type="checkbox" id="l-possible" checked> Include "possible" sites</label>
+    </section>
+
+    <section>
+      <h2>Period (military sites)</h2>
+      <input type="range" id="period" min="0" max="7" value="0" step="1">
+      <div><span id="period-label">All periods</span> <span class="note" id="period-count"></span></div>
+    </section>
+
+    <section>
+      <h2>Legend</h2>
+      <div id="legend"></div>
+    </section>
+
+    <section id="credit">
+      Data: <a href="https://roadsofromanbritain.org/digital-britannia/downloads.html" target="_blank" rel="noopener">Digital Britannia v1</a>,
+      © Roman Roads Research Association / Mike Haken. CC BY-NC 4.0, non-commercial use.
+      This viewer is <strong>unofficial</strong> and is not endorsed by the RRRA.
+      Some categories are normalised for display; see
+      <a href="https://github.com/adrianco/romanroads/blob/main/docs/ERRATA.md" target="_blank" rel="noopener">errata</a>.
+    </section>
+  </div>
+</aside>
+
+<script>
+"use strict";
+
+// ---------------------------------------------------------------------------
+// Config
+// ---------------------------------------------------------------------------
+const DATA_CREDIT = 'Data: <a href="https://roadsofromanbritain.org/digital-britannia/downloads.html" target="_blank">Digital Britannia v1</a>, © Roman Roads Research Association / Mike Haken (unofficial viewer)';
+
+const EA_WMS = "https://environment.data.gov.uk/spatialdata/lidar-composite-digital-terrain-model-dtm-1m/wms" +
+  "?service=WMS&request=GetMap&version=1.3.0&layers=Lidar_Composite_Hillshade_DTM_1m&styles=" +
+  "&format=image/png&transparent=true&crs=EPSG:3857&width=256&height=256&bbox={bbox-epsg-3857}";
+
+const NLS_EDITIONS = ["6inchsecond", "6inchfirst", "britain10knatgrid", "newpopular"];
+const NLS_ATTR = 'Historic maps: <a href="https://maps.nls.uk/" target="_blank">National Library of Scotland</a>';
+
+// Periods: slider index -> military property name
+const PERIODS = [
+  ["All periods", null],
+  ["Claudio-Neronian (AD 43–69)", "Type - Claudio-Neronian AD43-69"],
+  ["Flavian (AD 69–96)", "Type - Flavian AD69-96"],
+  ["Nerva-Hadrianic (AD 96–138)", "Type - Nerva-Hadrianic AD96-138"],
+  ["Antonine (AD 138–161)", "Type - Antoninus Pius AD138-161"],
+  ["Late 2nd c. – Severan (AD 161–211)", "Type - Late 2nd - Severus AD161-211"],
+  ["3rd century", "Type - 3rd Century"],
+  ["4th century", "Type - 4th Century"],
+];
+
+const ROAD_COLOR = "#9d0014";
+const ROAD_C0_COLOR = "#c9b800"; // author uses #f2ff89; darkened a little for legibility on light bases
+
+// ---------------------------------------------------------------------------
+// Expressions
+// ---------------------------------------------------------------------------
+// lower-cased string value of a property, '' when null
+const lc = (p) => ["downcase", ["to-string", ["coalesce", ["get", p], ""]]];
+const has = (needle, p) => [">=", ["index-of", needle, lc(p)], 0];
+
+function militaryColor(p) {
+  return ["case",
+    has("legionary", p), "#000000",
+    has("possible", p), "#fb9a99",
+    "#ff0000"];
+}
+function militaryRadius(p) {
+  return ["interpolate", ["linear"], ["zoom"],
+    6, ["case", has("legionary", p), 4.5, has("fortress", p), 4, has("fortlet", p), 2.5,
+          has("signal", p), 2.5, has("fort", p), 3, 2.5],
+    12, ["case", has("legionary", p), 9, has("fortress", p), 8, has("fortlet", p), 5,
+          has("signal", p), 5, has("fort", p), 6.5, 5]];
+}
+
+const settlementColor = ["case",
+  has("military vicus", "_type"), "#98d8f8",
+  has("colonia", "_type"), "#ff6b01",
+  has("municipium", "_type"), "#fdbf6f",
+  ["==", ["get", "_type"], "Unknown"], "#a64ffe",
+  "#f7ff01"];
+const settlementRadius = ["interpolate", ["linear"], ["zoom"],
+  6, ["case", has("colonia", "_type"), 5, has("municipium", "_type"), 5, has("civitas", "_type"), 5,
+        has("large", "_type"), 3.5, has("medium", "_type"), 3, 2.5],
+  12, ["case", has("colonia", "_type"), 10, has("municipium", "_type"), 10, has("civitas", "_type"), 10,
+        has("large", "_type"), 7, has("medium", "_type"), 6, 5]];
+
+const campColor = ["match", ["get", "_type"],
+  "Temporary camp", "#6a3d9a",
+  "Possible temporary camp", "#cab2d6",
+  "Practice camp", "#33a02c",
+  "Possible practice camp", "#b2df8a",
+  "#999999"];
+const campRadius = ["interpolate", ["linear"], ["zoom"],
+  6, ["interpolate", ["linear"], ["to-number", ["get", "Area (Ha)"], 0], 0, 2, 20, 3.5, 60, 5],
+  12, ["interpolate", ["linear"], ["to-number", ["get", "Area (Ha)"], 0], 0, 4, 20, 7, 60, 11]];
+
+const lineWidth = (w6, w12, w16) => ["interpolate", ["linear"], ["zoom"], 6, w6, 12, w12, 16, w16];
+
+// ---------------------------------------------------------------------------
+// Map + style
+// ---------------------------------------------------------------------------
+const esriCanvas = (name) => [`https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/${name}/MapServer/tile/{z}/{y}/{x}`];
+const ESRI_CANVAS_ATTR = "Base map © Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community";
+
+const style = {
+  version: 8,
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+  sources: {
+    "light": { type: "raster", tiles: esriCanvas("World_Light_Gray_Base"), tileSize: 256, maxzoom: 16, attribution: ESRI_CANVAS_ATTR },
+    "dark": { type: "raster", tiles: esriCanvas("World_Dark_Gray_Base"), tileSize: 256, maxzoom: 16, attribution: ESRI_CANVAS_ATTR },
+    "osm": { type: "raster", tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize: 256, maxzoom: 19,
+      attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors' },
+    "aerial": { type: "raster", tileSize: 256, maxzoom: 19,
+      tiles: ["https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+      attribution: "Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community" },
+    "lidar": { type: "raster", tiles: [EA_WMS], tileSize: 256, minzoom: 6, maxzoom: 19,
+      bounds: [-6.5, 49.8, 2.0, 55.9],
+      attribution: "LiDAR: Contains Environment Agency information © Environment Agency and/or database right" },
+  },
+  layers: [
+    { id: "base-light", type: "raster", source: "light" },
+    { id: "base-dark", type: "raster", source: "dark", layout: { visibility: "none" } },
+    { id: "base-osm", type: "raster", source: "osm", layout: { visibility: "none" } },
+    { id: "u-aerial", type: "raster", source: "aerial", layout: { visibility: "none" }, paint: { "raster-opacity": 1 } },
+  ],
+};
+// one source + layer per NLS edition; only the selected one is shown
+for (const ed of NLS_EDITIONS) {
+  style.sources["nls-" + ed] = { type: "raster", tileSize: 256, maxzoom: 17,
+    tiles: [`https://mapseries-tilesets.s3.amazonaws.com/os/${ed}/{z}/{x}/{y}.png`], attribution: NLS_ATTR };
+  style.layers.push({ id: "u-hist-" + ed, type: "raster", source: "nls-" + ed,
+    layout: { visibility: "none" }, paint: { "raster-opacity": 0.8 } });
+}
+style.layers.push({ id: "u-lidar", type: "raster", source: "lidar", paint: { "raster-opacity": 0.6 } });
+
+const map = new maplibregl.Map({
+  container: "map",
+  style,
+  center: [-2.2, 53.6],
+  zoom: 5.6,
+  maxZoom: 19,
+  hash: true,
+  attributionControl: false,
+});
+map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: DATA_CREDIT }), "bottom-right");
+map.addControl(new maplibregl.NavigationControl(), "top-right");
+map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
+
+// ---------------------------------------------------------------------------
+// Data layers
+// ---------------------------------------------------------------------------
+const FILES = ["roads", "walls", "military", "camps", "settlement", "milestones", "milecastles"];
+const data = {};
+
+map.on("load", async () => {
+  map.resize(); // the container may have been laid out after the map was created
+  if (window.innerWidth <= 700) { // fold the attribution on phones; the panel carries the full credit
+    document.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
+  }
+  const loaded = await Promise.all(FILES.map(f => fetch(`data/${f}.geojson`).then(r => {
+    if (!r.ok) throw new Error(`${f}: HTTP ${r.status}`);
+    return r.json();
+  })));
+  FILES.forEach((f, i) => {
+    data[f] = loaded[i];
+    map.addSource(f, { type: "geojson", data: loaded[i] });
+  });
+
+  // walls (one layer per feature kind: dasharray can't be data-driven)
+  map.addLayer({ id: "walls-ditch", type: "line", source: "walls",
+    filter: has("ditch", "_feature"),
+    paint: { "line-color": "#1f78b4", "line-width": lineWidth(1, 2, 4) } });
+  map.addLayer({ id: "walls-vallum", type: "line", source: "walls",
+    filter: has("vallum", "_feature"),
+    paint: { "line-color": "#33a02c", "line-width": lineWidth(1, 2, 4), "line-dasharray": [3, 1.5] } });
+  map.addLayer({ id: "walls-wall", type: "line", source: "walls",
+    filter: ["all", ["!", has("ditch", "_feature")], ["!", has("vallum", "_feature")]],
+    paint: { "line-color": "#5a2d0c", "line-width": lineWidth(2, 3.5, 6) } });
+
+  // roads: halo + line per confidence level
+  const ROAD_LEVELS = [
+    { c: 3, dash: null, color: ROAD_COLOR },
+    { c: 2, dash: [4, 2], color: ROAD_COLOR },
+    { c: 1, dash: [1, 2], color: ROAD_COLOR },
+    { c: 0, dash: [1, 2], color: ROAD_C0_COLOR },
+  ];
+  for (const lvl of ROAD_LEVELS) {
+    const halo = { "line-color": "#ffffff", "line-opacity": 0.75, "line-width": lineWidth(2.5, 4.5, 7) };
+    const line = { "line-color": lvl.color, "line-width": lineWidth(1, 2, 3.5) };
+    if (lvl.dash) { line["line-dasharray"] = lvl.dash; }
+    map.addLayer({ id: `roads-halo-c${lvl.c}`, type: "line", source: "roads",
+      filter: ["==", ["get", "_conf"], lvl.c], layout: { "line-cap": "round", "line-join": "round" }, paint: halo });
+    map.addLayer({ id: `roads-c${lvl.c}`, type: "line", source: "roads",
+      filter: ["==", ["get", "_conf"], lvl.c], layout: { "line-join": "round" }, paint: line });
+  }
+  map.addLayer({ id: "roads-highlight", type: "line", source: "roads",
+    filter: ["==", ["get", "_margary"], "__none__"],
+    layout: { "line-cap": "round", "line-join": "round" },
+    paint: { "line-color": "#00b7ff", "line-width": lineWidth(4, 6, 9), "line-opacity": 0.85 } });
+  map.addLayer({ id: "roads-labels", type: "symbol", source: "roads", minzoom: 9,
+    filter: ["all", [">=", ["get", "_conf"], 1], ["!", ["==", ["slice", ["coalesce", ["get", "_margary"], "none"], 0, 4], "none"]]],
+    layout: {
+      "symbol-placement": "line", "symbol-spacing": 400,
+      "text-field": ["concat", "RR", ["get", "_margary"]],
+      "text-font": ["Noto Sans Regular"], "text-size": 12, "text-max-angle": 30,
+    },
+    paint: { "text-color": ROAD_COLOR, "text-halo-color": "#ffffff", "text-halo-width": 2 } });
+
+  // points
+  map.addLayer({ id: "camps", type: "circle", source: "camps",
+    paint: { "circle-color": campColor, "circle-radius": campRadius, "circle-opacity": 0.85,
+      "circle-stroke-color": "#2d1846", "circle-stroke-width": 0.8 } });
+  map.addLayer({ id: "settlement", type: "circle", source: "settlement",
+    paint: { "circle-color": settlementColor, "circle-radius": settlementRadius,
+      "circle-stroke-color": "#555555", "circle-stroke-width": 1 } });
+  map.addLayer({ id: "military", type: "circle", source: "military",
+    paint: { "circle-color": militaryColor("_type"), "circle-radius": militaryRadius("_type"),
+      "circle-stroke-color": "#3a0000", "circle-stroke-width": 1 } });
+  map.addLayer({ id: "milecastles", type: "circle", source: "milecastles",
+    paint: { "circle-color": ["match", ["get", "_status"], "Confirmed", "#ff0000", "#fb9a99"],
+      "circle-radius": lineWidth(2, 4, 7), "circle-stroke-color": "#600000", "circle-stroke-width": 1 } });
+  map.addLayer({ id: "milestones", type: "circle", source: "milestones",
+    paint: { "circle-color": "#222222", "circle-radius": lineWidth(2.5, 4, 6),
+      "circle-stroke-color": "#ffffff", "circle-stroke-width": 1.5 } });
+
+  buildSearchIndex();
+  if (input.value) input.dispatchEvent(new Event("input")); // query typed while data was loading
+  applyAll();
+  buildLegend();
+  wireClicks();
+});
+
+map.on("error", (e) => {
+  // tile errors for rasters outside coverage are expected; surface the rest
+  if (e && e.sourceId && ["lidar", "aerial", "osm"].includes(e.sourceId) || /^nls-/.test(e?.sourceId || "")) return;
+  console.warn("map error", e && e.error ? e.error.message : e);
+});
+
+// ---------------------------------------------------------------------------
+// UI state -> map
+// ---------------------------------------------------------------------------
+const $ = (id) => document.getElementById(id);
+const vis = (id, on) => map.getLayer(id) && map.setLayoutProperty(id, "visibility", on ? "visible" : "none");
+
+const ROAD_LAYERS = ["roads-halo-c3", "roads-c3", "roads-halo-c2", "roads-c2", "roads-halo-c1", "roads-c1"];
+const ROAD_C0_LAYERS = ["roads-halo-c0", "roads-c0"];
+
+function applyBase() {
+  const v = document.querySelector('input[name="base"]:checked').value;
+  vis("base-light", v === "light");
+  vis("base-dark", v === "dark");
+  vis("base-osm", v === "osm");
+}
+
+function applyUnderlays() {
+  vis("u-lidar", $("u-lidar").checked);
+  map.setPaintProperty("u-lidar", "raster-opacity", $("o-lidar").value / 100);
+  const ed = $("hist-edition").value;
+  for (const e of NLS_EDITIONS) {
+    vis("u-hist-" + e, $("u-hist").checked && e === ed);
+    map.setPaintProperty("u-hist-" + e, "raster-opacity", $("o-hist").value / 100);
+  }
+  vis("u-aerial", $("u-aerial").checked);
+  map.setPaintProperty("u-aerial", "raster-opacity", $("o-aerial").value / 100);
+  for (const k of ["lidar", "hist", "aerial"]) $(`o-${k}-v`).textContent = $(`o-${k}`).value + "%";
+}
+
+function applyRoads() {
+  const on = $("l-roads").checked;
+  ROAD_LAYERS.forEach(id => vis(id, on));
+  ROAD_C0_LAYERS.forEach(id => vis(id, on && $("l-conf0").checked));
+  vis("roads-highlight", on);
+  vis("roads-labels", on && $("l-labels").checked);
+}
+
+function applySites() {
+  const possible = $("l-possible").checked;
+  const notPossible = (p) => ["!", has("possible", p)];
+
+  // military: period filter + possible filter, coloured by period type when a period is selected
+  const idx = +$("period").value;
+  const [label, field] = PERIODS[idx];
+  const typeProp = field || "_type";
+  const filters = ["all"];
+  if (field) filters.push(["!=", ["to-string", ["coalesce", ["get", field], ""]], ""]);
+  if (!possible) filters.push(notPossible(typeProp));
+  map.setFilter("military", filters.length > 1 ? filters : null);
+  map.setPaintProperty("military", "circle-color", militaryColor(typeProp));
+  map.setPaintProperty("military", "circle-radius", militaryRadius(typeProp));
+  $("period-label").textContent = label;
+  if (data.military) {
+    const n = data.military.features.filter(f => {
+      const v = f.properties[typeProp];
+      if (field && (v == null || String(v).trim() === "")) return false;
+      if (!possible && String(v || "").toLowerCase().includes("possible")) return false;
+      return true;
+    }).length;
+    $("period-count").textContent = `· ${n} sites`;
+  }
+
+  map.setFilter("camps", possible ? null : notPossible("_type"));
+  map.setFilter("milecastles", possible ? null : ["==", ["get", "_status"], "Confirmed"]);
+
+  for (const id of ["military", "camps", "settlement", "milestones", "milecastles"]) vis(id, $("l-" + id).checked);
+  for (const id of ["walls-wall", "walls-ditch", "walls-vallum"]) vis(id, $("l-walls").checked);
+}
+
+function applyAll() { applyBase(); applyUnderlays(); applyRoads(); applySites(); }
+
+document.querySelectorAll('input[name="base"]').forEach(el => el.addEventListener("change", applyBase));
+["u-lidar", "u-hist", "u-aerial", "hist-edition"].forEach(id => $(id).addEventListener("change", applyUnderlays));
+["o-lidar", "o-hist", "o-aerial"].forEach(id => $(id).addEventListener("input", applyUnderlays));
+["l-roads", "l-conf0", "l-labels"].forEach(id => $(id).addEventListener("change", applyRoads));
+["l-military", "l-camps", "l-settlement", "l-milestones", "l-milecastles", "l-walls", "l-possible"]
+  .forEach(id => $(id).addEventListener("change", applySites));
+$("period").addEventListener("input", applySites);
+$("toggle-panel").addEventListener("click", () => $("panel").classList.toggle("collapsed"));
+if (window.innerWidth <= 700) $("panel").classList.add("collapsed"); // map first on phones
+
+// ---------------------------------------------------------------------------
+// Legend
+// ---------------------------------------------------------------------------
+function buildLegend() {
+  const line = (style, color, text) =>
+    `<div class="legend-item"><span class="swatch-line" style="border-top-style:${style};border-top-color:${color}"></span>${text}</div>`;
+  const dot = (color, text) =>
+    `<div class="legend-item"><span class="swatch-dot" style="background:${color}"></span>${text}</div>`;
+  $("legend").innerHTML = [
+    line("solid", ROAD_COLOR, "Certain ±30 m"),
+    line("dashed", ROAD_COLOR, "Probable ±200 m"),
+    line("dotted", ROAD_COLOR, "Conjectured"),
+    line("dotted", ROAD_C0_COLOR, "No evidence – requires investigation"),
+    line("solid", "#5a2d0c", "Wall"), line("solid", "#1f78b4", "Ditch"), line("dashed", "#33a02c", "Vallum"),
+    dot("#000000", "Legionary fortress"), dot("#ff0000", "Fort / fortlet / signal station"),
+    dot("#fb9a99", "Possible military site"),
+    dot("#6a3d9a", "Temporary camp"), dot("#33a02c", "Practice camp"), dot("#cab2d6", "Possible camp"),
+    dot("#ff6b01", "Colonia"), dot("#fdbf6f", "Municipium"), dot("#f7ff01", "Civitas / vicus"),
+    dot("#98d8f8", "Military vicus"), dot("#222222", "Milestone"),
+  ].join("");
+}
+
+// ---------------------------------------------------------------------------
+// Popups
+// ---------------------------------------------------------------------------
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function linkify(v) {
+  return esc(v).replace(/https?:\/\/[^\s<>"]+/g, u => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
+}
+const TITLE_FIELDS = {
+  roads: (p) => p._margary ? `RR${p._margary}${p._name ? " – " + p._name : ""}` : "Road segment",
+  military: (p) => p["Modern Name"] || p["Roman name (if known)"] || "Military site",
+  camps: (p) => p["Site Name"] || "Temporary camp",
+  settlement: (p) => p["SITE_NAME"] || p["ROMAN NAME"] || "Settlement",
+  milestones: (p) => p["Site name"] || "Milestone",
+  milecastles: (p) => p["Site_name"] || `Milecastle ${p["MC_No."] || ""}`,
+  walls: (p) => p["Feature"] || "Wall",
+};
+
+function popupHtml(layer, p) {
+  const rows = Object.entries(p)
+    .filter(([k, v]) => !k.startsWith("_") && v !== null && v !== undefined && String(v).trim() !== "")
+    .map(([k, v]) => `<tr><td>${esc(k.trim())}</td><td>${linkify(String(v).trim())}</td></tr>`).join("");
+  let html = `<div class="popup"><h3>${esc(TITLE_FIELDS[layer](p))}</h3><table>${rows}</table>`;
+  if (layer === "roads" && p._margary) html += `<button class="route-btn" data-road="${esc(p._margary)}">Zoom to whole route</button>`;
+  return html + "</div>";
+}
+
+let popup = null;
+function showPopup(layer, feature, lngLat) {
+  if (popup) popup.remove();
+  popup = new maplibregl.Popup({ maxWidth: "380px" }).setLngLat(lngLat).setHTML(popupHtml(layer, feature.properties)).addTo(map);
+  const btn = popup.getElement().querySelector(".route-btn");
+  if (btn) btn.addEventListener("click", () => zoomToRoute(btn.dataset.road));
+}
+
+function wireClicks() {
+  const clickable = ["milestones", "milecastles", "military", "settlement", "camps",
+    "roads-c3", "roads-c2", "roads-c1", "roads-c0", "walls-wall", "walls-ditch", "walls-vallum"];
+  const layerOf = (id) => id.startsWith("roads") ? "roads" : id.startsWith("walls") ? "walls" : id;
+  map.on("click", (e) => {
+    const pad = 5;
+    const box = [[e.point.x - pad, e.point.y - pad], [e.point.x + pad, e.point.y + pad]];
+    const hits = map.queryRenderedFeatures(box, { layers: clickable.filter(id => map.getLayer(id)) });
+    if (!hits.length) { highlightRoute(null); return; }
+    const f = hits[0];
+    const layer = layerOf(f.layer.id);
+    if (layer === "roads") highlightRoute(f.properties._margary);
+    const ll = f.geometry.type === "Point" ? f.geometry.coordinates : e.lngLat;
+    showPopup(layer, f, ll);
+  });
+  for (const id of clickable) {
+    map.on("mouseenter", id, () => map.getCanvas().style.cursor = "pointer");
+    map.on("mouseleave", id, () => map.getCanvas().style.cursor = "");
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Route highlight
+// ---------------------------------------------------------------------------
+function highlightRoute(num) {
+  map.setFilter("roads-highlight", ["==", ["get", "_margary"], num == null ? "__none__" : num]);
+}
+function routeBounds(num) {
+  const b = new maplibregl.LngLatBounds();
+  for (const f of data.roads.features) {
+    if (f.properties._margary !== num) continue;
+    for (const c of f.geometry.coordinates) b.extend(c);
+  }
+  return b;
+}
+// keep fitted features clear of the side panel (bottom sheet on narrow screens)
+function panelPadding() {
+  const r = $("panel").getBoundingClientRect();
+  return window.innerWidth > 700
+    ? { top: 50, bottom: 50, right: 60, left: r.right + 40 }
+    : { top: 50, left: 30, right: 30, bottom: window.innerHeight - r.top + 30 };
+}
+function panelOffset() {
+  const p = panelPadding();
+  return [(p.left - p.right) / 2, (p.top - p.bottom) / 2];
+}
+function zoomToRoute(num) {
+  if (popup) popup.remove();
+  highlightRoute(num);
+  const b = routeBounds(num);
+  if (!b.isEmpty()) map.fitBounds(b, { padding: panelPadding(), maxZoom: 14 });
+}
+
+// ---------------------------------------------------------------------------
+// Search
+// ---------------------------------------------------------------------------
+let index = [];
+function buildSearchIndex() {
+  index = [];
+  // one entry per Margary route, combining every segment's names
+  const routes = new Map();
+  for (const f of data.roads.features) {
+    const p = f.properties, n = p._margary;
+    if (!n) continue;
+    if (!routes.has(n)) routes.set(n, { names: new Set(), starts: new Set(), segs: 0 });
+    const r = routes.get(n);
+    r.segs++;
+    if (p._name) r.names.add(p._name);
+    if (p["Road - Start and End"]) r.starts.add(p["Road - Start and End"]);
+  }
+  for (const [n, r] of routes) {
+    const names = [...r.names].join("; ");
+    const starts = [...r.starts];
+    index.push({
+      kind: "road", key: n,
+      label: `RR${n}${names ? " – " + names : ""}`,
+      sub: `${r.segs} segment${r.segs > 1 ? "s" : ""}${starts.length ? " · " + starts[0] : ""}`,
+      text: [n, "rr" + n, names, ...starts].join(" ").toLowerCase(),
+    });
+  }
+  const add = (layer, nameFields, kindLabel) => {
+    for (const f of data[layer].features) {
+      const p = f.properties;
+      const names = nameFields.map(k => p[k]).filter(v => v && String(v).trim() && String(v).toLowerCase() !== "unknown");
+      if (!names.length) continue;
+      index.push({
+        kind: "point", layer, feature: f,
+        label: String(names[0]).trim(),
+        sub: [kindLabel, ...names.slice(1)].join(" · "),
+        text: names.join(" ").toLowerCase(),
+      });
+    }
+  };
+  add("military", ["Modern Name", "Roman name (if known)"], "Military");
+  add("camps", ["Site Name", "Alternative Name", "Roman Name"], "Camp");
+  add("settlement", ["SITE_NAME", "ROMAN NAME"], "Settlement");
+  add("milestones", ["Site name"], "Milestone");
+  add("milecastles", ["Site_name", "MC_No."], "Milecastle");
+}
+
+function search(q) {
+  q = q.trim().toLowerCase();
+  if (q.length < 2) return [];
+  const roadQ = q.replace(/^(rr|margary)\s*/, "");
+  const scored = [];
+  for (const e of index) {
+    let s = -1;
+    const key = e.kind === "road" ? e.key.toLowerCase() : "";
+    if (e.kind === "road" && key === roadQ) s = 100;
+    // same Margary family (2 -> 2a, 2b) ranks above a longer number (2 -> 20, 220)
+    else if (e.kind === "road" && /^\d/.test(roadQ) && key.startsWith(roadQ) && !/\d/.test(key[roadQ.length])) s = 90;
+    else if (e.kind === "road" && /^\d/.test(roadQ) && key.startsWith(roadQ)) s = 80;
+    else if (e.label.toLowerCase().startsWith(q)) s = 60;
+    else if (e.text.includes(q)) s = 40;
+    if (s >= 0) scored.push([s, e]);
+  }
+  scored.sort((a, b) => b[0] - a[0] || a[1].label.localeCompare(b[1].label));
+  return scored.slice(0, 25).map(x => x[1]);
+}
+
+const input = $("search"), results = $("results");
+let current = [], active = -1;
+function renderResults() {
+  if (!current.length) { results.style.display = "none"; return; }
+  results.innerHTML = current.map((e, i) =>
+    `<div data-i="${i}" class="${i === active ? "active" : ""}">${esc(e.label)}<small>${esc(e.sub)}</small></div>`).join("");
+  results.style.display = "block";
+}
+function choose(e) {
+  results.style.display = "none";
+  input.value = e.label;
+  if (e.kind === "road") { zoomToRoute(e.key); return; }
+  const c = e.feature.geometry.coordinates;
+  if (!$("l-" + e.layer).checked) { $("l-" + e.layer).checked = true; applySites(); }
+  map.flyTo({ center: c, zoom: Math.max(map.getZoom(), 13), offset: panelOffset() });
+  map.once("moveend", () => showPopup(e.layer, e.feature, c));
+}
+input.addEventListener("input", () => { current = search(input.value); active = -1; renderResults(); });
+input.addEventListener("keydown", (ev) => {
+  if (!current.length) return;
+  if (ev.key === "ArrowDown") { active = Math.min(active + 1, current.length - 1); renderResults(); ev.preventDefault(); }
+  else if (ev.key === "ArrowUp") { active = Math.max(active - 1, 0); renderResults(); ev.preventDefault(); }
+  else if (ev.key === "Enter") { choose(current[Math.max(active, 0)]); ev.preventDefault(); }
+  else if (ev.key === "Escape") { results.style.display = "none"; }
+});
+results.addEventListener("click", (ev) => {
+  const d = ev.target.closest("[data-i]");
+  if (d) choose(current[+d.dataset.i]);
+});
+document.addEventListener("click", (ev) => { if (!$("search-wrap").contains(ev.target)) results.style.display = "none"; });
+</script>
+</body>
+</html>
