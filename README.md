@@ -79,7 +79,12 @@ Then open http://localhost:8765.
 - **Period slider** using the per-period type fields (Claudio-Neronian …
   4th century).
 - **Underlays**, each with an opacity slider:
-  - LiDAR hillshade: Environment Agency 1 m composite (England)
+  - LiDAR hillshade:
+    - **England:** Environment Agency 1 m composite.
+    - **Scotland** (from zoom 11): DTMs from the Scottish Remote Sensing
+      Portal, shaded on the fly by its server.
+    - **Wales:** not yet. The Welsh hillshades aren't available in any form a
+      web page can use ([ADR 0006](docs/adr/0006-lidar-hillshade.md)).
   - Historic OS maps: National Library of Scotland, 6-inch 2nd edition (GB)
     and other editions
   - Aerial imagery: Esri World Imagery
@@ -105,7 +110,8 @@ python3 -m venv .venv
 
 ## Credits
 - Data: Digital Britannia v1 © Roman Roads Research Association / Mike Haken (CC BY-NC 4.0)
-- LiDAR: contains Environment Agency information © Environment Agency and/or database right
+- LiDAR (England): contains Environment Agency information © Environment Agency and/or database right
+- LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the Scottish Remote Sensing Portal (OGL)
 - Historic maps: National Library of Scotland
 - Imagery and base maps: © Esri, Maxar, Earthstar Geographics, HERE, Garmin, and the GIS User Community
 - Base map: © OpenStreetMap contributors

@@ -120,7 +120,7 @@
 
     <section>
       <h2>Underlays</h2>
-      <label class="row"><input type="checkbox" id="u-lidar" checked> LiDAR hillshade <span class="note">(England, EA 1 m)</span></label>
+      <label class="row"><input type="checkbox" id="u-lidar" checked> LiDAR hillshade <span class="note">(England; Scotland from zoom 11)</span></label>
       <div class="slider-row"><input type="range" id="o-lidar" min="0" max="100" value="60"><output id="o-lidar-v">60%</output></div>
 
       <label class="row"><input type="checkbox" id="u-hist"> Historic OS maps <span class="note">(NLS)</span></label>
@@ -189,7 +189,22 @@ const EA_WMS = "https://environment.data.gov.uk/spatialdata/lidar-composite-digi
   "?service=WMS&request=GetMap&version=1.3.0&layers=Lidar_Composite_Hillshade_DTM_1m&styles=" +
   "&format=image/png&transparent=true&crs=EPSG:3857&width=256&height=256&bbox={bbox-epsg-3857}";
 
-const NLS_EDITIONS = ["6inchsecond", "6inchfirst", "britain10knatgrid", "newpopular"];
+// Scotland: the Scottish Remote Sensing Portal publishes DTMs but no hillshade, so we ask its
+// GeoServer to shade them on the fly (SLD_BODY + ShadedRelief). Later layers draw on top: the
+// 2020s National LiDAR Programme over the older phases, then HES archaeological surveys.
+const SCOT_DTMS = [1, 2, 3, 4, 5, 6].map(i => `scotland:scotland-lidar-${i}-dtm`)
+  .concat(["scotland:nlp-dtm"],
+    ["2010s10", "2016", "2017", "2016-2017"].map(s => `scotland:scotland-gov-lidar-hes-hes-${s}-dtm`));
+const SCOT_SLD = '<StyledLayerDescriptor version="1.0.0" xmlns="http://www.opengis.net/sld">' +
+  SCOT_DTMS.map(l => `<NamedLayer><Name>${l}</Name><UserStyle><FeatureTypeStyle><Rule><RasterSymbolizer>` +
+    "<ShadedRelief><BrightnessOnly>true</BrightnessOnly><ReliefFactor>8</ReliefFactor></ShadedRelief>" +
+    "</RasterSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer>").join("") +
+  "</StyledLayerDescriptor>";
+const SCOT_WMS = "https://srsp-ows.jncc.gov.uk/ows?service=WMS&request=GetMap&version=1.3.0" +
+  "&format=image/png&transparent=true&crs=EPSG:3857&width=256&height=256" +
+  `&layers=${encodeURIComponent(SCOT_DTMS.join(","))}&SLD_BODY=${encodeURIComponent(SCOT_SLD)}&bbox={bbox-epsg-3857}`;
+
+const NLS_EDITIONS =["6inchsecond", "6inchfirst", "britain10knatgrid", "newpopular"];
 const NLS_ATTR = 'Historic maps: <a href="https://maps.nls.uk/" target="_blank">National Library of Scotland</a>';
 
 // Periods: slider index -> military property name
@@ -272,6 +287,9 @@ const style = {
     "lidar": { type: "raster", tiles: [EA_WMS], tileSize: 256, minzoom: 6, maxzoom: 19,
       bounds: [-6.5, 49.8, 2.0, 55.9],
       attribution: "LiDAR: Contains Environment Agency information © Environment Agency and/or database right" },
+    "lidar-scot": { type: "raster", tiles: [SCOT_WMS], tileSize: 256, minzoom: 11, maxzoom: 19,
+      bounds: [-8.9, 54.6, -0.7, 60.9],
+      attribution: 'LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the <a href="https://remotesensingdata.gov.scot/" target="_blank">Scottish Remote Sensing Portal</a> (OGL)' },
   },
   layers: [
     { id: "base-light", type: "raster", source: "light" },
@@ -288,6 +306,9 @@ for (const ed of NLS_EDITIONS) {
     layout: { visibility: "none" }, paint: { "raster-opacity": 0.8 } });
 }
 style.layers.push({ id: "u-lidar", type: "raster", source: "lidar", paint: { "raster-opacity": 0.6 } });
+// GeoServer's shading is paler than the EA's; pull its highlights down to match across the border
+style.layers.push({ id: "u-lidar-scot", type: "raster", source: "lidar-scot",
+  paint: { "raster-opacity": 0.6, "raster-brightness-max": 0.8, "raster-contrast": 0.2 } });
 
 const map = new maplibregl.Map({
   container: "map",
@@ -388,7 +409,7 @@ map.on("load", async () => {
 
 map.on("error", (e) => {
   // tile errors for rasters outside coverage are expected; surface the rest
-  if (e && e.sourceId && ["lidar", "aerial", "osm"].includes(e.sourceId) || /^nls-/.test(e?.sourceId || "")) return;
+  if (e && e.sourceId && ["lidar", "lidar-scot", "aerial", "osm"].includes(e.sourceId) || /^nls-/.test(e?.sourceId || "")) return;
   console.warn("map error", e && e.error ? e.error.message : e);
 });
 
@@ -409,8 +430,10 @@ function applyBase() {
 }
 
 function applyUnderlays() {
-  vis("u-lidar", $("u-lidar").checked);
-  map.setPaintProperty("u-lidar", "raster-opacity", $("o-lidar").value / 100);
+  for (const id of ["u-lidar", "u-lidar-scot"]) {
+    vis(id, $("u-lidar").checked);
+    map.setPaintProperty(id, "raster-opacity", $("o-lidar").value / 100);
+  }
   const ed = $("hist-edition").value;
   for (const e of NLS_EDITIONS) {
     vis("u-hist-" + e, $("u-hist").checked && e === ed);
