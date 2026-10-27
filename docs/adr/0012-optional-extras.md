@@ -51,8 +51,34 @@ from an https page with CORS, and its licence. Checked 2026-10-27.
 | Old OS "Map of Roman Britain" editions | Not in the NLS tileset bucket (no `roman` prefix) and no other tiled source found. |
 | Heritage Gateway as a layer | Links only. The popups already carry the HER links from the data. |
 
-## Pending
-- **Itiner-e** (CC BY 4.0) comparison roads. The smallest usable file in
-  Zenodo record 17122148 is `itinere_roads.gpkg` (33.6 MB, empire-wide). The
-  plan is to clip it to Britain in `scripts/process.py` and commit only that
-  subset. This needs the owner's approval for the download.
+## Itiner-e comparison roads (added after approval)
+- **Source:** Zenodo record 17122148, "Itiner-e static version 2024", v1.3,
+  CC BY 4.0. Downloaded `itinere_roads.gpkg` (33,619,968 bytes); its MD5
+  matches the record (`3e2d318978e42dd551301f739e0d9a16`). It's stored in
+  `data/external/` (gitignored). Only the Britain subset is committed.
+- **The GeoPackage is a simplified copy** (layer `itinere_roads_simplify`),
+  but its `MaxSimpTol`/`MinSimpTol` are 1.0 m everywhere in Britain. That's
+  negligible next to the source's own accuracy, so I didn't download the
+  138 MB shapefile.
+- **Clipping:** keep whole features that intersect a Britain polygon, without
+  cutting any. A plain box let in 8 Roman roads on the Normandy and Picardy
+  coast (Dieppe, Fécamp, Rotomagus), so the polygon also excludes
+  lon −2.5…1.9 south of 50.5°N and lon 1.45…1.9 south of 51.1°N. Result:
+  **1,371 segments**, all entirely within Britain.
+- **Cleanup:** Z dropped (`force_2d`); coordinates rounded to 7 dp; text
+  cleaned as for the core layers. All four date fields are the 9999 "no date"
+  placeholder for every British segment, so they become null. All-null and
+  internal fields are dropped. Truncated names are restored (`Descriptio` →
+  `Description`, `Segment_s` → `Segment certainty`, …).
+- **What it shows in Britain:** only *Conjectured* (1,065) and *Hypothetical*
+  (306) segments; there's no "Certain" class. Many are described as "Straight
+  line conjecture by Joseph Lewis". Coverage ends at 55.98°N, just south of the
+  Antonine Wall, so Itiner-e has nothing for the Gask Ridge or further north.
+- **Rendering:** magenta lines drawn *under* the RRRA road halos, so the RRRA
+  data stays primary and agreement shows as a magenta edge to the red line.
+  Main roads are drawn wider; hypothetical segments are dashed. There's a
+  popup per segment.
+- **Page weight:** the subset is 943 KiB, which takes all GeoJSON to 5.12 MiB,
+  over the ~5 MB single-page budget. It's therefore **fetched only when
+  switched on**, so the page still loads 4.19 MiB up front (see ADR 0002).
+  `process.py` reports start-up and on-demand sizes separately.

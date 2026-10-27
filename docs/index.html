@@ -159,6 +159,8 @@
       <label class="row"><input type="checkbox" id="l-roads" checked> Show roads</label>
       <label class="row sub"><input type="checkbox" id="l-conf0"> Include "no evidence" segments</label>
       <label class="row sub"><input type="checkbox" id="l-labels" checked> Margary numbers</label>
+      <label class="row"><input type="checkbox" id="l-itinere"> Compare: Itiner-e roads</label>
+      <div class="sub note" id="l-itinere-status">Itiner-e 2024 (CC BY 4.0), drawn under the RRRA roads</div>
     </section>
 
     <section>
@@ -612,6 +614,42 @@ function applySites() {
   for (const id of ["walls-wall", "walls-ditch", "walls-vallum"]) vis(id, $("l-walls").checked);
 }
 
+// Itiner-e comparison roads: fetched the first time they are switched on (not part of the page load)
+const ITINERE_COLOR = "#c51b7d";
+const ITINERE_ATTR = 'Comparison roads: <a href="https://itiner-e.org/" target="_blank">Itiner-e</a> ' +
+  "(Brughmans, de Soto, Pažout &amp; Bjerregaard Vahlstrup 2024), CC BY 4.0";
+let itinereLoading = null;
+async function applyItinere() {
+  const on = $("l-itinere").checked;
+  if (on && !map.getSource("itinere")) {
+    $("l-itinere-status").textContent = "loading…";
+    itinereLoading = itinereLoading || fetch("data/itinere.geojson").then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    });
+    try { data.itinere = await itinereLoading; } catch (err) {
+      itinereLoading = null;
+      $("l-itinere-status").textContent = "could not load Itiner-e data";
+      return;
+    }
+    if (!map.getSource("itinere")) {
+      map.addSource("itinere", { type: "geojson", data: data.itinere, attribution: ITINERE_ATTR });
+      // zoom must be the outermost input, so the main/secondary choice goes inside each stop
+      const main = (a, b) => ["match", ["get", "Type"], "Main Road", a, b];
+      const width = lineWidth(main(1.5, 1), main(2.5, 1.5), main(4, 2.5));
+      map.addLayer({ id: "itinere-conj", type: "line", source: "itinere",
+        filter: ["==", ["get", "Segment certainty"], "Conjectured"],
+        paint: { "line-color": ITINERE_COLOR, "line-width": width, "line-opacity": 0.85 } }, "roads-halo-c3");
+      map.addLayer({ id: "itinere-hyp", type: "line", source: "itinere",
+        filter: ["!=", ["get", "Segment certainty"], "Conjectured"],
+        paint: { "line-color": ITINERE_COLOR, "line-width": width, "line-opacity": 0.85, "line-dasharray": [2, 2] } },
+        "roads-halo-c3");
+    }
+    $("l-itinere-status").textContent = `${data.itinere.features.length} Itiner-e segments, drawn under the RRRA roads`;
+  }
+  for (const id of ["itinere-conj", "itinere-hyp"]) vis(id, $("l-itinere").checked);
+}
+
 function applyAll() { applyBase(); applyUnderlays(); applyRoads(); applySites(); applyOverlays(); }
 
 document.querySelectorAll('input[name="base"]').forEach(el => el.addEventListener("change", applyBase));
@@ -621,6 +659,7 @@ $("u-terrain").addEventListener("change", applyTerrain);
 ["o-sam", "o-aim"].forEach(id => $(id).addEventListener("change", applyOverlays));
 map.on("moveend", () => { if (data.roads) DYNAMIC.forEach(loadDynamic); });
 ["l-roads", "l-conf0", "l-labels"].forEach(id => $(id).addEventListener("change", applyRoads));
+$("l-itinere").addEventListener("change", applyItinere);
 ["l-military", "l-camps", "l-settlement", "l-milestones", "l-milecastles", "l-walls", "l-possible"]
   .forEach(id => $(id).addEventListener("change", applySites));
 $("period").addEventListener("input", applySites);
@@ -646,6 +685,7 @@ function buildLegend() {
     dot("#6a3d9a", "Temporary camp"), dot("#33a02c", "Practice camp"), dot("#cab2d6", "Possible camp"),
     dot("#ff6b01", "Colonia"), dot("#fdbf6f", "Municipium"), dot("#f7ff01", "Civitas / vicus"),
     dot("#98d8f8", "Military vicus"), dot("#222222", "Milestone"),
+    line("solid", "#c51b7d", "Itiner-e road: conjectured"), line("dashed", "#c51b7d", "Itiner-e road: hypothetical"),
     line("solid", "#e66101", "Scheduled monument (England)"),
     line("solid", "#d7301f", "Aerial mapping: ditch"), line("solid", "#1a9850", "Aerial mapping: bank"),
     line("solid", "#a6611a", "Aerial mapping: scarp"), line("solid", "#4d4d4d", "Aerial mapping: structure"),
@@ -669,6 +709,7 @@ const TITLE_FIELDS = {
   milecastles: (p) => p["Site_name"] || `Milecastle ${p["MC_No."] || ""}`,
   walls: (p) => p["Feature"] || "Wall",
   "he-sam": (p) => p["Name"] || "Scheduled monument",
+  itinere: (p) => `Itiner-e: ${p["Name"] || "road"}${p["Type"] ? " (" + p["Type"].toLowerCase() + ")" : ""}`,
   "he-aim": (p) => `Aerial mapping: ${String(p["LAYER"] || "feature").replace(/_/g, " ").toLowerCase()}`,
 };
 
@@ -712,9 +753,9 @@ function showPopup(layer, feature, lngLat) {
 function wireClicks() {
   const clickable = ["milestones", "milecastles", "military", "settlement", "camps",
     "roads-c3", "roads-c2", "roads-c1", "roads-c0", "walls-wall", "walls-ditch", "walls-vallum",
-    "he-aim-fill", "he-sam-fill"];
+    "itinere-conj", "itinere-hyp", "he-aim-fill", "he-sam-fill"];
   const layerOf = (id) => id.startsWith("roads") ? "roads" : id.startsWith("walls") ? "walls"
-    : id.startsWith("he-") ? id.slice(0, 6) : id;
+    : id.startsWith("he-") ? id.slice(0, 6) : id.startsWith("itinere") ? "itinere" : id;
   map.on("click", (e) => {
     const pad = 5;
     const box = [[e.point.x - pad, e.point.y - pad], [e.point.x + pad, e.point.y + pad]];

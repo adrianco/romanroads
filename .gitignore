@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# third-party downloads (Itiner-e etc.); only derived subsets are committed
+data/external/

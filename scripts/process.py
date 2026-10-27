@@ -22,6 +22,8 @@ from pathlib import Path
 import numpy as np
 import geopandas as gpd
 import shapely
+from shapely.geometry import box
+from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parent.parent
 GPKG = ROOT / "data" / "digital-britannia_v1.gpkg"
@@ -174,10 +176,46 @@ walls["_feature"] = walls["Feature"].apply(clean_str)
 sz = write_geojson(walls, "walls.geojson")
 record("walls", "walls.geojson", sz, len(walls), "Feature: wall / ditch / vallum")
 
+# --- Itiner-e comparison roads (optional third-party input) ------------------
+# Itiner-e static version 2024 (Brughmans, de Soto, Pažout, Bjerregaard Vahlstrup),
+# CC BY 4.0, https://doi.org/10.5281/zenodo.17122148. The empire-wide file is not
+# committed: download itinere_roads.gpkg to data/external/ to rebuild the subset.
+ITINERE = ROOT / "data" / "external" / "itinere_roads.gpkg"
+# Britain, minus the Picardy/Normandy coast that a simple box would let in
+BRITAIN = box(-8.7, 49.8, 1.9, 61.0).difference(
+    unary_union([box(1.45, 49.8, 1.9, 51.1), box(-2.5, 49.0, 1.9, 50.5)]))
+if ITINERE.exists():
+    it = gpd.read_file(ITINERE).to_crs(epsg=4326)
+    it = it[it.intersects(BRITAIN)].copy()              # whole features, not cut
+    it["geometry"] = shapely.force_2d(it.geometry).apply(round_coords)
+    for col in it.columns:
+        if col != "geometry":
+            it[col] = it[col].apply(clean_text)
+    for col in ("Lower_Date", "Low_Date_E", "Upper_Date", "Up_Date_E"):   # 9999 = no date given
+        it[col] = it[col].apply(lambda v: None if v is None or v != v or v == 9999 else int(v))
+    it = it.drop(columns=["Cons_per_e", "Shape_Leng", "InLine_FID", "MaxSimpTol", "MinSimpTol"])
+    it = it.rename(columns={"Descriptio": "Description", "Bibliograp": "Bibliography",
+                            "passabilit": "Passability", "Segment_s": "Segment certainty"})
+    sz = write_geojson(it, "itinere.geojson")
+    record("itinere", "itinere.geojson", sz, len(it),
+           "Itiner-e 2024 roads intersecting Britain (CC BY 4.0); source simplified at 1 m")
+elif (OUT / "itinere.geojson").exists():
+    sz = (OUT / "itinere.geojson").stat().st_size
+    n = len(json.loads((OUT / "itinere.geojson").read_text())["features"])
+    record("itinere", "itinere.geojson", sz, n, "kept from a previous build (source not downloaded)")
+
+# Comparison layers are fetched only when switched on, so they don't count
+# towards the page-load budget (ADR 0002).
+ON_DEMAND = {"itinere"}
+for key, layer in manifest["layers"].items():
+    layer["on_demand"] = key in ON_DEMAND
 total = sum(l["bytes"] for l in manifest["layers"].values())
+core = sum(l["bytes"] for l in manifest["layers"].values() if not l["on_demand"])
 manifest["total_bytes"] = total
+manifest["core_bytes"] = core
 (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2))
 
-print(f"\n  TOTAL GeoJSON: {total/1024/1024:.2f} MiB")
-print(f"  {'UNDER' if total < 5*1024*1024 else 'OVER'} the ~5 MB single-page threshold")
+print(f"\n  TOTAL GeoJSON: {total/1024/1024:.2f} MiB "
+      f"(loaded at start: {core/1024/1024:.2f} MiB; on demand: {(total-core)/1024/1024:.2f} MiB)")
+print(f"  page load is {'UNDER' if core < 5*1024*1024 else 'OVER'} the ~5 MB single-page threshold")
 print(f"\n  Wrote manifest.json")

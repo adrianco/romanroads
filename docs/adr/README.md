@@ -16,4 +16,4 @@ context, decision, and consequences. Status is `Accepted` unless noted.
 | [0009](0009-label-glyphs.md) | Label glyphs from MapLibre demotiles (Noto Sans Regular) |
 | [0010](0010-road-rendering.md) | One line layer per confidence level, with a halo |
 | [0011](0011-data-in-repo.md) | Commit the source GeoPackage to the repository |
-| [0012](0012-optional-extras.md) | Optional extras: DARE, BGS geology, 3D terrain, scheduled monuments, HE aerial mapping, Pleiades; rejected candidates |
+| [0012](0012-optional-extras.md) | Optional extras: DARE, BGS geology, 3D terrain, scheduled monuments, HE aerial mapping, Pleiades, Itiner-e comparison; rejected candidates |

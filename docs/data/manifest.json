@@ -11,44 +11,59 @@
       "file": "data/roads.geojson",
       "bytes": 3130108,
       "features": 3572,
-      "note": "Segment Confidence 3/2/1/0; -1 = unspecified (hidden by default)"
+      "note": "Segment Confidence 3/2/1/0; -1 = unspecified (hidden by default)",
+      "on_demand": false
     },
     "military": {
       "file": "data/military.geojson",
       "bytes": 387122,
       "features": 517,
-      "note": "Main site type normalised; _possible flag; per-period Type-* fields"
+      "note": "Main site type normalised; _possible flag; per-period Type-* fields",
+      "on_demand": false
     },
     "camps": {
       "file": "data/camps.geojson",
       "bytes": 338536,
       "features": 617,
-      "note": "Camp type; _possible flag; Area (Ha)"
+      "note": "Camp type; _possible flag; Area (Ha)",
+      "on_demand": false
     },
     "settlement": {
       "file": "data/settlement.geojson",
       "bytes": 223791,
       "features": 485,
-      "note": "TYPE normalised (garble fixed)"
+      "note": "TYPE normalised (garble fixed)",
+      "on_demand": false
     },
     "milestones": {
       "file": "data/milestones.geojson",
       "bytes": 202736,
       "features": 137,
-      "note": "inscription, translation, image links"
+      "note": "inscription, translation, image links",
+      "on_demand": false
     },
     "milecastles": {
       "file": "data/milecastles.geojson",
       "bytes": 52728,
       "features": 81,
-      "note": "Status Confirmed/Assumed"
+      "note": "Status Confirmed/Assumed",
+      "on_demand": false
     },
     "walls": {
       "file": "data/walls.geojson",
       "bytes": 59255,
       "features": 29,
-      "note": "Feature: wall / ditch / vallum"
+      "note": "Feature: wall / ditch / vallum",
+      "on_demand": false
+    },
+    "itinere": {
+      "file": "data/itinere.geojson",
+      "bytes": 971276,
+      "features": 1371,
+      "note": "Itiner-e 2024 roads intersecting Britain (CC BY 4.0); source simplified at 1 m",
+      "on_demand": true
     }
   },
-  "total_bytes": 4394276
+  "total_bytes": 5365552,
+  "core_bytes": 4394276
 }

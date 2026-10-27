@@ -28,6 +28,15 @@ Measured output from `scripts/process.py`:
 - Keep data out of the HTML. Separate files cache well, the processing script
   can regenerate them without touching the page, and the layers load in parallel.
 
+## Amendment: on-demand layers
+The Itiner-e comparison subset (943 KiB) takes all GeoJSON to 5.12 MiB. The
+budget is about what the page has to load before it works, so optional
+comparison layers are **fetched only when the user switches them on** and
+don't count towards it. The start-up load is unchanged at 4.19 MiB, so the
+single-page decision stands. `manifest.json` marks each layer `on_demand`, and
+`process.py` reports both figures. The PMTiles fallback applies if the
+*start-up* data passes ~5 MB.
+
 ## Consequences
 - GitHub Pages also gzips the GeoJSON in transit, so the real download is a
   fraction of 4.19 MiB.

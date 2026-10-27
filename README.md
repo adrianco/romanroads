@@ -14,11 +14,10 @@ imagery.
 
 ## View the map
 
-### Online (GitHub Pages)
-Once Pages is enabled, the map is at **https://adrianco.github.io/romanroads/**.
-
-To enable it: repo **Settings → Pages → Build and deployment → Deploy from a
-branch → `main` / `/docs` → Save**. The first deploy takes a minute or two.
+### Online
+The map is live at **https://adrianco.github.io/romanroads/**, served by
+GitHub Pages from the `docs/` folder of `main`. Each push to `main` redeploys
+it within a minute or two.
 
 ### Locally
 The viewer fetches its GeoJSON over HTTP, so opening `docs/index.html` straight
@@ -101,6 +100,10 @@ Then open http://localhost:8765.
     Wales (Cadw).
   - Historic England's aerial mapping of Roman-period features (England, from
     zoom 14): cropmark and earthwork ditches, banks and structures.
+- **Itiner-e comparison:** tick *Compare: Itiner-e roads* to draw the
+  Itiner-e 2024 network for Britain in magenta, under the RRRA roads, to see
+  where the two datasets agree and differ. Dashed means hypothetical. It's
+  fetched only when switched on.
 - **Pleiades links** in the popups of sites with a Roman name. Search accepts
   modern spellings of inscribed names (`Vercovicium` finds `VERCOVICIVM`).
 - Phone layout with a bottom sheet.
@@ -114,7 +117,8 @@ data/digital-britannia_v1.gpkg   source GeoPackage (EPSG:27700)
 scripts/process.py               GeoPackage -> per-layer GeoJSON (EPSG:4326)
 requirements.txt                 pinned Python dependencies
 docs/index.html                  the viewer (single page, MapLibre GL JS)
-docs/data/*.geojson              processed layers + manifest.json
+docs/data/*.geojson              processed layers + manifest.json (itinere.geojson = Britain subset)
+data/external/                   third-party downloads (gitignored)
 docs/ERRATA.md                   data issues to report back to the RRRA
 docs/adr/                        architecture decision records
 ```
@@ -125,6 +129,12 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python scripts/process.py
 ```
+The Itiner-e comparison layer comes from a 33.6 MB empire-wide file that isn't
+committed. Only the Britain subset (`docs/data/itinere.geojson`) is. To rebuild
+it, download `itinere_roads.gpkg` from
+[Zenodo record 17122148](https://doi.org/10.5281/zenodo.17122148) into
+`data/external/` (gitignored) and rerun the script. Without the file, the
+script keeps the committed subset.
 
 ## Credits
 - Data: Digital Britannia v1 © Roman Roads Research Association / Mike Haken (CC BY-NC 4.0)
@@ -132,6 +142,7 @@ python3 -m venv .venv
 - LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the Scottish Remote Sensing Portal (OGL)
 - Historic maps: National Library of Scotland
 - Roman Empire map: Digital Atlas of the Roman Empire, Johan Åhlfeldt (CC BY 4.0)
+- Comparison roads: Itiner-e static version 2024, Brughmans, de Soto, Pažout & Bjerregaard Vahlstrup (CC BY 4.0), https://doi.org/10.5281/zenodo.17122148
 - Geology: contains British Geological Survey materials © UKRI
 - Heritage (England): © Historic England, contains OS data © Crown copyright (OGL)
 - Scheduled monuments (Scotland): © Historic Environment Scotland, Scottish Charity No. SC045925, © Crown copyright (OGL)
