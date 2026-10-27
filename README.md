@@ -34,9 +34,13 @@ Then open http://localhost:8765.
   whole route.
 - **Click** any road or site for a popup with every attribute and clickable
   links. Clicking a road highlights its entire Margary route in blue.
-- **Underlays:** tick LiDAR hillshade, historic OS maps (choose the edition)
-  or aerial imagery, and set each one's opacity with its slider. Untick
-  **Show roads** to look at the bare terrain.
+- **Underlays:** tick LiDAR hillshade, historic OS maps (choose the edition),
+  aerial imagery, the Roman Empire map or geology, and set each one's opacity
+  with its slider. Untick **Show roads** to look at the bare terrain. Tick
+  **3D terrain** and right-drag (or Ctrl-drag) to tilt the view.
+- **Heritage overlays:** scheduled monuments and Roman-period aerial mapping
+  load for the area in view once you zoom in. The line under each one says how
+  many features are showing.
 - **Period slider:** shows only military sites occupied in the chosen period,
   coloured by their type in that period.
 - The URL keeps the current view (`#zoom/lat/lon`), so you can share a link to
@@ -88,7 +92,21 @@ Then open http://localhost:8765.
   - Historic OS maps: National Library of Scotland, 6-inch 2nd edition (GB)
     and other editions
   - Aerial imagery: Esri World Imagery
+  - Roman Empire map: the Digital Atlas of the Roman Empire (DARE), with Latin
+    place names
+  - Bedrock geology: BGS, 1:625k zoomed out and 1:50k zoomed in
+  - 3D terrain: tilts the view with real elevation
+- **Heritage overlays:**
+  - Scheduled monuments for England (Historic England), Scotland (HES) and
+    Wales (Cadw).
+  - Historic England's aerial mapping of Roman-period features (England, from
+    zoom 14): cropmark and earthwork ditches, banks and structures.
+- **Pleiades links** in the popups of sites with a Roman name. Search accepts
+  modern spellings of inscribed names (`Vercovicium` finds `VERCOVICIVM`).
 - Phone layout with a bottom sheet.
+
+Why each source was chosen, and why others were rejected, is in
+[ADR 0012](docs/adr/0012-optional-extras.md).
 
 ## Layout
 ```
@@ -113,5 +131,11 @@ python3 -m venv .venv
 - LiDAR (England): contains Environment Agency information © Environment Agency and/or database right
 - LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the Scottish Remote Sensing Portal (OGL)
 - Historic maps: National Library of Scotland
+- Roman Empire map: Digital Atlas of the Roman Empire, Johan Åhlfeldt (CC BY 4.0)
+- Geology: contains British Geological Survey materials © UKRI
+- Heritage (England): © Historic England, contains OS data © Crown copyright (OGL)
+- Scheduled monuments (Scotland): © Historic Environment Scotland, Scottish Charity No. SC045925, © Crown copyright (OGL)
+- Scheduled monuments (Wales): Cadw, via DataMapWales (OGL)
+- Terrain: Mapzen terrain tiles on AWS Open Data; UK terrain data © Environment Agency 2015; EU-DEM (Copernicus); SRTM/GMTED2010 (USGS)
 - Imagery and base maps: © Esri, Maxar, Earthstar Geographics, HERE, Garmin, and the GIS User Community
 - Base map: © OpenStreetMap contributors

@@ -136,6 +136,22 @@
 
       <label class="row"><input type="checkbox" id="u-aerial"> Aerial imagery <span class="note">(Esri)</span></label>
       <div class="slider-row"><input type="range" id="o-aerial" min="0" max="100" value="100"><output id="o-aerial-v">100%</output></div>
+
+      <label class="row"><input type="checkbox" id="u-dare"> Roman Empire map <span class="note">(DARE)</span></label>
+      <div class="slider-row"><input type="range" id="o-dare" min="0" max="100" value="85"><output id="o-dare-v">85%</output></div>
+
+      <label class="row"><input type="checkbox" id="u-geo"> Bedrock geology <span class="note">(BGS)</span></label>
+      <div class="slider-row"><input type="range" id="o-geo" min="0" max="100" value="55"><output id="o-geo-v">55%</output></div>
+
+      <label class="row"><input type="checkbox" id="u-terrain"> 3D terrain <span class="note">(right-drag to tilt)</span></label>
+    </section>
+
+    <section>
+      <h2>Heritage overlays</h2>
+      <label class="row"><input type="checkbox" id="o-sam"> Scheduled monuments</label>
+      <div class="sub note" id="o-sam-status">England from zoom 11 · Scotland &amp; Wales from zoom 10</div>
+      <label class="row"><input type="checkbox" id="o-aim"> Aerial mapping: Roman features <span class="note">(HE, England)</span></label>
+      <div class="sub note" id="o-aim-status">from zoom 14</div>
     </section>
 
     <section>
@@ -204,7 +220,29 @@ const SCOT_WMS = "https://srsp-ows.jncc.gov.uk/ows?service=WMS&request=GetMap&ve
   "&format=image/png&transparent=true&crs=EPSG:3857&width=256&height=256" +
   `&layers=${encodeURIComponent(SCOT_DTMS.join(","))}&SLD_BODY=${encodeURIComponent(SCOT_SLD)}&bbox={bbox-epsg-3857}`;
 
-const NLS_EDITIONS =["6inchsecond", "6inchfirst", "britain10knatgrid", "newpopular"];
+// Historic England ArcGIS Online feature services: no tiles, so the features in view are
+// queried on demand once zoomed in (see loadDynamic)
+const HE_ARCGIS = "https://services-eu1.arcgis.com/ZOdPfBS3aqqDYPUQ/arcgis/rest/services/";
+const ENGLAND_BBOX = [-6.5, 49.8, 2.0, 55.9];
+const DYNAMIC = [
+  { id: "he-sam", minzoom: 11, max: 2000, toggle: "o-sam", status: "o-sam-status",
+    url: HE_ARCGIS + "National_Heritage_List_for_England_NHLE_v02_VIEW/FeatureServer/6/query",
+    where: "1=1", fields: "ListEntry,Name,SchedDate,AmendDate,hyperlink",
+    idle: "England from zoom 11 · Scotland & Wales from zoom 10" },
+  { id: "he-aim", minzoom: 14, max: 2000, toggle: "o-aim", status: "o-aim-status",
+    url: HE_ARCGIS + "HE_AIM_data/FeatureServer/0/query",
+    where: "PERIOD LIKE '%ROMAN%'", fields: "LAYER,PERIOD,MONUMENT_TYPE,EVIDENCE_1,SOURCE_1,EVIDENCE_2,SOURCE_2,HER_NO,HE_UID,project",
+    idle: "from zoom 14" },
+];
+const HE_ATTR = "Heritage (England): © Historic England 2026, contains OS data © Crown copyright 2026 (OGL)";
+const HES_ATTR = "Scheduled monuments (Scotland): Contains Historic Environment Scotland and Ordnance Survey data © Historic Environment Scotland - Scottish Charity No. SC045925 © Crown copyright and database right 2026 (OGL)";
+const CADW_ATTR = "Scheduled monuments (Wales): Cadw, via DataMapWales (OGL)";
+const BGS_ATTR = "Geology: Contains British Geological Survey materials © UKRI 2026";
+
+const wms = (base, layer) => `${base}?service=WMS&request=GetMap&version=1.3.0&layers=${encodeURIComponent(layer)}` +
+  "&styles=&format=image/png&transparent=true&crs=EPSG:3857&width=256&height=256&bbox={bbox-epsg-3857}";
+
+const NLS_EDITIONS = ["6inchsecond","6inchfirst", "britain10knatgrid", "newpopular"];
 const NLS_ATTR = 'Historic maps: <a href="https://maps.nls.uk/" target="_blank">National Library of Scotland</a>';
 
 // Periods: slider index -> military property name
@@ -265,6 +303,12 @@ const campRadius = ["interpolate", ["linear"], ["zoom"],
   6, ["interpolate", ["linear"], ["to-number", ["get", "Area (Ha)"], 0], 0, 2, 20, 3.5, 60, 5],
   12, ["interpolate", ["linear"], ["to-number", ["get", "Area (Ha)"], 0], 0, 4, 20, 7, 60, 11]];
 
+// viewer palette for Historic England aerial-mapping feature classes (LAYER)
+const AIM_COLORS = [
+  ["DITCH", "#d7301f"], ["BANK", "#1a9850"], ["STRUCTURE", "#4d4d4d"], ["SCARP_SLOPE_EDGE", "#a6611a"],
+  ["EXTENT_OF_FEATURE", "#7570b3"], ["RIDGE_AND_FURROW_ALIGNMENT", "#bdbdbd"], ["RIDGE_AND_FURROW_AREA", "#bdbdbd"],
+];
+
 const lineWidth = (w6, w12, w16) => ["interpolate", ["linear"], ["zoom"], 6, w6, 12, w12, 16, w16];
 
 // ---------------------------------------------------------------------------
@@ -290,11 +334,27 @@ const style = {
     "lidar-scot": { type: "raster", tiles: [SCOT_WMS], tileSize: 256, minzoom: 11, maxzoom: 19,
       bounds: [-8.9, 54.6, -0.7, 60.9],
       attribution: 'LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the <a href="https://remotesensingdata.gov.scot/" target="_blank">Scottish Remote Sensing Portal</a> (OGL)' },
+    "dare": { type: "raster", tiles: ["https://dh.gu.se/tiles/imperium/{z}/{x}/{y}.png"], tileSize: 256, minzoom: 4, maxzoom: 11,
+      attribution: 'Roman Empire map: <a href="https://dh.gu.se/dare/" target="_blank">Digital Atlas of the Roman Empire</a>, Johan Åhlfeldt (CC BY 4.0)' },
+    "geo-625k": { type: "raster", tileSize: 256, maxzoom: 19, attribution: BGS_ATTR,
+      tiles: [wms("https://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/wms", "GBR_BGS_625k_BLT")] },
+    "geo-50k": { type: "raster", tileSize: 256, minzoom: 11, maxzoom: 19, attribution: BGS_ATTR,
+      tiles: [wms("https://map.bgs.ac.uk/arcgis/services/BGS_Detailed_Geology/MapServer/WMSServer", "BGS.50k.Bedrock")] },
+    "sam-scot": { type: "raster", tileSize: 256, minzoom: 10, maxzoom: 19, bounds: [-8.9, 54.6, -0.7, 60.9], attribution: HES_ATTR,
+      tiles: [wms("https://inspire.hes.scot/arcgis/services/HES/HES_Designations/MapServer/WMSServer", "2")] },
+    "sam-wales": { type: "raster", tileSize: 256, minzoom: 10, maxzoom: 19, bounds: [-5.7, 51.3, -2.6, 53.5], attribution: CADW_ATTR,
+      tiles: [wms("https://datamap.gov.wales/geoserver/ows", "geonode:wom_scheduled_monument")] },
+    "terrain": { type: "raster-dem", encoding: "terrarium", tileSize: 256, maxzoom: 15,
+      tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
+      attribution: "Terrain: Mapzen terrain tiles (AWS Open Data); United Kingdom terrain data © Environment Agency copyright and/or database right 2015; EU-DEM produced using Copernicus data; SRTM and GMTED2010 courtesy of the U.S. Geological Survey" },
   },
   layers: [
     { id: "base-light", type: "raster", source: "light" },
     { id: "base-dark", type: "raster", source: "dark", layout: { visibility: "none" } },
     { id: "base-osm", type: "raster", source: "osm", layout: { visibility: "none" } },
+    { id: "u-dare", type: "raster", source: "dare", layout: { visibility: "none" } },
+    { id: "u-geo-625k", type: "raster", source: "geo-625k", maxzoom: 11, layout: { visibility: "none" } },
+    { id: "u-geo-50k", type: "raster", source: "geo-50k", minzoom: 11, layout: { visibility: "none" } },
     { id: "u-aerial", type: "raster", source: "aerial", layout: { visibility: "none" }, paint: { "raster-opacity": 1 } },
   ],
 };
@@ -309,6 +369,9 @@ style.layers.push({ id: "u-lidar", type: "raster", source: "lidar", paint: { "ra
 // GeoServer's shading is paler than the EA's; pull its highlights down to match across the border
 style.layers.push({ id: "u-lidar-scot", type: "raster", source: "lidar-scot",
   paint: { "raster-opacity": 0.6, "raster-brightness-max": 0.8, "raster-contrast": 0.2 } });
+for (const id of ["sam-scot", "sam-wales"]) {
+  style.layers.push({ id: "o-" + id, type: "raster", source: id, layout: { visibility: "none" }, paint: { "raster-opacity": 0.7 } });
+}
 
 const map = new maplibregl.Map({
   container: "map",
@@ -342,6 +405,20 @@ map.on("load", async () => {
     data[f] = loaded[i];
     map.addSource(f, { type: "geojson", data: loaded[i] });
   });
+
+  // heritage overlays filled on demand by loadDynamic(); drawn under the Digital Britannia layers
+  const empty = { type: "FeatureCollection", features: [] };
+  map.addSource("he-sam", { type: "geojson", data: empty, attribution: HE_ATTR });
+  map.addSource("he-aim", { type: "geojson", data: empty, attribution: HE_ATTR });
+  map.addLayer({ id: "he-sam-fill", type: "fill", source: "he-sam", layout: { visibility: "none" },
+    paint: { "fill-color": "#ff7f00", "fill-opacity": 0.18 } });
+  map.addLayer({ id: "he-sam-line", type: "line", source: "he-sam", layout: { visibility: "none" },
+    paint: { "line-color": "#e66101", "line-width": 1.5 } });
+  map.addLayer({ id: "he-aim-fill", type: "fill", source: "he-aim", layout: { visibility: "none" },
+    paint: { "fill-color": ["match", ["get", "LAYER"], ...AIM_COLORS.flat(), "#999999"],
+      "fill-opacity": ["match", ["get", "LAYER"], "EXTENT_OF_FEATURE", 0.08, "RIDGE_AND_FURROW_AREA", 0.08, 0.5] } });
+  map.addLayer({ id: "he-aim-line", type: "line", source: "he-aim", layout: { visibility: "none" },
+    paint: { "line-color": ["match", ["get", "LAYER"], ...AIM_COLORS.flat(), "#999999"], "line-width": 1 } });
 
   // walls (one layer per feature kind: dasharray can't be data-driven)
   map.addLayer({ id: "walls-ditch", type: "line", source: "walls",
@@ -409,7 +486,7 @@ map.on("load", async () => {
 
 map.on("error", (e) => {
   // tile errors for rasters outside coverage are expected; surface the rest
-  if (e && e.sourceId && ["lidar", "lidar-scot", "aerial", "osm"].includes(e.sourceId) || /^nls-/.test(e?.sourceId || "")) return;
+  if (e && e.sourceId && ["lidar", "lidar-scot", "aerial", "osm", "dare", "geo-625k", "geo-50k", "sam-scot", "sam-wales", "terrain"].includes(e.sourceId) || /^nls-/.test(e?.sourceId || "")) return;
   console.warn("map error", e && e.error ? e.error.message : e);
 });
 
@@ -441,7 +518,58 @@ function applyUnderlays() {
   }
   vis("u-aerial", $("u-aerial").checked);
   map.setPaintProperty("u-aerial", "raster-opacity", $("o-aerial").value / 100);
-  for (const k of ["lidar", "hist", "aerial"]) $(`o-${k}-v`).textContent = $(`o-${k}`).value + "%";
+  vis("u-dare", $("u-dare").checked);
+  map.setPaintProperty("u-dare", "raster-opacity", $("o-dare").value / 100);
+  for (const id of ["u-geo-625k", "u-geo-50k"]) {
+    vis(id, $("u-geo").checked);
+    map.setPaintProperty(id, "raster-opacity", $("o-geo").value / 100);
+  }
+  for (const k of ["lidar", "hist", "aerial", "dare", "geo"]) $(`o-${k}-v`).textContent = $(`o-${k}`).value + "%";
+}
+
+function applyTerrain() {
+  const on = $("u-terrain").checked;
+  map.setTerrain(on ? { source: "terrain", exaggeration: 1.5 } : null);
+  map.easeTo({ pitch: on ? 60 : 0, duration: 800 });
+}
+
+// Historic England layers: query the features in view from the ArcGIS feature service
+const pending = {};
+async function loadDynamic(d) {
+  const on = $(d.toggle).checked, z = map.getZoom();
+  const b = map.getBounds();
+  const inEngland = b.getEast() > ENGLAND_BBOX[0] && b.getWest() < ENGLAND_BBOX[2] &&
+    b.getNorth() > ENGLAND_BBOX[1] && b.getSouth() < ENGLAND_BBOX[3];
+  if (pending[d.id]) pending[d.id].abort();
+  if (!on || z < d.minzoom || !inEngland) {
+    map.getSource(d.id).setData({ type: "FeatureCollection", features: [] });
+    $(d.status).textContent = d.idle;
+    return;
+  }
+  const ctl = pending[d.id] = new AbortController();
+  const q = new URLSearchParams({
+    where: d.where, outFields: d.fields, f: "geojson", outSR: "4326", inSR: "4326",
+    geometry: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].map(v => v.toFixed(5)).join(","),
+    geometryType: "esriGeometryEnvelope", spatialRel: "esriSpatialRelIntersects",
+    resultRecordCount: String(d.max), geometryPrecision: "6",
+  });
+  $(d.status).textContent = "loading…";
+  try {
+    const gj = await (await fetch(`${d.url}?${q}`, { signal: ctl.signal })).json();
+    map.getSource(d.id).setData(gj);
+    const n = gj.features ? gj.features.length : 0;
+    $(d.status).textContent = gj.properties?.exceededTransferLimit
+      ? `first ${n} in view (zoom in for all)` : `${n} in view`;
+  } catch (err) {
+    if (err.name !== "AbortError") $(d.status).textContent = "service unavailable";
+  }
+}
+
+function applyOverlays() {
+  const sam = $("o-sam").checked, aim = $("o-aim").checked;
+  for (const id of ["he-sam-fill", "he-sam-line", "o-sam-scot", "o-sam-wales"]) vis(id, sam);
+  for (const id of ["he-aim-fill", "he-aim-line"]) vis(id, aim);
+  DYNAMIC.forEach(loadDynamic);
 }
 
 function applyRoads() {
@@ -484,11 +612,14 @@ function applySites() {
   for (const id of ["walls-wall", "walls-ditch", "walls-vallum"]) vis(id, $("l-walls").checked);
 }
 
-function applyAll() { applyBase(); applyUnderlays(); applyRoads(); applySites(); }
+function applyAll() { applyBase(); applyUnderlays(); applyRoads(); applySites(); applyOverlays(); }
 
 document.querySelectorAll('input[name="base"]').forEach(el => el.addEventListener("change", applyBase));
-["u-lidar", "u-hist", "u-aerial", "hist-edition"].forEach(id => $(id).addEventListener("change", applyUnderlays));
-["o-lidar", "o-hist", "o-aerial"].forEach(id => $(id).addEventListener("input", applyUnderlays));
+["u-lidar", "u-hist", "u-aerial", "u-dare", "u-geo", "hist-edition"].forEach(id => $(id).addEventListener("change", applyUnderlays));
+["o-lidar", "o-hist", "o-aerial", "o-dare", "o-geo"].forEach(id => $(id).addEventListener("input", applyUnderlays));
+$("u-terrain").addEventListener("change", applyTerrain);
+["o-sam", "o-aim"].forEach(id => $(id).addEventListener("change", applyOverlays));
+map.on("moveend", () => { if (data.roads) DYNAMIC.forEach(loadDynamic); });
 ["l-roads", "l-conf0", "l-labels"].forEach(id => $(id).addEventListener("change", applyRoads));
 ["l-military", "l-camps", "l-settlement", "l-milestones", "l-milecastles", "l-walls", "l-possible"]
   .forEach(id => $(id).addEventListener("change", applySites));
@@ -515,6 +646,10 @@ function buildLegend() {
     dot("#6a3d9a", "Temporary camp"), dot("#33a02c", "Practice camp"), dot("#cab2d6", "Possible camp"),
     dot("#ff6b01", "Colonia"), dot("#fdbf6f", "Municipium"), dot("#f7ff01", "Civitas / vicus"),
     dot("#98d8f8", "Military vicus"), dot("#222222", "Milestone"),
+    line("solid", "#e66101", "Scheduled monument (England)"),
+    line("solid", "#d7301f", "Aerial mapping: ditch"), line("solid", "#1a9850", "Aerial mapping: bank"),
+    line("solid", "#a6611a", "Aerial mapping: scarp"), line("solid", "#4d4d4d", "Aerial mapping: structure"),
+    line("solid", "#7570b3", "Aerial mapping: extent of feature"),
   ].join("");
 }
 
@@ -533,13 +668,35 @@ const TITLE_FIELDS = {
   milestones: (p) => p["Site name"] || "Milestone",
   milecastles: (p) => p["Site_name"] || `Milecastle ${p["MC_No."] || ""}`,
   walls: (p) => p["Feature"] || "Wall",
+  "he-sam": (p) => p["Name"] || "Scheduled monument",
+  "he-aim": (p) => `Aerial mapping: ${String(p["LAYER"] || "feature").replace(/_/g, " ").toLowerCase()}`,
 };
+
+// Roman names are written as inscribed (VERCOVICIVM); give the modern spelling (Vercovicium)
+const ROMAN_NAME_FIELDS = { military: "Roman name (if known)", settlement: "ROMAN NAME", camps: "Roman Name" };
+function latinise(s) {
+  s = String(s || "").toLowerCase().replace(/\(.*?\)/g, "").replace(/\b(possibly|probably|unknown|uncertain)\b/g, "")
+    .replace(/[?]/g, "").split(/[\/,;]/)[0].trim();
+  return s.replace(/qv/g, "qu").replace(/vv/g, "vu").replace(/v(?=[^aeiou]|$)/g, "u")
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function fmt(layer, k, v) {
+  if (layer === "he-sam" && /Date$/.test(k) && typeof v === "number") return new Date(v).toISOString().slice(0, 10);
+  if (layer === "he-aim") return String(v).replace(/\\/g, ", ");
+  return String(v).trim();
+}
 
 function popupHtml(layer, p) {
   const rows = Object.entries(p)
     .filter(([k, v]) => !k.startsWith("_") && v !== null && v !== undefined && String(v).trim() !== "")
-    .map(([k, v]) => `<tr><td>${esc(k.trim())}</td><td>${linkify(String(v).trim())}</td></tr>`).join("");
+    .map(([k, v]) => `<tr><td>${esc(k.trim())}</td><td>${linkify(fmt(layer, k, v))}</td></tr>`).join("");
   let html = `<div class="popup"><h3>${esc(TITLE_FIELDS[layer](p))}</h3><table>${rows}</table>`;
+  const roman = latinise(p[ROMAN_NAME_FIELDS[layer]]);
+  if (roman) {
+    html += `<p><a href="https://pleiades.stoa.org/search?SearchableText=${encodeURIComponent(roman)}" ` +
+      `target="_blank" rel="noopener">Find ${esc(roman)} in Pleiades</a></p>`;
+  }
   if (layer === "roads" && p._margary) html += `<button class="route-btn" data-road="${esc(p._margary)}">Zoom to whole route</button>`;
   return html + "</div>";
 }
@@ -554,8 +711,10 @@ function showPopup(layer, feature, lngLat) {
 
 function wireClicks() {
   const clickable = ["milestones", "milecastles", "military", "settlement", "camps",
-    "roads-c3", "roads-c2", "roads-c1", "roads-c0", "walls-wall", "walls-ditch", "walls-vallum"];
-  const layerOf = (id) => id.startsWith("roads") ? "roads" : id.startsWith("walls") ? "walls" : id;
+    "roads-c3", "roads-c2", "roads-c1", "roads-c0", "walls-wall", "walls-ditch", "walls-vallum",
+    "he-aim-fill", "he-sam-fill"];
+  const layerOf = (id) => id.startsWith("roads") ? "roads" : id.startsWith("walls") ? "walls"
+    : id.startsWith("he-") ? id.slice(0, 6) : id;
   map.on("click", (e) => {
     const pad = 5;
     const box = [[e.point.x - pad, e.point.y - pad], [e.point.x + pad, e.point.y + pad]];
@@ -641,7 +800,8 @@ function buildSearchIndex() {
         kind: "point", layer, feature: f,
         label: String(names[0]).trim(),
         sub: [kindLabel, ...names.slice(1)].join(" · "),
-        text: names.join(" ").toLowerCase(),
+        // also match the modern spelling of inscribed Roman names (VERCOVICIVM -> vercovicium)
+        text: names.concat(names.map(latinise)).join(" ").toLowerCase(),
       });
     }
   };
