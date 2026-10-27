@@ -187,6 +187,10 @@ BRITAIN = box(-8.7, 49.8, 1.9, 61.0).difference(
 if ITINERE.exists():
     it = gpd.read_file(ITINERE).to_crs(epsg=4326)
     it = it[it.intersects(BRITAIN)].copy()              # whole features, not cut
+    # Datum fix (ADR 0013): the British segments sit 85-125 m ESE of the RRRA roads in
+    # exactly the pattern of OSGB36 latitude/longitude stored as if it were WGS84.
+    # Reinterpret them as OSGB36 (EPSG:4277) and convert properly to WGS84.
+    it = it.set_crs(epsg=4277, allow_override=True).to_crs(epsg=4326)
     it["geometry"] = shapely.force_2d(it.geometry).apply(round_coords)
     for col in it.columns:
         if col != "geometry":
@@ -198,7 +202,8 @@ if ITINERE.exists():
                             "passabilit": "Passability", "Segment_s": "Segment certainty"})
     sz = write_geojson(it, "itinere.geojson")
     record("itinere", "itinere.geojson", sz, len(it),
-           "Itiner-e 2024 roads intersecting Britain (CC BY 4.0); source simplified at 1 m")
+           "Itiner-e 2024 roads intersecting Britain (CC BY 4.0); source simplified at 1 m; "
+           "OSGB36->WGS84 datum fix applied (ADR 0013)")
 elif (OUT / "itinere.geojson").exists():
     sz = (OUT / "itinere.geojson").stat().st_size
     n = len(json.loads((OUT / "itinere.geojson").read_text())["features"])

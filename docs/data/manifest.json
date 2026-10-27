@@ -58,12 +58,12 @@
     },
     "itinere": {
       "file": "data/itinere.geojson",
-      "bytes": 971276,
+      "bytes": 971109,
       "features": 1371,
-      "note": "Itiner-e 2024 roads intersecting Britain (CC BY 4.0); source simplified at 1 m",
+      "note": "Itiner-e 2024 roads intersecting Britain (CC BY 4.0); source simplified at 1 m; OSGB36->WGS84 datum fix applied (ADR 0013)",
       "on_demand": true
     }
   },
-  "total_bytes": 5365552,
+  "total_bytes": 5365385,
   "core_bytes": 4394276
 }

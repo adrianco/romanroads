@@ -645,7 +645,8 @@ async function applyItinere() {
         paint: { "line-color": ITINERE_COLOR, "line-width": width, "line-opacity": 0.85, "line-dasharray": [2, 2] } },
         "roads-halo-c3");
     }
-    $("l-itinere-status").textContent = `${data.itinere.features.length} Itiner-e segments, drawn under the RRRA roads`;
+    $("l-itinere-status").textContent = `${data.itinere.features.length} Itiner-e segments, drawn under the RRRA roads; ` +
+      "positions corrected from OSGB36 (see ADR 0013)";
   }
   for (const id of ["itinere-conj", "itinere-hyp"]) vis(id, $("l-itinere").checked);
 }

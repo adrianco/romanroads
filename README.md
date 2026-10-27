@@ -103,7 +103,9 @@ Then open http://localhost:8765.
 - **Itiner-e comparison:** tick *Compare: Itiner-e roads* to draw the
   Itiner-e 2024 network for Britain in magenta, under the RRRA roads, to see
   where the two datasets agree and differ. Dashed means hypothetical. It's
-  fetched only when switched on.
+  fetched only when switched on. The British Itiner-e segments are stored
+  ~100 m out of place (OSGB36 lat/lon labelled as WGS84), so the viewer
+  corrects them; see [ADR 0013](docs/adr/0013-itinere-datum-fix.md).
 - **Pleiades links** in the popups of sites with a Roman name. Search accepts
   modern spellings of inscribed names (`Vercovicium` finds `VERCOVICIVM`).
 - Phone layout with a bottom sheet.

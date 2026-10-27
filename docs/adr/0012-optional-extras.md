@@ -65,6 +65,9 @@ from an https page with CORS, and its licence. Checked 2026-10-27.
   coast (Dieppe, Fécamp, Rotomagus), so the polygon also excludes
   lon −2.5…1.9 south of 50.5°N and lon 1.45…1.9 south of 51.1°N. Result:
   **1,371 segments**, all entirely within Britain.
+- **Datum fix:** the British segments turned out to be OSGB36 lat/lon
+  labelled as WGS84, putting them ~85–125 m ESE of their true positions. They
+  are now corrected; see [ADR 0013](0013-itinere-datum-fix.md).
 - **Cleanup:** Z dropped (`force_2d`); coordinates rounded to 7 dp; text
   cleaned as for the core layers. All four date fields are the 9999 "no date"
   placeholder for every British segment, so they become null. All-null and
