@@ -393,16 +393,20 @@ map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
 // ---------------------------------------------------------------------------
 const FILES = ["roads", "walls", "military", "camps", "settlement", "milestones", "milecastles"];
 const data = {};
+// start downloading straight away rather than after the map's first full render
+const dataFetch = Promise.all(FILES.map(f => fetch(`data/${f}.geojson`).then(r => {
+  if (!r.ok) throw new Error(`${f}: HTTP ${r.status}`);
+  return r.json();
+})));
 
-map.on("load", async () => {
+// "style.load", not "load": "load" waits for every visible tile, and the Scottish
+// hillshade is rendered per request (1-2.5 s a tile), which held the data back
+map.once("style.load", async () => {
   map.resize(); // the container may have been laid out after the map was created
   if (window.innerWidth <= 700) { // fold the attribution on phones; the panel carries the full credit
     document.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
   }
-  const loaded = await Promise.all(FILES.map(f => fetch(`data/${f}.geojson`).then(r => {
-    if (!r.ok) throw new Error(`${f}: HTTP ${r.status}`);
-    return r.json();
-  })));
+  const loaded = await dataFetch;
   FILES.forEach((f, i) => {
     data[f] = loaded[i];
     map.addSource(f, { type: "geojson", data: loaded[i] });
