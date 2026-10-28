@@ -38,7 +38,8 @@
     z-index: 2; overflow: hidden; }
   #panel header { padding: 12px 14px 8px; border-bottom: 1px solid var(--line); }
   #panel h1 { margin: 0; font-size: 16px; }
-  .unofficial { display: inline-block; margin-top: 4px; padding: 1px 7px; font-size: 11px;
+  .title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .unofficial { display: inline-block; padding: 1px 7px; font-size: 11px;
     border-radius: 9px; background: var(--accent); color: #fff; font-weight: 600; }
   .gh-links { display: flex; gap: 6px; margin-top: 8px; }
   .gh-links a { flex: 1; text-align: center; padding: 4px 6px; border: 1px solid var(--line);
@@ -103,8 +104,10 @@
 <aside id="panel">
   <header>
     <button id="toggle-panel" aria-label="Toggle panel">☰</button>
-    <h1>Digital Britannia</h1>
-    <span class="unofficial">UNOFFICIAL VIEWER</span>
+    <div class="title-row">
+      <h1>Digital Britannia</h1>
+      <span class="unofficial">UNOFFICIAL VIEWER</span>
+    </div>
     <nav class="gh-links" aria-label="GitHub">
       <a href="https://github.com/adrianco/romanroads" target="_blank" rel="noopener" title="Open the repo on GitHub to star it">★ Star repo</a>
       <a href="https://github.com/adrianco/romanroads/issues" target="_blank" rel="noopener" title="View or report issues on GitHub">Issues</a>
