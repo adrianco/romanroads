@@ -18,3 +18,4 @@ context, decision, and consequences. Status is `Accepted` unless noted.
 | [0011](0011-data-in-repo.md) | Commit the source GeoPackage to the repository |
 | [0012](0012-optional-extras.md) | Optional extras: DARE, BGS geology, 3D terrain, scheduled monuments, HE aerial mapping, Pleiades, Itiner-e comparison; rejected candidates |
 | [0013](0013-itinere-datum-fix.md) | Itiner-e British segments are OSGB36 lat/lon labelled WGS84; corrected (median gap 81 m → 17 m) |
+| [0014](0014-pleiades-matching.md) | Pleiades links matched at build time: fuzzy Roman/modern-name match within 2 km (issue #1) |

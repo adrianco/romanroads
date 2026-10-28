@@ -109,8 +109,14 @@ Then open http://localhost:8765.
   fetched only when switched on. The British Itiner-e segments are stored
   ~100 m out of place (OSGB36 lat/lon labelled as WGS84), so the viewer
   corrects them; see [ADR 0013](docs/adr/0013-itinere-datum-fix.md).
-- **Pleiades links** in the popups of sites with a Roman name. Search accepts
-  modern spellings of inscribed names (`Vercovicium` finds `VERCOVICIVM`).
+- **Pleiades links:** 533 forts and settlements link straight to their
+  Pleiades place, matched at build time by Roman name, or by modern name where
+  there's no Roman one, within 2 km
+  ([ADR 0014](docs/adr/0014-pleiades-matching.md)). The rest fall back to a
+  Pleiades search for the modern name; they're listed in
+  `data/unmatched_pleiades.csv` for review. Roman names display in title case
+  (`VERCOVICIVM` → "Vercovicium"). Search accepts the modern spelling and
+  Pleiades' standard name (`Durnovaria` finds Dorchester's `DVROVARIA`).
 - Phone layout with a bottom sheet.
 
 Why each source was chosen, and why others were rejected, is in
@@ -141,12 +147,20 @@ it, download `itinere_roads.gpkg` from
 `data/external/` (gitignored) and rerun the script. Without the file, the
 script keeps the committed subset.
 
+Pleiades matching works the same way. Download `pleiades-places-latest.csv.gz`
+and `pleiades-names-latest.csv.gz` from
+[the Pleiades dumps](https://atlantides.org/downloads/pleiades/dumps/) into
+`data/external/pleiades/`, and the script re-matches and rewrites
+`data/pleiades_matches.csv` and `data/unmatched_pleiades.csv`. Without
+them, it reuses the committed match table.
+
 ## Credits
 - Data: Digital Britannia v1 © Roman Roads Research Association / Mike Haken (CC BY-NC 4.0)
 - LiDAR (England): contains Environment Agency information © Environment Agency and/or database right
 - LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the Scottish Remote Sensing Portal (OGL)
 - Historic maps: National Library of Scotland
 - Roman Empire map: Digital Atlas of the Roman Empire, Johan Åhlfeldt (CC BY 4.0)
+- Places: Pleiades, Copyright © The Contributors (CC BY 3.0), https://pleiades.stoa.org
 - Comparison roads: Itiner-e static version 2024, Brughmans, de Soto, Pažout & Bjerregaard Vahlstrup (CC BY 4.0), https://doi.org/10.5281/zenodo.17122148
 - Geology: contains British Geological Survey materials © UKRI
 - Heritage (England): © Historic England, contains OS data © Crown copyright (OGL)

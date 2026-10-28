@@ -197,6 +197,7 @@
       This viewer is <strong>unofficial</strong> and is not endorsed by the RRRA.
       Some categories are normalised for display; see
       <a href="https://github.com/adrianco/romanroads/blob/main/docs/ERRATA.md" target="_blank" rel="noopener">errata</a>.
+      Place links: <a href="https://pleiades.stoa.org/" target="_blank" rel="noopener">Pleiades</a>, © the contributors, CC BY 3.0.
     </section>
   </div>
 </aside>
@@ -738,9 +739,9 @@ function linkify(v) {
 }
 const TITLE_FIELDS = {
   roads: (p) => p._margary ? `RR${p._margary}${p._name ? " – " + p._name : ""}` : "Road segment",
-  military: (p) => p["Modern Name"] || p["Roman name (if known)"] || "Military site",
+  military: (p) => p["Modern Name"] || romanDisplay(p["Roman name (if known)"]) || "Military site",
   camps: (p) => p["Site Name"] || "Temporary camp",
-  settlement: (p) => p["SITE_NAME"] || p["ROMAN NAME"] || "Settlement",
+  settlement: (p) => p["SITE_NAME"] || romanDisplay(p["ROMAN NAME"]) || "Settlement",
   milestones: (p) => p["Site name"] || "Milestone",
   milecastles: (p) => p["Site_name"] || `Milecastle ${p["MC_No."] || ""}`,
   walls: (p) => p["Feature"] || "Wall",
@@ -751,14 +752,28 @@ const TITLE_FIELDS = {
 
 // Roman names are written as inscribed (VERCOVICIVM); give the modern spelling (Vercovicium)
 const ROMAN_NAME_FIELDS = { military: "Roman name (if known)", settlement: "ROMAN NAME", camps: "Roman Name" };
+const MODERN_NAME_FIELDS = { military: "Modern Name", settlement: "SITE_NAME", camps: "Site Name" };
+const uv = (w) => w.replace(/qv/g, "qu").replace(/vv/g, "vu").replace(/v(?=[^aeiou]|$)/g, "u");
 function latinise(s) {
   s = String(s || "").toLowerCase().replace(/\(.*?\)/g, "").replace(/\b(possibly|probably|unknown|uncertain)\b/g, "")
     .replace(/[?]/g, "").split(/[\/,;]/)[0].trim();
-  return s.replace(/qv/g, "qu").replace(/vv/g, "vu").replace(/v(?=[^aeiou]|$)/g, "u")
-    .replace(/\b\w/g, c => c.toUpperCase());
+  return uv(s).replace(/\b\w/g, c => c.toUpperCase());
+}
+// Display form: modern spelling in title case, qualifiers kept
+// ("possibly FANUM COCIDI (Ravenna)" -> "possibly Fanum Cocidi (Ravenna)", "SPINIS?" -> "Spinis?")
+const LOWER_WORDS = new Set(["or", "and", "of", "possibly", "probably", "unknown", "uncertain", "not", "known"]);
+function romanDisplay(s) {
+  if (s === null || s === undefined) return s;
+  return String(s).replace(/[A-Za-z]+/g, (w) => {
+    const l = w.toLowerCase();
+    if (LOWER_WORDS.has(l)) return l;
+    const m = uv(l);
+    return m[0].toUpperCase() + m.slice(1);
+  });
 }
 
 function fmt(layer, k, v) {
+  if (k === ROMAN_NAME_FIELDS[layer]) return romanDisplay(String(v).trim());
   if (layer === "he-sam" && /Date$/.test(k) && typeof v === "number") return new Date(v).toISOString().slice(0, 10);
   if (layer === "he-aim") return String(v).replace(/\\/g, ", ");
   return String(v).trim();
@@ -769,10 +784,15 @@ function popupHtml(layer, p) {
     .filter(([k, v]) => !k.startsWith("_") && v !== null && v !== undefined && String(v).trim() !== "")
     .map(([k, v]) => `<tr><td>${esc(k.trim())}</td><td>${linkify(fmt(layer, k, v))}</td></tr>`).join("");
   let html = `<div class="popup"><h3>${esc(TITLE_FIELDS[layer](p))}</h3><table>${rows}</table>`;
-  const roman = latinise(p[ROMAN_NAME_FIELDS[layer]]);
-  if (roman) {
-    html += `<p><a href="https://pleiades.stoa.org/search?SearchableText=${encodeURIComponent(roman)}" ` +
-      `target="_blank" rel="noopener">Find ${esc(roman)} in Pleiades</a></p>`;
+  // matched at build time (scripts/pleiades.py, ADR 0014): link straight to the place;
+  // otherwise fall back to a Pleiades search for the modern name
+  if (p._pleiades_uri) {
+    const how = p._pleiades_basis === "modern name" ? ' <span class="note">(matched by modern place name)</span>' : "";
+    html += `<p><a href="${esc(p._pleiades_uri)}" target="_blank" rel="noopener">Pleiades: ${esc(p._pleiades_title)}</a>${how}</p>`;
+  } else if (MODERN_NAME_FIELDS[layer] && p[MODERN_NAME_FIELDS[layer]]) {
+    const modern = String(p[MODERN_NAME_FIELDS[layer]]).trim();
+    html += `<p><a href="https://pleiades.stoa.org/search?SearchableText=${encodeURIComponent(modern)}" ` +
+      `target="_blank" rel="noopener">Search Pleiades for ${esc(modern)}</a></p>`;
   }
   if (layer === "roads" && p._margary) html += `<button class="route-btn" data-road="${esc(p._margary)}">Zoom to whole route</button>`;
   return html + "</div>";
@@ -818,7 +838,8 @@ function highlightRoute(num) {
 function routeBounds(num) {
   const b = new maplibregl.LngLatBounds();
   for (const f of data.roads.features) {
-    if (f.properties._margary !== num) continue;
+    // 67 segments carry attributes but no line in the source (ERRATA R5)
+    if (f.properties._margary !== num || !f.geometry) continue;
     for (const c of f.geometry.coordinates) b.extend(c);
   }
   return b;
@@ -851,7 +872,7 @@ function buildSearchIndex() {
   const routes = new Map();
   for (const f of data.roads.features) {
     const p = f.properties, n = p._margary;
-    if (!n) continue;
+    if (!n || !f.geometry) continue;   // nothing to zoom to for a segment with no line
     if (!routes.has(n)) routes.set(n, { names: new Set(), starts: new Set(), segs: 0 });
     const r = routes.get(n);
     r.segs++;
@@ -871,14 +892,21 @@ function buildSearchIndex() {
   const add = (layer, nameFields, kindLabel) => {
     for (const f of data[layer].features) {
       const p = f.properties;
+      if (!f.geometry) continue;   // 3 blank Settlement rows (ERRATA S5)
       const names = nameFields.map(k => p[k]).filter(v => v && String(v).trim() && String(v).toLowerCase() !== "unknown");
       if (!names.length) continue;
+      const shown = nameFields.filter(k => p[k] && String(p[k]).trim() && String(p[k]).toLowerCase() !== "unknown")
+        .map(k => k === ROMAN_NAME_FIELDS[layer] ? romanDisplay(String(p[k]).trim()) : String(p[k]).trim());
       index.push({
         kind: "point", layer, feature: f,
-        label: String(names[0]).trim(),
-        sub: [kindLabel, ...names.slice(1)].join(" · "),
+        label: shown[0],
+        sub: [kindLabel, ...shown.slice(1)].join(" · "),
         // also match the modern spelling of inscribed Roman names (VERCOVICIVM -> vercovicium)
-        text: names.concat(names.map(latinise)).join(" ").toLowerCase(),
+        // ...and the standard spelling Pleiades uses (Durnovaria finds DVROVARIA)
+        // ('Durno(no)varia' is indexed as both Durnovaria and Durnonovaria)
+        text: names.concat(names.map(latinise), p._pleiades_title
+          ? [p._pleiades_title.replace(/\(.*?\)/g, ""), p._pleiades_title.replace(/[()]/g, "")] : [])
+          .join(" ").toLowerCase(),
       });
     }
   };

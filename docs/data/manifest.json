@@ -16,9 +16,9 @@
     },
     "military": {
       "file": "data/military.geojson",
-      "bytes": 387122,
+      "bytes": 455051,
       "features": 517,
-      "note": "Main site type normalised; _possible flag; per-period Type-* fields",
+      "note": "Main site type normalised; _possible flag; per-period Type-* fields; 298 Pleiades links",
       "on_demand": false
     },
     "camps": {
@@ -30,9 +30,9 @@
     },
     "settlement": {
       "file": "data/settlement.geojson",
-      "bytes": 223791,
+      "bytes": 284376,
       "features": 485,
-      "note": "TYPE normalised (garble fixed)",
+      "note": "TYPE normalised (garble fixed); 235 Pleiades links",
       "on_demand": false
     },
     "milestones": {
@@ -64,6 +64,6 @@
       "on_demand": true
     }
   },
-  "total_bytes": 5365385,
-  "core_bytes": 4394276
+  "total_bytes": 5493899,
+  "core_bytes": 4522790
 }

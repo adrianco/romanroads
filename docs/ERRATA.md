@@ -23,6 +23,7 @@ Severity key: 🔴 breaks automated use · 🟠 inconsistent / fragile · 🟡 c
 | S2 | 🟠 | `TYPE` | 3 records have a blank/null type | assign a type or mark explicitly `Unknown` |
 | S3 | 🟠 | `TYPE` | **270 of 485** values carry **double spaces** (e.g. `Vicus - large  >9Ha`, `Vicus - medium  4-8Ha`, `Defended vicus - medium  4-8Ha`). They match the style labels, but double spaces are easy to break on edit | single-space consistently |
 | S4 | 🟡 | style | The style **value** `Military vicus - size uncertain` has the **label** `Military vicus - defence & size uncertain` — value/label drift | align label to value (or vice-versa) |
+| S5 | 🟠 | geometry | **3 of 485 rows are entirely blank**: no attributes and a `NULL` geometry | delete them |
 
 ## Military Installations
 
@@ -42,6 +43,16 @@ Severity key: 🔴 breaks automated use · 🟠 inconsistent / fragile · 🟡 c
 | R2 | 🟠 | `Segment Confidence` | 2 of 3,572 segments have a **null** confidence (expected 0–3) | assign 0–3, or document null as a fourth state |
 | R3 | 🟡 | style | Confidence-0 category label reads `No evidence - Requires invetsigation` — **"invetsigation"** is a typo | `investigation` |
 | R4 | 🟠 | `Road number ` | 239 of 533 distinct road numbers (1,211 segments) don't follow the plain Margary `<digits><letters>` form. Some look like deliberate conventions that aren't documented anywhere: the `(x)` suffix (136, e.g. `1cc(x)`), and `none-…` IDs (56, e.g. `none-Lon1`). Others look like real anomalies: uncertainty markers (18, e.g. `220?`, `79aa ???`, `?none?`), several numbers in one field (10, e.g. `1b & 1c`, `142/145`, `80a / 2e`), and inconsistent spellings (e.g. `75 link` / `85b - link` / `85-link`; `855(X)` vs `(x)`) | document the numbering conventions; move uncertainty into a separate field; use one form for "link" roads and one case for `(x)` |
+| R5 | 🔴 | geometry | **67 of 3,572 segments (1.9%) have a `NULL` geometry** (checked in the raw GeoPackage, so not a reader problem) and no `Segment length (m)`, though their attributes are filled in. They include parts of the Fosse Way (`5a` Axminster–Ilchester, `5b` Ilchester–Bath), Dere Street (`8g` Newstead–Elginhaugh), Sarn Helen (`69c`, `69d`, `622`), the Military Way (`86c` Carvoran–Carlisle), Watling Street west (`6c`) and the Icknield Way (`333`). In a map they're simply missing | redraw the lines, or remove the rows if they're placeholders for undrawn routes |
+
+## Roman names (Military Installations `Roman name (if known)`, Settlement `ROMAN NAME`)
+
+| # | Sev | Issue | Suggested fix |
+|---|-----|-------|---------------|
+| N1 | 🟠 | **Placeholders instead of empty values:** `unknown` (29), `uncertain` (1), `not known` (1) and the typo `unkonwn` (1). There is also a modern place name (`Wreay`) in the Roman-name field | leave the field empty when there's no name |
+| N2 | 🟡 | **Mixed capitalisation:** 231 names are in inscription capitals (`LONDINIVM`), 22 in title case (`Londinium`, `Lindum`, `Calleva Atrebatvm`) | pick one convention |
+| N3 | 🟡 | **U and V mixed inside one name:** `MAMUCIVM`, `PETVUARIA`, `DUROBRIVAE`, `ISCA SILURVM`, `LEUCARVM?` | use V throughout (or U throughout) |
+| N4 | 🟠 | **The same place is spelled differently in the two layers** (or within one): `PONS AELIVS` / `PONS AELIUS`, `MAMUCIVM` / `MAMVCIVM`, `PETVUARIA` / `PETVARIA`, `NEMETOSTATIO?` / `NEMETO STATIO?`, `DUROBRIVAE` / `DVROBRIVAE`; the uncertainty mark is often on only one of the pair (`CILVRNVM?` / `CILVRNVM`, `ALABVM?` / `ALABVM`) | reconcile; record uncertainty in its own field rather than as `?` |
 
 ## Layers / structure
 
@@ -52,6 +63,7 @@ Severity key: 🔴 breaks automated use · 🟠 inconsistent / fragile · 🟡 c
 | L3 | 🟡 | Downloads page notes milestone **icons may not render** from the GeoPackage | confirm icon/image handling in v1.1 |
 | L4 | 🔴 | The string **`NULL` is glued onto the front of real values**, apparently a database-export artefact: road `Main References` (`NULLGraham, A. & Richmond, I.A., 1955…`), military `Link 1` ×2 (`NULLhttps://www.heritagegateway…`, which breaks the link), milestone `link2`. One further road `Main References` value is just the literal text `NULL` | strip the `NULL` prefix; store empty values as real nulls |
 | L5 | 🟠 | **592 text values have leading/trailing whitespace**, including 196 that contain links (170 in road `Main References`, 12 in road `Link 1.`; e.g. military `Link 3` = `␣https://www.heritagegateway…`) | trim all text fields |
+| L6 | 🟡 | **Temporary Camps has 2 exact duplicate rows** (every attribute and the position identical): Cullompton and Milton | delete the duplicates |
 
 ## Licensing / documentation
 
@@ -77,6 +89,13 @@ are untouched):
 - **L5** whitespace trimmed from every text value. Internal double spaces (S3)
   are kept, because the style categories depend on them.
 - **R4** road numbers kept exactly as given.
+- **R5 / S5** rows without geometry are kept in the data files, but the viewer
+  skips them for search and route zooming. Before this was found, choosing
+  RR13 in search raised an error.
+- **N1–N4** Roman names are displayed in title case with the U/V reading
+  (`VERCOVICIVM` → "Vercovicium"), and are matched to Pleiades on a normalised
+  form that ignores U/V and capitalisation (ADR 0014). The data files keep the
+  dataset's own spelling.
 - Null category values surfaced as `Unknown` rather than dropped.
 
 These are editorial choices for display; see `docs/adr/0003-category-normalisation.md`.

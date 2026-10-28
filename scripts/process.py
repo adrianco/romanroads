@@ -14,16 +14,20 @@ CC BY-NC 4.0. https://roadsofromanbritain.org/digital-britannia/downloads.html
 """
 from __future__ import annotations
 
+import csv
 import json
 import math
 import re
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import geopandas as gpd
 import shapely
 from shapely.geometry import box
 from shapely.ops import unary_union
+
+from pleiades import Gazetteer, site_key
 
 ROOT = Path(__file__).resolve().parent.parent
 GPKG = ROOT / "data" / "digital-britannia_v1.gpkg"
@@ -114,6 +118,56 @@ def record(key, filename, size, count, note=""):
     print(f"  {key:28} {count:5} feats  {size/1024:8.1f} KiB  {filename}")
 
 
+# --- Pleiades links (issue #1) ----------------------------------------------
+# Matching needs the Pleiades CSV dumps (CC BY 3.0) in data/external/pleiades/
+# (gitignored). Each run with them rewrites the committed match table and the
+# manual-review list; a run without them reuses the committed table, so links
+# survive a rebuild from a fresh clone.
+PLEIADES = ROOT / "data" / "external" / "pleiades"
+PLEIADES_PLACES = PLEIADES / "pleiades-places-latest.csv.gz"
+PLEIADES_NAMES = PLEIADES / "pleiades-names-latest.csv.gz"
+MATCHES = ROOT / "data" / "pleiades_matches.csv"
+UNMATCHED = ROOT / "data" / "unmatched_pleiades.csv"
+if PLEIADES_PLACES.exists() and PLEIADES_NAMES.exists():
+    gazetteer = Gazetteer(PLEIADES_PLACES, PLEIADES_NAMES, bbox=(-8.7, 49.8, 1.9, 61.0))
+    saved_matches = {}
+else:
+    gazetteer = None
+    saved_matches = ({r["key"]: r for r in csv.DictReader(MATCHES.open())} if MATCHES.exists() else {})
+match_rows, unmatched_rows = [], []
+
+
+def link_pleiades(gdf, layer, roman_col, modern_col):
+    """Add _pleiades_uri/_title/_basis/_score to a point layer."""
+    found = []
+    for roman, modern, geom in zip(gdf[roman_col], gdf[modern_col], gdf.geometry):
+        if geom is None or geom.is_empty:     # 3 blank Settlement rows (ERRATA S5)
+            found.append(None)
+            continue
+        key = site_key(layer, modern, geom.x, geom.y)
+        site = {"key": key, "layer": layer, "modern_name": modern, "roman_name": roman,
+                "lon": round(geom.x, 5), "lat": round(geom.y, 5)}
+        if gazetteer:
+            best, miss = gazetteer.match(roman, modern, geom.x, geom.y)
+            if best:
+                match_rows.append({**site, **best})
+            else:
+                unmatched_rows.append({**site, "nearest_title": (miss or {}).get("title"),
+                                       "nearest_place_title": (miss or {}).get("place_title"),
+                                       "nearest_score": (miss or {}).get("score"),
+                                       "nearest_basis": (miss or {}).get("basis"),
+                                       "nearest_distance_m": (miss or {}).get("distance_m"),
+                                       "nearest_uri": (miss or {}).get("uri")})
+        else:
+            best = saved_matches.get(key)
+        found.append(best)
+    gdf["_pleiades_uri"] = [b["uri"] if b else None for b in found]
+    gdf["_pleiades_title"] = [b["title"] if b else None for b in found]
+    gdf["_pleiades_basis"] = [b["basis"] if b else None for b in found]
+    gdf["_pleiades_score"] = [float(b["score"]) if b else None for b in found]
+    return sum(b is not None for b in found)
+
+
 print("Processing Digital Britannia v1 -> docs/data/\n")
 
 # --- Engineered Roman roads --------------------------------------------------
@@ -136,9 +190,10 @@ mil["_possible"] = mil["_type"].apply(
     lambda v: isinstance(v, str) and v.lower().startswith("possible"))
 # write the cleaned value back into the displayed field (null where missing)
 mil["Main site type"] = mil["_type"].apply(lambda v: None if v == "Unknown" else v)
+n_mil = link_pleiades(mil, "military", "Roman name (if known)", "Modern Name")
 sz = write_geojson(mil, "military.geojson")
 record("military", "military.geojson", sz, len(mil),
-       "Main site type normalised; _possible flag; per-period Type-* fields")
+       f"Main site type normalised; _possible flag; per-period Type-* fields; {n_mil} Pleiades links")
 
 # --- Temporary Camps ---------------------------------------------------------
 camps = read_layer("Temporary Camps")
@@ -156,8 +211,20 @@ settle["_type"] = settle["TYPE"].apply(
     lambda v: SETTLEMENT_FIX.get(v, v) if isinstance(v, str) else "Unknown")
 # write the de-garbled value back into the displayed field (null where missing)
 settle["TYPE"] = settle["_type"].apply(lambda v: None if v == "Unknown" else v)
+n_set = link_pleiades(settle, "settlement", "ROMAN NAME", "SITE_NAME")
 sz = write_geojson(settle, "settlement.geojson")
-record("settlement", "settlement.geojson", sz, len(settle), "TYPE normalised (garble fixed)")
+record("settlement", "settlement.geojson", sz, len(settle),
+       f"TYPE normalised (garble fixed); {n_set} Pleiades links")
+
+if gazetteer:
+    pd.DataFrame(match_rows).to_csv(MATCHES, index=False)
+    pd.DataFrame(unmatched_rows).to_csv(UNMATCHED, index=False)
+    print(f"  Pleiades: {len(match_rows)} matched, {len(unmatched_rows)} for review -> "
+          f"{MATCHES.relative_to(ROOT)}, {UNMATCHED.relative_to(ROOT)}")
+elif saved_matches:
+    print(f"  Pleiades: dumps not downloaded; reused {len(saved_matches)} matches from {MATCHES.relative_to(ROOT)}")
+else:
+    print("  Pleiades: no dumps and no saved matches; popups fall back to a modern-name search")
 
 # --- milestones --------------------------------------------------------------
 miles = read_layer("milestones")

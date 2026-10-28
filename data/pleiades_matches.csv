@@ -1,0 +1,534 @@
+key,layer,modern_name,roman_name,lon,lat,uri,title,matched_name,place_title,score,basis,distance_m
+"military|Adel|-1.57795,53.86507",military,Adel,unknown,-1.57795,53.86507,https://pleiades.stoa.org/places/285857973,Adel,Adel,Adel,100.0,modern name,134
+"military|Abergavenny|-3.02151,51.82068",military,Abergavenny,GOBANNIVM,-3.02151,51.82068,https://pleiades.stoa.org/places/79484,Gobannio,Gobannium,‘Gobannio’,100.0,roman name,336
+"military|Alchester|-1.17241,51.87661",military,Alchester,unknown,-1.17241,51.87661,https://pleiades.stoa.org/places/79289,Alchester,Alchester,Alchester,100.0,modern name,177
+"military|Ancaster|-0.53923,52.98025",military,Ancaster,unknown,-0.53923,52.98025,https://pleiades.stoa.org/places/79292,Ancaster,Ancaster,Ancaster,100.0,modern name,347
+"military|Auchendavy|-4.11969,55.94931",military,Auchendavy,unknown,-4.11969,55.94931,https://pleiades.stoa.org/places/89105,Auchendavy,Auchendavy,Auchendavy,100.0,modern name,21
+"military|Bainbridge|-2.09825,54.30695",military,Bainbridge,VIROSIDVM,-2.09825,54.30695,https://pleiades.stoa.org/places/89317,Virosidum,Virosidum,Virosidum,100.0,roman name,23
+"military|Balmuildy|-4.27151,55.91761",military,Balmuildy,unknown,-4.27151,55.91761,https://pleiades.stoa.org/places/89108,Balmuildy Roman Fort,Balmuildy Roman Fort,Balmuildy Roman Fort,100.0,modern name,43
+"military|Bankhead fortlet|-3.97940,55.38610",military,Bankhead fortlet,unknown,-3.9794,55.3861,https://pleiades.stoa.org/places/364203292,Bankhead,Bankhead,Bankhead,100.0,modern name,20
+"military|Bar Hill|-4.07188,55.95889",military,Bar Hill,unknown,-4.07188,55.95889,https://pleiades.stoa.org/places/89110,Bar Hill Roman Fort,Bar Hill Roman Fort,Bar Hill Roman Fort,100.0,modern name,6
+"military|Barburgh Mill fortlet|-3.72558,55.17831",military,Barburgh Mill fortlet,unknown,-3.72558,55.17831,https://pleiades.stoa.org/places/655739578,Barburgh Mill Roman fortlet,Barburgh Mill Roman fortlet,Barburgh Mill Roman fortlet,100.0,modern name,90
+"military|Barochan Hill|-4.53798,55.88871",military,Barochan Hill,unknown,-4.53798,55.88871,https://pleiades.stoa.org/places/89111,Barochan Hill,Barochan Hill,Barochan Hill,100.0,modern name,423
+"military|Baylham House|1.08784,52.13198",military,Baylham House,COMBRETOVIVM,1.08784,52.13198,https://pleiades.stoa.org/places/79399,Combretovium,Combretovium,Combretovium,100.0,roman name,329
+"military|Bearsden|-4.33035,55.91944",military,Bearsden,unknown,-4.33035,55.91944,https://pleiades.stoa.org/places/89114,Bearsden,Bearsden,Bearsden,100.0,modern name,214
+"military|Benwell|-1.66412,54.97693",military,Benwell,CONDERCVM,-1.66412,54.97693,https://pleiades.stoa.org/places/89150,Condercum,Condercum,Condercum,100.0,roman name,19
+"military|Bertha|-3.46411,56.42475",military,Bertha,unknown,-3.46411,56.42475,https://pleiades.stoa.org/places/89116,Bertha,Bertha,Bertha,100.0,modern name,155
+"military|Bewcastle|-2.68240,55.06405",military,Bewcastle,possibly FANUM COCIDI (Ravenna),-2.6824,55.06405,https://pleiades.stoa.org/places/89181,Bewcastle Roman Fort,Fanum Cocidii,Bewcastle Roman Fort,100.0,roman name,16
+"military|Binchester|-1.67861,54.67738",military,Binchester,VINOVIVM,-1.67861,54.67738,https://pleiades.stoa.org/places/89316,Vinovia,Vinovia,Vinovia,100.0,roman name,155
+"military|Birdoswald|-2.60244,54.98948",military,Birdoswald,BANNA,-2.60244,54.98948,https://pleiades.stoa.org/places/89109,Banna,Banna,Banna,100.0,roman name,2
+"military|Birrens|-3.22447,55.06512",military,Birrens,BLATOBVLGIVM,-3.22447,55.06512,https://pleiades.stoa.org/places/89117,Blatobulgium,Blatobulgium,Blatobulgium,100.0,roman name,15
+"military|Blennerhasset|-3.25934,54.75959",military,Blennerhasset,,-3.25934,54.75959,https://pleiades.stoa.org/places/351340045,Blennerhasset Roman fort,Blennerhasset Roman fort,Blennerhasset Roman fort,100.0,modern name,1316
+"military|Bochastle|-4.23731,56.24348",military,Bochastle,,-4.23731,56.24348,https://pleiades.stoa.org/places/89118,Bochastle,Bochastle,Bochastle,100.0,modern name,1307
+"military|Boothby fortlet|-2.71276,54.95944",military,Boothby fortlet,unknown,-2.71276,54.95944,https://pleiades.stoa.org/places/24547396,Boothby Roman fort,Boothby Roman fort,Boothby Roman fort,100.0,modern name,20
+"military|Bothwellhaugh|-4.02593,55.79657",military,Bothwellhaugh,unknown,-4.02593,55.79657,https://pleiades.stoa.org/places/463220209,Bothwellhaugh,Bothwellhaugh,Bothwellhaugh,100.0,modern name,168
+"military|Bowes|-2.01513,54.51611",military,Bowes,LAVATRIS,-2.01513,54.51611,https://pleiades.stoa.org/places/89224,Lavatris,Lavatris,Lavatris,100.0,roman name,106
+"military|Bowness-on-Solway (MAIA)|-3.21470,54.95278",military,Bowness-on-Solway (MAIA),MAIA,-3.2147,54.95278,https://pleiades.stoa.org/places/89239,Maia,Maia,Maia,100.0,roman name,32
+"military|Brompton (Pentrehyling)|-3.11415,52.53054",military,Brompton (Pentrehyling),,-3.11415,52.53054,https://pleiades.stoa.org/places/148479467,Brompton Roman fort,Brompton Roman fort,Brompton Roman fort,100.0,modern name,303
+"military|Broomholm|-2.97579,55.12411",military,Broomholm,,-2.97579,55.12411,https://pleiades.stoa.org/places/752369279,Broomholm,Broomholm,Broomholm,100.0,modern name,66
+"military|Brough|-2.32369,54.52138",military,Brough,VERTERIS,-2.32369,54.52138,https://pleiades.stoa.org/places/89312,Verteris,Verteris,Verteris,100.0,roman name,8
+"military|Brough-on-Noe|-1.72877,53.34132",military,Brough-on-Noe,NAVIO,-1.72877,53.34132,https://pleiades.stoa.org/places/79605,Navio,Navio,Navio,100.0,roman name,25
+"military|Brougham|-2.71758,54.65334",military,Brougham,BROCAVM,-2.71758,54.65334,https://pleiades.stoa.org/places/89127,Brocavum,BROCAVVM,Brocavum,93.3,roman name,30
+"military|Brownhart Law|-2.33234,55.38036",military,Brownhart Law,,-2.33234,55.38036,https://pleiades.stoa.org/places/949375107,Brownhart Law,Brownhart Law,Brownhart Law,100.0,modern name,9
+"military|Broxtowe|-1.21805,52.98021",military,Broxtowe,,-1.21805,52.98021,https://pleiades.stoa.org/places/985158683,Broxtowe Roman fort,Broxtowe Roman fort,Broxtowe Roman fort,100.0,modern name,124
+"military|Burgh-by-Sands II|-3.04911,54.92175",military,Burgh-by-Sands II,ABALLAVA,-3.04911,54.92175,https://pleiades.stoa.org/places/89092,Aballava,Aballava,Aballava,100.0,roman name,65
+"military|Burnswark fortlet|-3.27210,55.09583",military,Burnswark fortlet,,-3.2721,55.09583,https://pleiades.stoa.org/places/615343018,Burnswark Hill Iron Age Hillfort,Burnswark Hill Iron Age Hillfort,Burnswark Hill Iron Age Hillfort,100.0,modern name,289
+"military|Cadder|-4.21570,55.92613",military,Cadder,,-4.2157,55.92613,https://pleiades.stoa.org/places/89130,Cadder,Cadder,Cadder,100.0,modern name,548
+"military|Cae Gaer|-3.73121,52.42238",military,Cae Gaer,,-3.73121,52.42238,https://pleiades.stoa.org/places/8861236,Cae Gaer Roman fort,Cae Gaer Roman fort,Cae Gaer Roman fort,100.0,modern name,7
+"military|Caer Gai|-3.66914,52.86913",military,Caer Gai,,-3.66914,52.86913,https://pleiades.stoa.org/places/42633537,Caer Gai,Caer Gai,Caer Gai,100.0,modern name,15
+"military|Caer Gybi fortlet|-4.63229,53.31148",military,Caer Gybi fortlet,,-4.63229,53.31148,https://pleiades.stoa.org/places/79362,Caer Gybi,Caer Gybi,Caer Gybi,100.0,modern name,110
+"military|Caerau (Beulah)|-3.57364,52.13949",military,Caerau (Beulah),,-3.57364,52.13949,https://pleiades.stoa.org/places/882133969,Caerau,Caerau,Caerau,100.0,modern name,15
+"military|Caerhun|-3.83428,53.21606",military,Caerhun,CANOVIVM,-3.83428,53.21606,https://pleiades.stoa.org/places/79542,Kanovium/Conovium,Canovium,Kanovium/Conovium,100.0,roman name,13
+"military|CAERLEON|-2.95560,51.61040",military,CAERLEON,ISCA SILURVM,-2.9556,51.6104,https://pleiades.stoa.org/places/79532,Isca Silurum,Isca Silurum,Isca Silurum,100.0,roman name,25
+"military|Caermote|-3.24030,54.71968",military,Caermote,,-3.2403,54.71968,https://pleiades.stoa.org/places/452125610,Caermote Roman fort,Caermote Roman fort,Caermote Roman fort,100.0,modern name,39
+"military|Caernarfon|-4.26563,53.13758",military,Caernarfon,SEGONTIVM,-4.26563,53.13758,https://pleiades.stoa.org/places/79678,Segontium,Segontium,Segontium,100.0,roman name,42
+"military|Caersws II|-3.43161,52.51709",military,Caersws II,,-3.43161,52.51709,https://pleiades.stoa.org/places/79363,Caersws,Caersws,Caersws,100.0,modern name,26
+"military|Calstock|-4.20630,50.50170",military,Calstock,,-4.2063,50.5017,https://pleiades.stoa.org/places/247074450,Calstock Roman fort,Calstock Roman fort,Calstock Roman fort,100.0,modern name,9
+"military|Cappuck|-2.48406,55.48321",military,Cappuck,,-2.48406,55.48321,https://pleiades.stoa.org/places/104728999,Cappuck,Cappuck,Cappuck,100.0,modern name,73
+"military|Cardiff|-3.18101,51.48246",military,Cardiff,,-3.18101,51.48246,https://pleiades.stoa.org/places/735520833,Cardiff Castle,Cardiff Castle,Cardiff Castle,100.0,modern name,31
+"military|Cargill|-3.35677,56.52615",military,Cargill,,-3.35677,56.52615,https://pleiades.stoa.org/places/89135,Cargill,Cargill,Cargill,100.0,modern name,1929
+"military|Cargill fortlet|-3.36178,56.52419",military,Cargill fortlet,,-3.36178,56.52419,https://pleiades.stoa.org/places/89135,Cargill,Cargill,Cargill,100.0,modern name,1551
+"military|Carlisle|-2.94096,54.89627",military,Carlisle,LVGVVALLIVM,-2.94096,54.89627,https://pleiades.stoa.org/places/89234,Luguvalium,Luguvalium,Luguvalium,95.2,roman name,212
+"military|Carpow|-3.28478,56.34695",military,Carpow,,-3.28478,56.34695,https://pleiades.stoa.org/places/89136,Carpow,Carpow,Carpow,100.0,modern name,193
+"military|Carrawburgh|-2.22190,55.03494",military,Carrawburgh,BROCOLITIA,-2.2219,55.03494,https://pleiades.stoa.org/places/89128,Brocolitia,Brocolitia,*Brocolitia,100.0,roman name,42
+"military|Carriden|-3.56491,56.00987",military,Carriden,VELVNIATE,-3.56491,56.00987,https://pleiades.stoa.org/places/89309,Velunia(te),Veluniate,Velunia(te),100.0,roman name,62
+"military|Carvoran|-2.52432,54.98482",military,Carvoran,MAGNA,-2.52432,54.98482,https://pleiades.stoa.org/places/89238,Magnis,Magna,Magnis,100.0,roman name,3
+"military|Carzield|-3.61854,55.11992",military,Carzield,,-3.61854,55.11992,https://pleiades.stoa.org/places/109408874,Carzield,Carzield,Carzield,100.0,modern name,16
+"military|Castell Collen|-3.38430,52.25579",military,Castell Collen,,-3.3843,52.25579,https://pleiades.stoa.org/places/79378,Castell Collen,Castell Collen,Castell Collen,100.0,modern name,10
+"military|Castle Greg fortlet|-3.51720,55.81720",military,Castle Greg fortlet,,-3.5172,55.8172,https://pleiades.stoa.org/places/109516473,Castle Greg,Castle Greg,Castle Greg,100.0,modern name,2
+"military|Castlecary|-3.94005,55.98202",military,Castlecary,,-3.94005,55.98202,https://pleiades.stoa.org/places/89138,Castlecary,Castlecary,Castlecary,100.0,modern name,43
+"military|Castleford|-1.35568,53.72656",military,Castleford,LAGENTIVM,-1.35568,53.72656,https://pleiades.stoa.org/places/79553,Lagentium,Lagentium,Lagentium,100.0,roman name,87
+"military|Castlesteads|-2.76342,54.96360",military,Castlesteads,CAMBOGLANNA,-2.76342,54.9636,https://pleiades.stoa.org/places/89133,Camboglanna,Camboglanna,*Camboglanna,100.0,roman name,29
+"military|Catterick|-1.65736,54.38682",military,Catterick,CATARACTONIVM,-1.65736,54.38682,https://pleiades.stoa.org/places/89143,Cataractonium,Cataractonium,Cataractonium,100.0,roman name,177
+"military|Cawthorn|-0.80067,54.29964",military,Cawthorn,,-0.80067,54.29964,https://pleiades.stoa.org/places/842845453,Roman Forts and Camps at Cawthorn,Roman Forts and Camps at Cawthorn,Roman Forts and Camps at Cawthorn,100.0,modern name,190
+"military|Charterhouse|-2.71287,51.29894",military,Charterhouse,,-2.71287,51.29894,https://pleiades.stoa.org/places/100635258,Charterhouse Warren Farm Shaft,Charterhouse Warren Farm Shaft,Charterhouse Warren Farm Shaft,100.0,modern name,901
+"military|Chelmsford|0.47241,51.72725",military,Chelmsford,CAESAROMAGVS,0.47241,51.72725,https://pleiades.stoa.org/places/79364,Caesaromagus,Caesaromagus,Caesaromagus,100.0,roman name,980
+"military|Chester-le-Street|-1.57297,54.85585",military,Chester-le-Street,CONCANGIS,-1.57297,54.85585,https://pleiades.stoa.org/places/89146,Cocanges/Concangios,Concangios,‘Cocanges’/‘Concangios’,100.0,roman name,67
+"military|Chesters (CILVRNVM)|-2.13959,55.02575",military,Chesters (CILVRNVM),CILVRNVM?,-2.13959,55.02575,https://pleiades.stoa.org/places/89144,Cilurnum,Cilurnum,Cilurnum,100.0,roman name,19
+"military|Chesterton|-2.25286,53.03850",military,Chesterton,,-2.25286,53.0385,https://pleiades.stoa.org/places/79384,Chesterton/Holditch,Chesterton,Chesterton/Holditch,100.0,modern name,1070
+"military|Chew Green|-2.33378,55.37022",military,Chew Green,unknown - Ad Fines is a fiction,-2.33378,55.37022,https://pleiades.stoa.org/places/414303980,Chew Green,Chew Green,Chew Green,100.0,modern name,148
+"military|Cirencester|-1.96386,51.71493",military,Cirencester,CORINIVM,-1.96386,51.71493,https://pleiades.stoa.org/places/79549,Korinion/Cironium,Corinium Dobunnorum,Korinion/Cironium,100.0,roman name,675
+"military|Clyro|-3.12742,52.08398",military,Clyro,,-3.12742,52.08398,https://pleiades.stoa.org/places/330425754,Clyro,Clyro,Clyro,100.0,modern name,26
+"military|Coelbren|-3.65538,51.78363",military,Coelbren,,-3.65538,51.78363,https://pleiades.stoa.org/places/219618094,Coelbren Roman auxiliary fort,Coelbren Roman auxiliary fort,Coelbren Roman auxiliary fort,100.0,modern name,1363
+"military|Colwyn Castle|-3.30615,52.17701",military,Colwyn Castle,,-3.30615,52.17701,https://pleiades.stoa.org/places/120195538,Colwyn,Colwyn,Colwyn,100.0,modern name,24
+"military|Corbridge|-2.02904,54.97825",military,Corbridge,CORIA,-2.02904,54.97825,https://pleiades.stoa.org/places/89152,Coriosopitum/Coria,Coria,*Coriosopitum/Coria,100.0,roman name,17
+"military|Cramond|-3.29934,55.97816",military,Cramond,,-3.29934,55.97816,https://pleiades.stoa.org/places/89153,Cramond,Cramond,Cramond,100.0,modern name,74
+"military|Crawford|-3.65671,55.47562",military,Crawford,,-3.65671,55.47562,https://pleiades.stoa.org/places/89154,Crawford,Crawford,Crawford,100.0,modern name,7
+"military|Croy Hill|-4.03037,55.96508",military,Croy Hill,,-4.03037,55.96508,https://pleiades.stoa.org/places/89155,Croy Hill,Croy Hill,Croy Hill,100.0,modern name,84
+"military|Dalswinton|-3.67552,55.13968",military,Dalswinton,,-3.67552,55.13968,https://pleiades.stoa.org/places/89157,Dalswinton,Dalswinton,Dalswinton,100.0,modern name,1361
+"military|Doncaster|-1.13540,53.52517",military,Doncaster,DANVM,-1.1354,53.52517,https://pleiades.stoa.org/places/79412,Danum?,Danum,Danum?,100.0,roman name,34
+"military|Dorchester-on-Thames|-1.16680,51.64393",military,Dorchester-on-Thames,,-1.1668,51.64393,https://pleiades.stoa.org/places/79424,Dorchester-on-Thames,Dorchester-on-Thames,Dorchester-on-Thames,100.0,modern name,85
+"military|Doune|-4.05176,56.18711",military,Doune,,-4.05176,56.18711,https://pleiades.stoa.org/places/745417441,Doune,Doune,Doune,100.0,modern name,37
+"military|Drumburgh|-3.14839,54.92766",military,Drumburgh,CONGAVATA,-3.14839,54.92766,https://pleiades.stoa.org/places/89151,Congavata,Congavata,Congavata,100.0,roman name,59
+"military|Drumlanrig|-3.80470,55.27089",military,Drumlanrig,,-3.8047,55.27089,https://pleiades.stoa.org/places/309231037,Drumlanrig,Drumlanrig,Drumlanrig,100.0,modern name,203
+"military|Duntocher|-4.40971,55.92349",military,Duntocher,,-4.40971,55.92349,https://pleiades.stoa.org/places/89171,Duntocher,Duntocher,Duntocher,100.0,modern name,14
+"military|Durisdeer fortlet|-3.73091,55.32564",military,Durisdeer fortlet,,-3.73091,55.32564,https://pleiades.stoa.org/places/309231036,Durisdeer,Durisdeer,Durisdeer,100.0,modern name,1
+"military|Easter Happrew|-3.28121,55.64781",military,Easter Happrew,,-3.28121,55.64781,https://pleiades.stoa.org/places/89173,Easter Happrew Roman Fort,Easter Happrew,Easter Happrew Roman Fort,100.0,modern name,7
+"military|Ebchester|-1.83993,54.89393",military,Ebchester,VINDOMORA,-1.83993,54.89393,https://pleiades.stoa.org/places/89314,Vindomora,Vindomora,Vindomora,100.0,roman name,29
+"military|Elginhaugh|-3.08639,55.89476",military,Elginhaugh,,-3.08639,55.89476,https://pleiades.stoa.org/places/217976835,Elginhaugh Roman fort,Elginhaugh Roman fort,Elginhaugh Roman fort,100.0,modern name,64
+"military|Elslack|-2.11589,53.94091",military,Elslack,OLENACVM?,-2.11589,53.94091,https://pleiades.stoa.org/places/89260,Elslack Roman Fort,Olenacum,Elslack Roman Fort,100.0,roman name,46
+"military|Falkirk, Pleasance|-3.78665,55.99746",military,"Falkirk, Pleasance",,-3.78665,55.99746,https://pleiades.stoa.org/places/89182,Falkirk,Falkirk,Falkirk,100.0,modern name,212
+"military|Fishbourne|-0.80756,50.83672",military,Fishbourne,,-0.80756,50.83672,https://pleiades.stoa.org/places/79466,Fishbourne,Fishbourne,Fishbourne,100.0,modern name,161
+"military|Gatehouse of Fleet fortlet|-4.19100,54.89107",military,Gatehouse of Fleet fortlet,,-4.191,54.89107,https://pleiades.stoa.org/places/949375108,Gatehouse-of-Fleet,Gatehouse-of-Fleet,Gatehouse-of-Fleet,100.0,modern name,34
+"military|Gelligaer|-3.25333,51.66569",military,Gelligaer,,-3.25333,51.66569,https://pleiades.stoa.org/places/79479,Gelligaer,Gelligaer,Gelligaer,100.0,modern name,28
+"military|Glenbank fortlet|-3.91781,56.22923",military,Glenbank fortlet,,-3.91781,56.22923,https://pleiades.stoa.org/places/343256472,Glenbank,Glenbank,Glenbank,100.0,modern name,30
+"military|Glenlochar|-3.97706,54.95907",military,Glenlochar,,-3.97706,54.95907,https://pleiades.stoa.org/places/92163,Glenlochar Roman Fort,Glenlochar Roman Fort,Glenlochar Roman Fort,100.0,modern name,35
+"military|Gloucester|-2.24603,51.86537",military,Gloucester,GLEVVM,-2.24603,51.86537,https://pleiades.stoa.org/places/79394,Col. Glevum,Col. Glevum,Col. Glevum,100.0,roman name,50
+"military|Grandford|0.05374,52.57806",military,Grandford,,0.05374,52.57806,https://pleiades.stoa.org/places/65728677,Grandford,Grandford,Grandford,100.0,modern name,137
+"military|Great Casterton|-0.51883,52.67182",military,Great Casterton,,-0.51883,52.67182,https://pleiades.stoa.org/places/79487,Great Casterton,Great Casterton,Great Casterton,100.0,modern name,303
+"military|Great Chesterford|0.19187,52.06511",military,Great Chesterford,,0.19187,52.06511,https://pleiades.stoa.org/places/79488,Great Chesterford,Great Chesterford,Great Chesterford,100.0,modern name,127
+"military|Great Chesters (AESICA)|-2.46448,54.99510",military,Great Chesters (AESICA),AESICA,-2.46448,54.9951,https://pleiades.stoa.org/places/89095,(A)Esica,AEsica,(A)Esica,100.0,roman name,26
+"military|Greta Bridge|-1.87134,54.51418",military,Greta Bridge,,-1.87134,54.51418,https://pleiades.stoa.org/places/496316189,Greta Bridge,Greta Bridge,Greta Bridge,100.0,modern name,24
+"military|Halton Chesters|-2.00593,55.01070",military,Halton Chesters,ONNVM,-2.00593,55.0107,https://pleiades.stoa.org/places/89201,Onnum,Onnum,Onnum,100.0,roman name,36
+"military|Haltwhistle Burn fortlet|-2.44780,54.98907",military,Haltwhistle Burn fortlet,,-2.4478,54.98907,https://pleiades.stoa.org/places/9324677,Haltwhistle Burn Roman Fortlet and Camp,Gabaglanda,Haltwhistle Burn Roman Fortlet and Camp,100.0,modern name,387
+"military|Hardknott|-3.20538,54.40272",military,Hardknott,MEDIOBOGDVM,-3.20538,54.40272,https://pleiades.stoa.org/places/89243,Medibogdo,Mediobogdo,‘Medibogdo’,100.0,roman name,4
+"military|Harlow|0.12793,51.78873",military,Harlow,,0.12793,51.78873,https://pleiades.stoa.org/places/79502,Harlow,Harlow,Harlow,100.0,modern name,855
+"military|Hembury|-3.26096,50.82086",military,Hembury,,-3.26096,50.82086,https://pleiades.stoa.org/places/913038938,Hembury,Hembury,Hembury,100.0,modern name,76
+"military|High Rochester|-2.26460,55.28148",military,High Rochester,BREMENIVM,-2.2646,55.28148,https://pleiades.stoa.org/places/89124,Bremenium,Bremenium,Bremenium,100.0,roman name,13
+"military|Hindwell Farm|-3.08829,52.24009",military,Hindwell Farm,,-3.08829,52.24009,https://pleiades.stoa.org/places/810017626,Hindwell Farm,Hindwell Farm,Hindwell Farm,100.0,modern name,200
+"military|Hod Hill|-2.20775,50.89617",military,Hod Hill,,-2.20775,50.89617,https://pleiades.stoa.org/places/42178780,Hod Hill,Hod Hill,Hod Hill,100.0,modern name,96
+"military|Housesteads|-2.33031,55.01336",military,Housesteads,VERCOVICIVM,-2.33031,55.01336,https://pleiades.stoa.org/places/89311,Vercovicium,Vercouicium,*Vercovicium,100.0,roman name,6
+"military|Ilchester|-2.68260,51.00139",military,Ilchester,,-2.6826,51.00139,https://pleiades.stoa.org/places/79527,Ilchester Mead,Ilchester Mead,Ilchester Mead,100.0,modern name,53
+"military|Ilkley|-1.82423,53.92685",military,Ilkley,,-1.82423,53.92685,https://pleiades.stoa.org/places/89205,Ilkley (Verbeia?),Ilkley,Ilkley (Verbeia?),100.0,modern name,22
+"military|Inveresk|-3.05288,55.93731",military,Inveresk,,-3.05288,55.93731,https://pleiades.stoa.org/places/89207,Inveresk,Inveresk,Inveresk,100.0,modern name,110
+"military|Inverquharity|-2.97228,56.71101",military,Inverquharity,,-2.97228,56.71101,https://pleiades.stoa.org/places/25339216,Inverquharity,Inverquharity,Inverquharity,100.0,modern name,70
+"military|Ixworth|0.83002,52.29223",military,Ixworth,,0.83002,52.29223,https://pleiades.stoa.org/places/79538,Ixworth,Ixworth,Ixworth,100.0,modern name,621
+"military|Jay Lane|-2.88393,52.36499",military,Jay Lane,BRAVONIVM,-2.88393,52.36499,https://pleiades.stoa.org/places/79347,Branogenium,Bravonium,Branogenium,100.0,roman name,766
+"military|Kaims Castle fortlet|-3.84224,56.29521",military,Kaims Castle fortlet,,-3.84224,56.29521,https://pleiades.stoa.org/places/224098652,Kaims Castle,Kaims Castle,Kaims Castle,100.0,modern name,1
+"military|Kinvaston|-2.13656,52.70080",military,Kinvaston,,-2.13656,52.7008,https://pleiades.stoa.org/places/933767407,Kinvaston Fort,Kinvaston Fort,Kinvaston Fort,100.0,modern name,77
+"military|Kirkbride|-3.20187,54.90468",military,Kirkbride,,-3.20187,54.90468,https://pleiades.stoa.org/places/774886524,Kirkbride,Kirkbride,Kirkbride,100.0,modern name,24
+"military|Kirkby Thore|-2.56069,54.62363",military,Kirkby Thore,BRAVONIACVM,-2.56069,54.62363,https://pleiades.stoa.org/places/89123,Brav(o)niacum,Bravoniacum,Brav(o)niacum,100.0,roman name,115
+"military|Kirkintilloch|-4.16032,55.93992",military,Kirkintilloch,,-4.16032,55.93992,https://pleiades.stoa.org/places/89218,Kirkintilloch,Kirkintilloch,Kirkintilloch,100.0,modern name,357
+"military|Kirkland fortlet|-3.87977,55.19080",military,Kirkland fortlet,,-3.87977,55.1908,https://pleiades.stoa.org/places/824024652,Kirkland,Kirkland,Kirkland,100.0,modern name,14
+"military|Kirmington|-0.34460,53.58707",military,Kirmington,,-0.3446,53.58707,https://pleiades.stoa.org/places/849071429,Kirmington,Kirmington,Kirmington,100.0,modern name,24
+"military|Ladyward|-3.39161,55.12476",military,Ladyward,,-3.39161,55.12476,https://pleiades.stoa.org/places/89227,Ladyward Roman Fort,Ladyward Roman Fort,Ladyward Roman Fort,100.0,modern name,91
+"military|Lake Farm|-2.00215,50.79214",military,Lake Farm,,-2.00215,50.79214,https://pleiades.stoa.org/places/600065939,Lake Farm Roman fort,Lake Farm Roman fort,Lake Farm Roman fort,100.0,modern name,97
+"military|Lamington fortlet|-3.62368,55.55941",military,Lamington fortlet,,-3.62368,55.55941,https://pleiades.stoa.org/places/747767219,Lamington,Lamington,Lamington,100.0,modern name,26
+"military|Lancaster|-2.80564,54.05031",military,Lancaster,,-2.80564,54.05031,https://pleiades.stoa.org/places/89222,Lancaster,Lancaster,Lancaster,100.0,modern name,53
+"military|Lanchester|-1.75343,54.81651",military,Lanchester,LONGOVICIVM,-1.75343,54.81651,https://pleiades.stoa.org/places/89230,Longovicium,Longovicium,Longovicium,100.0,roman name,10
+"military|Leicester|-1.14427,52.63325",military,Leicester,RATAE,-1.14427,52.63325,https://pleiades.stoa.org/places/79651,Ratae,Ratae,Ratae,100.0,roman name,622
+"military|Leintwardine|-2.87640,52.36092",military,Leintwardine,BRAVONIVM,-2.8764,52.36092,https://pleiades.stoa.org/places/79347,Branogenium,Bravonium,Branogenium,100.0,roman name,131
+"military|Little Chester|-1.47553,52.93390",military,Little Chester,DERVENTIO,-1.47553,52.9339,https://pleiades.stoa.org/places/79419,Derbentio,Derbentio,Derbentio,88.9,roman name,333
+"military|Llandovery|-3.79308,52.00147",military,Llandovery,ALABVM?,-3.79308,52.00147,https://pleiades.stoa.org/places/79287,Alabum,Alabum,Alabum,100.0,roman name,56
+"military|Llanfor|-3.58128,52.91186",military,Llanfor,,-3.58128,52.91186,https://pleiades.stoa.org/places/975153391,Llanfor,Llanfor,Llanfor,100.0,modern name,281
+"military|London|-0.08409,51.51168",military,London,LONDINIVM,-0.08409,51.51168,https://pleiades.stoa.org/places/79574,Londinium/Augusta,Londinium,Londinium/Augusta,100.0,roman name,383
+"military|London (Cripplegate)|-0.09381,51.51710",military,London (Cripplegate),LONDINIVM,-0.09381,51.5171,https://pleiades.stoa.org/places/79574,Londinium/Augusta,Londinium,Londinium/Augusta,100.0,roman name,537
+"military|Longthorpe|-0.29210,52.56501",military,Longthorpe,,-0.2921,52.56501,https://pleiades.stoa.org/places/442436712,Longthorpe,Longthorpe,Longthorpe,100.0,modern name,107
+"military|Loudoun Hill|-4.21611,55.60731",military,Loudoun Hill,,-4.21611,55.60731,https://pleiades.stoa.org/places/264399135,Loudoun Hill,Loudoun Hill,Loudoun Hill,100.0,modern name,216
+"military|Low Borrow Bridge|-2.60285,54.40541",military,Low Borrow Bridge,,-2.60285,54.40541,https://pleiades.stoa.org/places/89232,Low Borrowbridge,Low Borrowbridge,Low Borrowbridge,97.0,modern name,14
+"military|Lurg Moor fortlet|-4.73036,55.92635",military,Lurg Moor fortlet,,-4.73036,55.92635,https://pleiades.stoa.org/places/620007181,Lurg Moor,Lurg Moor,Lurg Moor,100.0,modern name,4
+"military|Lyne fort|-3.29219,55.65194",military,Lyne fort,,-3.29219,55.65194,https://pleiades.stoa.org/places/309791778,Lyne,Lyne,Lyne,100.0,modern name,22
+"military|Maiden Castle|-2.19896,54.51358",military,Maiden Castle,,-2.19896,54.51358,https://pleiades.stoa.org/places/396674383,Maiden Castle Roman Fortlet (Cumbria),Maiden Castle,Maiden Castle Roman Fortlet (Cumbria),100.0,modern name,6
+"military|Malling|-4.31446,56.17160",military,Malling,,-4.31446,56.1716,https://pleiades.stoa.org/places/89241,Malling,Malling,Malling,100.0,modern name,896
+"military|Mancetter|-1.52916,52.56626",military,Mancetter,MANDVESSEDVM,-1.52916,52.56626,https://pleiades.stoa.org/places/79592,Manduessedum,Manduessedum,Manduessedum,100.0,roman name,71
+"military|Manchester|-2.25436,53.47513",military,Manchester,MAMUCIVM,-2.25436,53.47513,https://pleiades.stoa.org/places/79590,Mamucio,Mamucio,‘Mamucio’,100.0,roman name,19
+"military|Martinhoe|-3.91601,51.22755",military,Martinhoe,,-3.91601,51.22755,https://pleiades.stoa.org/places/825003513,Martinhoe,Martinhoe,Martinhoe,100.0,modern name,6
+"military|Maryport|-3.49377,54.72089",military,Maryport,ALAVNA,-3.49377,54.72089,https://pleiades.stoa.org/places/89097,Alauna/Alione,Alauna,Alauna/Alione,100.0,roman name,4
+"military|Metchley|-1.93800,52.45043",military,Metchley,,-1.938,52.45043,https://pleiades.stoa.org/places/973041326,Metchley Fort,Metchley Fort,Metchley Fort,100.0,modern name,65
+"military|Milton of Tassiesholm|-3.43155,55.29909",military,Milton of Tassiesholm,,-3.43155,55.29909,https://pleiades.stoa.org/places/292892276,Tassiesholm,Milton,Tassiesholm,100.0,modern name,95
+"military|Mollins|-4.05973,55.92299",military,Mollins,,-4.05973,55.92299,https://pleiades.stoa.org/places/484422068,Mollins,Mollins,Mollins,100.0,modern name,17
+"military|Moresby|-3.57637,54.57412",military,Moresby,GABROSENTVM?,-3.57637,54.57412,https://pleiades.stoa.org/places/89189,Gabrosentum,Gabrosentum,Gabrosentum,100.0,roman name,22
+"military|Mumrills|-3.73496,55.99545",military,Mumrills,,-3.73496,55.99545,https://pleiades.stoa.org/places/89246,Mumrills,Mumrills,Mumrills,100.0,modern name,132
+"military|Murder Loch fortlet|-3.52175,55.15316",military,Murder Loch fortlet,,-3.52175,55.15316,https://pleiades.stoa.org/places/465554585,Murder Loch,Murder Loch, Murder Loch,100.0,modern name,35
+"military|Nanstallon, Bodmin|-4.77144,50.46972",military,"Nanstallon, Bodmin",,-4.77144,50.46972,https://pleiades.stoa.org/places/47824565,Nanstallon,Nanstallon,Nanstallon,100.0,modern name,3
+"military|Nether Denton|-2.63364,54.97440",military,Nether Denton,,-2.63364,54.9744,https://pleiades.stoa.org/places/24547397,Nether Denton Roman fort,Nether Denton Roman fort,Nether Denton Roman fort,100.0,modern name,29
+"military|Netherby|-2.94614,55.03612",military,Netherby,CASTRA EXPLORATORVM,-2.94614,55.03612,https://pleiades.stoa.org/places/89142,Castra Exploratorum,Castra Exploratorum,Castra Exploratorum,100.0,roman name,61
+"military|Newcastle upon Tyne|-1.61045,54.96883",military,Newcastle upon Tyne,PONS AELIVS,-1.61045,54.96883,https://pleiades.stoa.org/places/89275,Pons Aeli,Pons Aelius,Pons Aeli,100.0,roman name,24
+"military|Newstead|-2.68584,55.60202",military,Newstead,TRIMONTIVM,-2.68584,55.60202,https://pleiades.stoa.org/places/89304,Trimontium,Trimontium,Trimontium,100.0,roman name,416
+"military|Newton Kyme|-1.30678,53.90370",military,Newton Kyme,,-1.30678,53.9037,https://pleiades.stoa.org/places/89251,Newton Kyme,Newton Kyme,Newton Kyme,100.0,modern name,107
+"military|North Tawton|-3.90112,50.78308",military,North Tawton,NEMETOSTATIO?,-3.90112,50.78308,https://pleiades.stoa.org/places/79607,Nemetotacio,Nemetotacio,‘Nemetotacio’,87.0,roman name,64
+"military|Northwich|-2.52190,53.25662",military,Northwich,CONDATE,-2.5219,53.25662,https://pleiades.stoa.org/places/79400,Condate,Condate,Condate,100.0,roman name,434
+"military|Oakwood|-2.91199,55.51499",military,Oakwood,,-2.91199,55.51499,https://pleiades.stoa.org/places/910468314,Oakwood Roman fort,Oakwood Roman fort,Oakwood Roman fort,100.0,modern name,54
+"military|Okehampton|-3.99062,50.74687",military,Okehampton,,-3.99062,50.74687,https://pleiades.stoa.org/places/781089344,Okehampton Roman fort and fortlet,Okehampton Roman fort and fortlet,Okehampton Roman fort and fortlet,100.0,modern name,1230
+"military|Old Burrow, Countisbury|-3.73721,51.23040",military,"Old Burrow, Countisbury",,-3.73721,51.2304,https://pleiades.stoa.org/places/975884600,Old Burrow,Old Burrow,Old Burrow,100.0,modern name,1
+"military|Old Carlisle|-3.15308,54.80757",military,Old Carlisle,MAGLONA,-3.15308,54.80757,https://pleiades.stoa.org/places/89236,Maglone,Maglona,‘Maglone’,100.0,roman name,20
+"military|Old Church, Brampton|-2.76729,54.94613",military,"Old Church, Brampton",,-2.76729,54.94613,https://pleiades.stoa.org/places/337405873,Brampton Old Church,Brampton Old Church,Brampton Old Church,100.0,modern name,60
+"military|Old Kilpatrick|-4.46626,55.92680",military,Old Kilpatrick,,-4.46626,55.9268,https://pleiades.stoa.org/places/89259,Old Kilpatrick,Old Kilpatrick,Old Kilpatrick,100.0,modern name,673
+"military|Old Penrith|-2.78824,54.73843",military,Old Penrith,VOREDA,-2.78824,54.73843,https://pleiades.stoa.org/places/89318,Voreda,Voreda,Voreda,100.0,roman name,9
+"military|Osmanthorpe|-0.98859,53.10066",military,Osmanthorpe,,-0.98859,53.10066,https://pleiades.stoa.org/places/28699541,Osmanthorpe Roman vexillation fortress,Osmanthorpe Roman vexillation fortress,Osmanthorpe Roman vexillation fortress,100.0,modern name,437
+"military|Outerwards fortlet|-4.82687,55.86003",military,Outerwards fortlet,,-4.82687,55.86003,https://pleiades.stoa.org/places/299804165,Outerwards,Outerwards,Outerwards,100.0,modern name,17
+"military|Burrow in Lonsdale or Over Burrow|-2.59104,54.17739",military,Burrow in Lonsdale or Over Burrow,GALACVM,-2.59104,54.17739,https://pleiades.stoa.org/places/89215,Kalagon/Galacum,Galacum,Kalagon/Galacum,100.0,roman name,639
+"military|Oxton fortlet|-2.81247,55.78235",military,Oxton fortlet,,-2.81247,55.78235,https://pleiades.stoa.org/places/37433207,Oxton,Oxton,Oxton,100.0,modern name,54
+"military|Papcastle|-3.38171,54.67062",military,Papcastle,DERVENTIO,-3.38171,54.67062,https://pleiades.stoa.org/places/89165,Derventio,Deruentio,Derventio,100.0,roman name,29
+"military|Pen Llystyn|-4.26386,52.97946",military,Pen Llystyn,,-4.26386,52.97946,https://pleiades.stoa.org/places/842094503,Pen Llystyn,Pen Llystyn,Pen Llystyn,100.0,modern name,116
+"military|Pen-y-Gaer|-3.20926,51.88983",military,Pen-y-Gaer,,-3.20926,51.88983,https://pleiades.stoa.org/places/776990479,Pen-y-Gaer Roman fort,Pen y Gaer,Pen-y-Gaer Roman fort,100.0,modern name,21
+"military|Piercebridge|-1.67811,54.53631",military,Piercebridge,,-1.67811,54.53631,https://pleiades.stoa.org/places/89274,Piercebridge,Bermesio,Piercebridge,100.0,modern name,90
+"military|Pumsaint|-3.96074,52.04722",military,Pumsaint,LVENTINVM?,-3.96074,52.04722,https://pleiades.stoa.org/places/79578,Pumsaint Roman Fort (ancient Louentinon?),Louentinon,Pumsaint Roman Fort (ancient Louentinon?),93.3,roman name,10
+"military|Raeburnfoot|-3.18052,55.28045",military,Raeburnfoot,,-3.18052,55.28045,https://pleiades.stoa.org/places/950298919,Raeburnfoot,Raeburnfoot,Raeburnfoot,100.0,modern name,28
+"military|Ravenglass|-3.40445,54.34971",military,Ravenglass,GLANNAVENTA or ITVNOCELVM,-3.40445,54.34971,https://pleiades.stoa.org/places/89193,Glannoventa,Glannoventa,*Glannoventa,90.9,roman name,17
+"military|Redshaw Burn fortlet|-3.53351,55.41026",military,Redshaw Burn fortlet,,-3.53351,55.41026,https://pleiades.stoa.org/places/187731642,Redshaw Burn,Redshaw Burn,Redshaw Burn,100.0,modern name,17
+"military|Restormel|-4.67237,50.41873",military,Restormel,,-4.67237,50.41873,https://pleiades.stoa.org/places/851290707,Restormel,Restormel,Restormel,100.0,modern name,53
+"military|Ribchester|-2.53323,53.81157",military,Ribchester,,-2.53323,53.81157,https://pleiades.stoa.org/places/356123678,Ribchester Roman Bath House,Ribchester Roman Bath House,Ribchester Roman Bath House,100.0,modern name,112
+"military|Richborough|1.33279,51.29333",military,Richborough,RVTVPIAE,1.33279,51.29333,https://pleiades.stoa.org/places/79664,Rutupiae,Rutupiae,Rutupiae,100.0,roman name,40
+"military|Risingham|-2.17359,55.17008",military,Risingham,HABITANCVM,-2.17359,55.17008,https://pleiades.stoa.org/places/89196,Habitancum,Habitancum,Habitancum,100.0,roman name,4
+"military|Roall|-1.14652,53.72053",military,Roall,,-1.14652,53.72053,https://pleiades.stoa.org/places/571616794,Roall auxiliary fort,Roall auxiliary fort,Roall auxiliary fort,100.0,modern name,26
+"military|Rocester|-1.83482,52.95180",military,Rocester,,-1.83482,52.9518,https://pleiades.stoa.org/places/79658,Rocester,Rocester,Rocester,100.0,modern name,117
+"military|Roecliffe|-1.41044,54.09475",military,Roecliffe,,-1.41044,54.09475,https://pleiades.stoa.org/places/209534779,Roecliffe Fort,Roecliffe Fort,Roecliffe Fort,100.0,modern name,225
+"military|Rough Castle|-3.85459,55.99786",military,Rough Castle,,-3.85459,55.99786,https://pleiades.stoa.org/places/89282,Rough Castle,Rough Castle,Rough Castle,100.0,modern name,41
+"military|Rudchester|-1.82560,55.00222",military,Rudchester,VINDOBALA,-1.8256,55.00222,https://pleiades.stoa.org/places/89315,Vindovala,Vindobala,Vindovala,100.0,roman name,21
+"military|Ruthin|-3.31202,53.11211",military,Ruthin,,-3.31202,53.11211,https://pleiades.stoa.org/places/44473572,Ruthin,Ruthin,Ruthin,100.0,modern name,126
+"military|Silchester|-1.08233,51.35734",military,Silchester,CALLEVA,-1.08233,51.35734,https://pleiades.stoa.org/places/79368,Calleva,Calleva,Calleva,100.0,roman name,15
+"military|Slack|-1.87451,53.65394",military,Slack,,-1.87451,53.65394,https://pleiades.stoa.org/places/79371,Slack Roman Fort (Camulodonum?),Camulodonum,Slack Roman Fort (Camulodonum?),100.0,modern name,90
+"military|Cadbury Castle|-2.53077,51.02441",military,Cadbury Castle,,-2.53077,51.02441,https://pleiades.stoa.org/places/859366031,Cadbury Castle,Cadbury Castle,Cadbury Castle,100.0,modern name,43
+"military|South Shields|-1.43102,55.00445",military,South Shields,ARBEIA,-1.43102,55.00445,https://pleiades.stoa.org/places/89104,Arbeia,Arbeia,Arbeia,100.0,roman name,6
+"military|St Albans|-0.35860,51.75216",military,St Albans,VERVLAMIVM,-0.3586,51.75216,https://pleiades.stoa.org/places/79739,Verulamium,Verulamium,Verulamium,100.0,roman name,17
+"military|Gosbecks - Stanway|0.84918,51.86893",military,Gosbecks - Stanway,,0.84918,51.86893,https://pleiades.stoa.org/places/79486,Gosbecks,Gosbecks,Gosbecks,100.0,modern name,575
+"military|Stanwix|-2.93470,54.90515",military,Stanwix,VXELODVNVM / PETRIANA,-2.9347,54.90515,https://pleiades.stoa.org/places/89307,Uxelodu(nu)m,Uxelodunum,Uxelodu(nu)m,100.0,roman name,29
+"military|Stracathro|-2.62849,56.78198",military,Stracathro,,-2.62849,56.78198,https://pleiades.stoa.org/places/89292,Stracathro,Stracathro,Stracathro,100.0,modern name,70
+"military|Strageath|-3.78422,56.34150",military,Strageath,,-3.78422,56.3415,https://pleiades.stoa.org/places/89293,Strageath,Strageath,Strageath,100.0,modern name,109
+"military|Stretton Grandison / Canon Frome|-2.52559,52.08709",military,Stretton Grandison / Canon Frome,,-2.52559,52.08709,https://pleiades.stoa.org/places/134603098,Canon Frome,Canon Frome,Canon Frome,100.0,modern name,1030
+"military|Stretton Mill|-2.15652,52.69745",military,Stretton Mill,,-2.15652,52.69745,https://pleiades.stoa.org/places/456084465,Stretton Mill Fort,Stretton Mill Fort,Stretton Mill Fort,100.0,modern name,203
+"military|Templeborough|-1.38806,53.41845",military,Templeborough,,-1.38806,53.41845,https://pleiades.stoa.org/places/79710,Templebrough,Templeborough,Templebrough,96.0,modern name,549
+"military|The Lunt, Baginton|-1.49653,52.37319",military,"The Lunt, Baginton",,-1.49653,52.37319,https://pleiades.stoa.org/places/878157790,Lunt Roman fort,Lunt Roman fort,Lunt Roman fort,100.0,modern name,62
+"military|Thorpe|-0.86752,53.04673",military,Thorpe,AD PONTEM,-0.86752,53.04673,https://pleiades.stoa.org/places/79285,Ad Pontem,Ad Pontem,Ad Pontem,100.0,roman name,1149
+"military|Tocherknowe fortlet|-3.36925,55.75969",military,Tocherknowe fortlet,,-3.36925,55.75969,https://pleiades.stoa.org/places/923198655,Tocherknowe,Tocherknowe,Tocherknowe,100.0,modern name,34
+"military|Tomen-y-Mur|-3.92645,52.92934",military,Tomen-y-Mur,,-3.92645,52.92934,https://pleiades.stoa.org/places/142376597,Tomen y mur,Tomen y mur,Tomen y mur,100.0,modern name,45
+"military|USK|-2.90049,51.70001",military,USK,BVRRIVM,-2.90049,51.70001,https://pleiades.stoa.org/places/79360,Burrium,Burrium,Burrium,100.0,roman name,453
+"military|Vindolanda (Chesterholm)|-2.36008,54.99128",military,Vindolanda (Chesterholm),VINDOLANDA,-2.36008,54.99128,https://pleiades.stoa.org/places/89313,Vindolanda,Vindolanda,Vindolanda,100.0,roman name,10
+"military|Waddon Hill|-2.78370,50.81052",military,Waddon Hill,,-2.7837,50.81052,https://pleiades.stoa.org/places/723056584,Waddon Hill,Waddon Hill,Waddon Hill,100.0,modern name,64
+"military|Wall|-1.85462,52.65757",military,Wall,LETOCETVM,-1.85462,52.65757,https://pleiades.stoa.org/places/79559,Letocetum,Letocetum,*Letocetum,100.0,roman name,144
+"military|Wallsend|-1.53229,54.98789",military,Wallsend,SEGEDVNVM,-1.53229,54.98789,https://pleiades.stoa.org/places/89288,Segedunum,Segedunum,Segedunum,100.0,roman name,2
+"military|Wandel|-3.67404,55.52320",military,Wandel,,-3.67404,55.5232,https://pleiades.stoa.org/places/606033360,Wandel,Wandel,Wandel,100.0,modern name,45
+"military|Lantonside|-3.54738,54.97988",military,Lantonside,,-3.54738,54.97988,https://pleiades.stoa.org/places/586023943,Lantonside,Lantonside,Lantonside,100.0,modern name,3
+"military|Water Eaton|-2.14240,52.69292",military,Water Eaton,PENNOCRVCIVM,-2.1424,52.69292,https://pleiades.stoa.org/places/79638,Pennocrucium,Pennocrucium,Pennocrucium,100.0,roman name,241
+"military|Water Newton|-0.35514,52.56154",military,Water Newton,DUROBRIVAE,-0.35514,52.56154,https://pleiades.stoa.org/places/79432,Durobrivae (Water Newton),Durobrivae,Durobrivae (Water Newton),100.0,roman name,585
+"military|Watercrook|-2.74797,54.30977",military,Watercrook,ALAVANA??,-2.74797,54.30977,https://pleiades.stoa.org/places/89102,Watercrook Roman Fort and Settlement,Alauna,Watercrook Roman Fort and Settlement,92.3,roman name,41
+"military|Westerwood|-3.98731,55.97329",military,Westerwood,,-3.98731,55.97329,https://pleiades.stoa.org/places/89321,Westerwood,Westerwood,Westerwood,100.0,modern name,428
+"military|Woodcock Hall|0.78371,52.57146",military,Woodcock Hall,,0.78371,52.57146,https://pleiades.stoa.org/places/4091848,Woodcock Hall,Woodcock Hall,Woodcock Hall,100.0,modern name,251
+"military|WROXETER|-2.64302,52.67433",military,WROXETER,VIROCONIVM CORNOVIORVM,-2.64302,52.67433,https://pleiades.stoa.org/places/79741,Viroconium,Viroconium,Viroconium,100.0,roman name,57
+"military|YORK|-1.08200,53.96222",military,YORK,,-1.082,53.96222,https://pleiades.stoa.org/places/299493181,Roman colonia at York,Roman colonia at York,Roman colonia at York,100.0,modern name,789
+"military|Burrow Walls, Workington|-3.54549,54.65545",military,"Burrow Walls, Workington",MAGIS,-3.54549,54.65545,https://pleiades.stoa.org/places/89237,Magis?,Magis,Magis?,100.0,roman name,35
+"military|Reculver|1.19990,51.37892",military,Reculver,REGVLBIVM,1.1999,51.37892,https://pleiades.stoa.org/places/79654,Regulbium,Regulbium,Regulbium,100.0,roman name,25
+"military|Lympne|1.02137,51.06821",military,Lympne,LEMNIS,1.02137,51.06821,https://pleiades.stoa.org/places/79647,Portus Lemanis,Portus Lemanis,Portus Lemanis,92.3,roman name,33
+"military|Dover|1.31209,51.12506",military,Dover,DVBRIS,1.31209,51.12506,https://pleiades.stoa.org/places/79646,Portus Dubris,Dubris,Portus Dubris,100.0,roman name,393
+"military|Pevensey|0.33331,50.81927",military,Pevensey,ANDERITVM,0.33331,50.81927,https://pleiades.stoa.org/places/79293,Anderidos,Anderitos,Anderidos,100.0,roman name,49
+"military|Portchester|-1.11447,50.83756",military,Portchester,PORTVS ADVRNI?,-1.11447,50.83756,https://pleiades.stoa.org/places/79645,Portus Adurni?,Portus Adurni,Portus ‘Adurni’?,100.0,roman name,1
+"military|Bradwell (Othona)|0.94025,51.73538",military,Bradwell (Othona),OTHONA,0.94025,51.73538,https://pleiades.stoa.org/places/79631,Othona,Othona,Othona,100.0,roman name,21
+"military|Brancaster|0.65191,52.96394",military,Brancaster,BRANODVNVM,0.65191,52.96394,https://pleiades.stoa.org/places/79346,Branodunum,Branodunum,Branodunum,100.0,roman name,43
+"military|Caister-on-Sea|1.71881,52.65066",military,Caister-on-Sea,,1.71881,52.65066,https://pleiades.stoa.org/places/79365,Caister-on-Sea,Caister-on-Sea,Caister-on-Sea,100.0,modern name,78
+"military|Burgh (Gariannonum)|1.65387,52.58298",military,Burgh (Gariannonum),GARIANNORVM,1.65387,52.58298,https://pleiades.stoa.org/places/79475,Gariann(on)um,Gariannonum,*Gariann(on)um,90.9,roman name,177
+"military|Walton Castle|1.37993,51.97231",military,Walton Castle,,1.37993,51.97231,https://pleiades.stoa.org/places/79744,Walton Castle,Walton Castle,Walton Castle,100.0,modern name,921
+"military|Middlewich|-2.44729,53.19913",military,Middlewich,,-2.44729,53.19913,https://pleiades.stoa.org/places/929059942,Middlewich Roman fort,Middlewich Roman fort,Middlewich Roman fort,100.0,modern name,35
+"military|Scarborough|-0.38589,54.28734",military,Scarborough,,-0.38589,54.28734,https://pleiades.stoa.org/places/89285,Scarborough,Scarborough,Scarborough,100.0,modern name,1529
+"military|Kirkhill|-3.67211,56.35059",military,Kirkhill,,-3.67211,56.35059,https://pleiades.stoa.org/places/121620025,Kirkhill Roman signal station,Kirkhill Roman signal station,Kirkhill Roman signal station,100.0,modern name,4
+"military|Croy Hill West signal platform|-4.04056,55.96212",military,Croy Hill West signal platform,,-4.04056,55.96212,https://pleiades.stoa.org/places/89155,Croy Hill,Croy Hill,Croy Hill,100.0,modern name,631
+"military|Muir O'Fauld|-3.64866,56.35213",military,Muir O'Fauld,,-3.64866,56.35213,https://pleiades.stoa.org/places/814043436,Muir O Fauld,Muir O' Fauld,Muir O' Fauld,100.0,modern name,8
+"military|Eildon Hill North|-2.70857,55.58723",military,Eildon Hill North,,-2.70857,55.58723,https://pleiades.stoa.org/places/511968273,Eildon Hill hill fort,Eildon Hill hill fort,Eildon Hill hill fort,100.0,modern name,53
+"military|Pike Hill|-2.66294,54.97596",military,Pike Hill,,-2.66294,54.97596,https://pleiades.stoa.org/places/967060279,Pike Hill Signal Tower,Pike Hill Signal Tower,Pike Hill Signal Tower,100.0,modern name,4
+"military|Mains Rigg|-2.60589,54.97968",military,Mains Rigg,,-2.60589,54.97968,https://pleiades.stoa.org/places/851023494,Mains Rigg signal tower,Mains Rigg signal tower,Mains Rigg signal tower,100.0,modern name,1
+"military|Barcombe B, Bardon Mill|-2.35380,54.98723",military,"Barcombe B, Bardon Mill",unknown,-2.3538,54.98723,https://pleiades.stoa.org/places/512867195,Barcombe Hill Roman Signal Station,Barcombe Hill Roman Signal Station,Barcombe Hill Roman Signal Station,100.0,modern name,1240
+"military|Barcombe Hill A|-2.34113,54.99546",military,Barcombe Hill A,unknown,-2.34113,54.99546,https://pleiades.stoa.org/places/512867195,Barcombe Hill Roman Signal Station,Barcombe Hill Roman Signal Station,Barcombe Hill Roman Signal Station,100.0,modern name,28
+"military|Ince|-2.82837,53.28780",military,Ince,,-2.82837,53.2878,https://pleiades.stoa.org/places/629766126,Ince fortlet,Ince fortlet,Ince fortlet,100.0,modern name,39
+"military|Sma' Glen|-3.77102,56.43612",military,Sma' Glen,,-3.77102,56.43612,https://pleiades.stoa.org/places/445439617,Sma Glen Signal Station,Sma' Glen Signal Station,Sma' Glen Signal Station,100.0,modern name,5
+"military|Glenlochar|-3.97565,54.96526",military,Glenlochar,,-3.97565,54.96526,https://pleiades.stoa.org/places/92163,Glenlochar Roman Fort,Glenlochar Roman Fort,Glenlochar Roman Fort,100.0,modern name,662
+"military|Butterhole Brae, Dalswinton|-3.66765,55.14209",military,"Butterhole Brae, Dalswinton",,-3.66765,55.14209,https://pleiades.stoa.org/places/89157,Dalswinton,Dalswinton,Dalswinton,100.0,modern name,1066
+"military|Lyne|-3.28665,55.65430",military,Lyne,,-3.28665,55.6543,https://pleiades.stoa.org/places/309791778,Lyne,Lyne,Lyne,100.0,modern name,454
+"military|Carleith|-4.43333,55.92596",military,Carleith,,-4.43333,55.92596,https://pleiades.stoa.org/places/940475797,Carleith,Carleith,Carleith,100.0,modern name,3
+"military|Cleddans|-4.38864,55.92014",military,Cleddans,,-4.38864,55.92014,https://pleiades.stoa.org/places/325648990,Cleddans,Cleddans,Cleddans,100.0,modern name,7
+"military|Boclair|-4.31700,55.91972",military,Boclair,,-4.317,55.91972,https://pleiades.stoa.org/places/940475798,Boclair,Boclair,Boclair,100.0,modern name,4
+"military|Wilderness Plantation|-4.24508,55.92167",military,Wilderness Plantation,,-4.24508,55.92167,https://pleiades.stoa.org/places/126777409,Wilderness Plantation Roman fortlet,Wilderness Plantation Roman fortlet,Wilderness Plantation Roman fortlet,100.0,modern name,20
+"military|Glasgow Bridge|-4.18386,55.93155",military,Glasgow Bridge,,-4.18386,55.93155,https://pleiades.stoa.org/places/466253098,Glasgow Bridge,Glasgow Bridge,Glasgow Bridge,100.0,modern name,1
+"military|Croy Hill|-4.03211,55.96448",military,Croy Hill,,-4.03211,55.96448,https://pleiades.stoa.org/places/89155,Croy Hill,Croy Hill,Croy Hill,100.0,modern name,44
+"military|Seabegs Wood|-3.90656,55.99105",military,Seabegs Wood,,-3.90656,55.99105,https://pleiades.stoa.org/places/89287,Seabegs Wood,Seabegs Wood,Seabegs Wood,100.0,modern name,482
+"military|Watling Lodge|-3.82530,55.99758",military,Watling Lodge,,-3.8253,55.99758,https://pleiades.stoa.org/places/77301056,Watling Lodge,Watling Lodge,Watling Lodge,100.0,modern name,8
+"military|Kinneil|-3.64139,56.00536",military,Kinneil,,-3.64139,56.00536,https://pleiades.stoa.org/places/728068766,Kinneil,Kinneil,Kinneil,100.0,modern name,6
+"military|Croy Hill (East) signal platform|-4.03852,55.96226",military,Croy Hill (East) signal platform,,-4.03852,55.96226,https://pleiades.stoa.org/places/89155,Croy Hill,Croy Hill,Croy Hill,100.0,modern name,513
+"military|Inveravon|-3.68341,55.99850",military,Inveravon,,-3.68341,55.9985,https://pleiades.stoa.org/places/800131926,Inveravon,Inveravon,Inveravon,100.0,modern name,23
+"military|Milefortlet 21 (Swarthy Hill)|-3.45050,54.74669",military,Milefortlet 21 (Swarthy Hill),,-3.4505,54.74669,https://pleiades.stoa.org/places/590945140,Swarthy Hill,Swarthy Hill,Swarthy Hill,100.0,modern name,25
+"military|Tower 20b (Swarthy Hill North)|-3.44602,54.74980",military,Tower 20b (Swarthy Hill North),,-3.44602,54.7498,https://pleiades.stoa.org/places/590945140,Swarthy Hill,Swarthy Hill,Swarthy Hill,100.0,modern name,453
+"military|Beckfoot|-3.41837,54.82613",military,Beckfoot,BIBRA,-3.41837,54.82613,https://pleiades.stoa.org/places/89125,B(r)ibra?,Bibra,B(r)ibra?,100.0,roman name,19
+"military|Milefortlet 9 (Skinburness)|-3.35913,54.89238",military,Milefortlet 9 (Skinburness),,-3.35913,54.89238,https://pleiades.stoa.org/places/504812865,Skinburness,Skinburness,Skinburness,100.0,modern name,27
+"military|Milefortlet 1 (Biglands House)|-3.23720,54.94533",military,Milefortlet 1 (Biglands House),,-3.2372,54.94533,https://pleiades.stoa.org/places/988627262,Milefortlet 1 (Biglands House),Milefortlet 1,Milefortlet 1 (Biglands House),100.0,modern name,55
+"military|Loughor|-4.07840,51.66229",military,Loughor,LEUCARVM?,-4.0784,51.66229,https://pleiades.stoa.org/places/79561,Leucaro,Leucaro,‘Leucaro’,100.0,roman name,9
+"military|Carmarthen|-4.30350,51.85650",military,Carmarthen,MORIDVNVM,-4.3035,51.8565,https://pleiades.stoa.org/places/79602,Moridunum,Moridunum,*Moridunum,100.0,roman name,306
+"military|Park Field, Topsham|-3.47199,50.68820",military,"Park Field, Topsham",,-3.47199,50.6882,https://pleiades.stoa.org/places/830662331,"Park Field, Topsham","Park Field, Topsham","Park Field, Topsham",100.0,modern name,558
+"military|Exeter|-3.53259,50.72257",military,Exeter,ISCA,-3.53259,50.72257,https://pleiades.stoa.org/places/79531,Isca Dumnoniorum,Isca,Isca Dumnoniorum,100.0,roman name,520
+"military|Bury Barton, Lapford|-3.80061,50.84995",military,"Bury Barton, Lapford",NEMETOSTATIO?,-3.80061,50.84995,https://pleiades.stoa.org/places/502452939,Lapford,Lapford,Lapford,100.0,modern name,86
+"military|Stoke Hill|-3.52689,50.74755",military,Stoke Hill,,-3.52689,50.74755,https://pleiades.stoa.org/places/93334047,Stoke Hill,Stoke Hill,Stoke Hill,100.0,modern name,36
+"military|Pomeroy Wood, Gittisham|-3.23296,50.78752",military,"Pomeroy Wood, Gittisham",MORIDVNVM,-3.23296,50.78752,https://pleiades.stoa.org/places/889232641,Pomeroy Wood,Gittisham Roman fort,Pomeroy Wood,100.0,modern name,81
+"military|Bolham Hill, Tiverton|-3.48643,50.91891",military,"Bolham Hill, Tiverton",,-3.48643,50.91891,https://pleiades.stoa.org/places/925625125,Tiverton,Tiverton,Tiverton,100.0,modern name,57
+"military|Okehampton|-3.99191,50.74594",military,Okehampton,,-3.99191,50.74594,https://pleiades.stoa.org/places/781089344,Okehampton Roman fort and fortlet,Okehampton Roman fort and fortlet,Okehampton Roman fort and fortlet,100.0,modern name,1094
+"military|Couchill, Seaton|-3.08291,50.70833",military,"Couchill, Seaton",,-3.08291,50.70833,https://pleiades.stoa.org/places/79676,Seaton,Honeyditches Roman Villa,Seaton,100.0,modern name,538
+"military|Wiveliscombe|-3.29901,51.03554",military,Wiveliscombe,,-3.29901,51.03554,https://pleiades.stoa.org/places/103477159,Wiveliscombe Auxiliary Fort,Wiveliscombe Auxiliary Fort,Wiveliscombe Auxiliary Fort,100.0,modern name,105
+"military|Cullompton|-3.39673,50.85988",military,Cullompton,,-3.39673,50.85988,https://pleiades.stoa.org/places/913038939,Cullompton Forts,Cullompton Forts,Cullompton Forts,100.0,modern name,26
+"military|Ham Hill|-2.74385,50.95197",military,Ham Hill,,-2.74385,50.95197,https://pleiades.stoa.org/places/859366030,Ham Hill Hillfort,Ham Hill Hillfort,Ham Hill Hillfort,100.0,modern name,180
+"military|Bowes Moor|-2.10982,54.50767",military,Bowes Moor,,-2.10982,54.50767,https://pleiades.stoa.org/places/301646303,Bowes Moor,Bowes Moor,Bowes Moor,100.0,modern name,45
+"military|Ravenscar|-0.49046,54.40230",military,Ravenscar,,-0.49046,54.4023,https://pleiades.stoa.org/places/89277,Ravenscar,Ravenscar,Ravenscar,100.0,modern name,129
+"military|Filey|-0.27300,54.21793",military,Filey,,-0.273,54.21793,https://pleiades.stoa.org/places/89185,Filey,Filey,Filey,100.0,modern name,1504
+"military|Derby (Strutt's Park)|-1.48140,52.93403",military,Derby (Strutt's Park),DERVENTIO,-1.4814,52.93403,https://pleiades.stoa.org/places/79419,Derbentio,Derbentio,Derbentio,88.9,roman name,472
+"military|Pen Llwyn|-3.98541,52.40734",military,Pen Llwyn,,-3.98541,52.40734,https://pleiades.stoa.org/places/636031892,Pen-Llwyn fort,Pen-Llwyn fort,Pen-Llwyn fort,100.0,modern name,37
+"military|Llanio|-3.98428,52.18958",military,Llanio,BREMIA?,-3.98428,52.18958,https://pleiades.stoa.org/places/79353,Bremia,Bremia,Bremia,100.0,roman name,32
+"military|Wiston|-4.86701,51.83136",military,Wiston,,-4.86701,51.83136,https://pleiades.stoa.org/places/1754699,Wiston fort,Wiston fort,Wiston fort,100.0,modern name,73
+"military|Cowbridge|-3.44963,51.46225",military,Cowbridge,BOMIVM?,-3.44963,51.46225,https://pleiades.stoa.org/places/79335,Bomio,Bomio,‘Bomio’,100.0,roman name,169
+"military|Caergwanaf, Miskin|-3.37913,51.51759",military,"Caergwanaf, Miskin",,-3.37913,51.51759,https://pleiades.stoa.org/places/333113314,Miskin,Caergwanaf,Miskin,100.0,modern name,29
+"military|Gelligaer I|-3.25484,51.66724",military,Gelligaer I,,-3.25484,51.66724,https://pleiades.stoa.org/places/79479,Gelligaer,Gelligaer,Gelligaer,100.0,modern name,192
+"military|Caerphilly|-3.22254,51.57810",military,Caerphilly,,-3.22254,51.5781,https://pleiades.stoa.org/places/407613499,Caerphilly Roman fort,Caerffili,Caerphilly Roman fort,100.0,modern name,68
+"military|Usk|-2.90282,51.69971",military,Usk,BVRRIVM,-2.90282,51.69971,https://pleiades.stoa.org/places/79360,Burrium,Burrium,Burrium,100.0,roman name,465
+"military|Wonastow|-2.74845,51.79537",military,Wonastow,,-2.74845,51.79537,https://pleiades.stoa.org/places/339480270,Wonastow,Wonastow,Wonastow,100.0,modern name,91
+"military|Caersws I|-3.41342,52.52222",military,Caersws I,,-3.41342,52.52222,https://pleiades.stoa.org/places/79363,Caersws,Caersws,Caersws,100.0,modern name,1332
+"military|Cefn Brynich|-3.34917,51.93759",military,Cefn Brynich,,-3.34917,51.93759,https://pleiades.stoa.org/places/891506482,Cefn-Brynich,Cefn-Brynich,Cefn-Brynich,100.0,modern name,83
+"military|Colchester|0.89644,51.88962",military,Colchester,CAMELODVNVM,0.89644,51.88962,https://pleiades.stoa.org/places/79393,Col. Camulodunum,Col. Camulodunum,Col. Camulodunum,90.9,roman name,323
+"military|Cambridge|0.11472,52.21201",military,Cambridge,DVRILOPONTE,0.11472,52.21201,https://pleiades.stoa.org/places/79436,Duroliponte,Duroliponte,Duroliponte,81.8,roman name,66
+"military|Redhill|-2.40675,52.69603",military,Redhill,VXACONA,-2.40675,52.69603,https://pleiades.stoa.org/places/79727,Uxacona,Uxacona,Uxacona,100.0,roman name,105
+"military|nan|-2.64984,51.47929",military,,ABONA,-2.64984,51.47929,https://pleiades.stoa.org/places/79280,Abone,Abone,‘Abone’,100.0,roman name,1470
+"military|Bitterne|-1.38450,50.91810",military,Bitterne,CLAVSENTVM,-1.3845,50.9181,https://pleiades.stoa.org/places/79331,Bitterne,Bitterne,Bitterne,100.0,modern name,986
+"military|Three Cocks / Gwernyfed Park|-3.20891,52.02696",military,Three Cocks / Gwernyfed Park,,-3.20891,52.02696,https://pleiades.stoa.org/places/963064754,Three Cocks Roman fort,Three Cocks Roman fort,Three Cocks Roman fort,100.0,modern name,14
+"military|Monmouth|-2.71548,51.81222",military,Monmouth,BLESTIVM,-2.71548,51.81222,https://pleiades.stoa.org/places/79333,Blestium,Blestium,Blestium,100.0,roman name,285
+"military|Cwmcarfan|-2.76751,51.76300",military,Cwmcarfan,,-2.76751,51.763,https://pleiades.stoa.org/places/810562007,Cwmcarfan,Cwmcarfan,Cwmcarfan,100.0,modern name,18
+"military|Cefn Brynich|-3.35174,51.93884",military,Cefn Brynich,,-3.35174,51.93884,https://pleiades.stoa.org/places/891506482,Cefn-Brynich,Cefn-Brynich,Cefn-Brynich,100.0,modern name,257
+"military|Prestatyn|-3.40934,53.32417",military,Prestatyn,,-3.40934,53.32417,https://pleiades.stoa.org/places/718938476,Prestatyn,Prestatyn,Prestatyn,100.0,modern name,23
+"settlement|Dunstable|-0.51483,51.88184",settlement,Dunstable,DVROCOBRIVAE,-0.51483,51.88184,https://pleiades.stoa.org/places/79434,Durocobrivis,Durocobrivis,Durocobrivis,100.0,roman name,957
+"settlement|Sandy|-0.27887,52.12251",settlement,Sandy,,-0.27887,52.12251,https://pleiades.stoa.org/places/79670,Sandy,Sandy,Sandy,100.0,modern name,1108
+"settlement|Thatcham|-1.28302,51.40621",settlement,Thatcham,,-1.28302,51.40621,https://pleiades.stoa.org/places/841173180,"Thatcham, Berkshire","Thatcham, Berkshire","Thatcham, Berkshire",100.0,modern name,878
+"settlement|Wickham Bushes|-0.75860,51.37661",settlement,Wickham Bushes,,-0.7586,51.37661,https://pleiades.stoa.org/places/928877229,Wickham Bushes Romano-British settlement,Wickham Bushes Romano-British settlement,Wickham Bushes Romano-British settlement,100.0,modern name,99
+"settlement|Fenny Stratford|-0.70547,51.99415",settlement,Fenny Stratford,MAGIOVINIVM,-0.70547,51.99415,https://pleiades.stoa.org/places/79586,Magiovinium,Magiovinium,Magiovinium,100.0,roman name,885
+"settlement|Water Newton|-0.34745,52.55866",settlement,Water Newton,DVROBRIVAE,-0.34745,52.55866,https://pleiades.stoa.org/places/79432,Durobrivae (Water Newton),Durobrivae,Durobrivae (Water Newton),100.0,roman name,34
+"settlement|Godmanchester|-0.17279,52.31760",settlement,Godmanchester,DVROVIGVTVM,-0.17279,52.3176,https://pleiades.stoa.org/places/79440,Durovigutum,Durovigutum,Durovigutum,100.0,roman name,193
+"settlement|Grandford|0.05429,52.57728",settlement,Grandford,,0.05429,52.57728,https://pleiades.stoa.org/places/65728677,Grandford,Grandford,Grandford,100.0,modern name,42
+"settlement|Stonea Grange|0.13454,52.52174",settlement,Stonea Grange,,0.13454,52.52174,https://pleiades.stoa.org/places/79696,Stonea,Stonea,Stonea,100.0,modern name,629
+"settlement|Carmarthen|-4.30088,51.85903",settlement,Carmarthen,MORIDVNVM,-4.30088,51.85903,https://pleiades.stoa.org/places/79602,Moridunum,Moridunum,*Moridunum,100.0,roman name,180
+"settlement|Llanfair-ar-y-Bryn, Llandovery|-3.79375,52.00129",settlement,"Llanfair-ar-y-Bryn, Llandovery",ALABVM,-3.79375,52.00129,https://pleiades.stoa.org/places/79287,Alabum,Alabum,Alabum,100.0,roman name,6
+"settlement|Heronbridge (2002-2003 excavations)|-2.88290,53.16910",settlement,Heronbridge (2002-2003 excavations),,-2.8829,53.1691,https://pleiades.stoa.org/places/79509,Heronbridge,Heronbridge,Heronbridge,100.0,modern name,31
+"settlement|Northwich|-2.52188,53.25740",settlement,Northwich,CONDATE,-2.52188,53.2574,https://pleiades.stoa.org/places/79400,Condate,Condate,Condate,100.0,roman name,375
+"settlement|Middlewich|-2.44573,53.19714",settlement,Middlewich,SALINAE,-2.44573,53.19714,https://pleiades.stoa.org/places/79667,Salinae,Salinae,Salinae,100.0,roman name,222
+"settlement|Caerau Roman Vicus|-3.57513,52.14031",settlement,Caerau Roman Vicus,,-3.57513,52.14031,https://pleiades.stoa.org/places/882133969,Caerau,Caerau,Caerau,100.0,modern name,136
+"settlement|Caersws|-3.42869,52.51627",settlement,Caersws,,-3.42869,52.51627,https://pleiades.stoa.org/places/79363,Caersws,Caersws,Caersws,100.0,modern name,209
+"settlement|Castell Collen, Llandrindod Wells|-3.38424,52.25569",settlement,"Castell Collen, Llandrindod Wells",,-3.38424,52.25569,https://pleiades.stoa.org/places/79378,Castell Collen,Castell Collen,Castell Collen,100.0,modern name,16
+"settlement|Brynhyfryd Park, Ruthin, Clwyd|-3.30124,53.11386",settlement,"Brynhyfryd Park, Ruthin, Clwyd",,-3.30124,53.11386,https://pleiades.stoa.org/places/44473572,Ruthin,Ruthin,Ruthin,100.0,modern name,631
+"settlement|Pen-y-gaer Roman Vicus, Cwmdu|-3.21035,51.88942",settlement,"Pen-y-gaer Roman Vicus, Cwmdu",,-3.21035,51.88942,https://pleiades.stoa.org/places/776990479,Pen-y-Gaer Roman fort,Pen y Gaer,Pen-y-Gaer Roman fort,100.0,modern name,67
+"settlement|Hindwell|-3.08816,52.23821",settlement,Hindwell,,-3.08816,52.23821,https://pleiades.stoa.org/places/810017626,Hindwell Farm,Hindwell Farm,Hindwell Farm,100.0,modern name,10
+"settlement|Ffrith|-3.06802,53.09002",settlement,Ffrith,,-3.06802,53.09002,https://pleiades.stoa.org/places/79463,Ffrith,Ffrith,Ffrith,100.0,modern name,188
+"settlement|Chysauster|-5.54050,50.16120",settlement,Chysauster,,-5.5405,50.1612,https://pleiades.stoa.org/places/330553536,Chysauster Ancient Village,Chysauster Ancient Village,Chysauster Ancient Village,100.0,modern name,12
+"settlement|Watercrook (Potter Excavations)|-2.74744,54.31009",settlement,Watercrook (Potter Excavations),ALAVANA??,-2.74744,54.31009,https://pleiades.stoa.org/places/89102,Watercrook Roman Fort and Settlement,Alauna,Watercrook Roman Fort and Settlement,92.3,roman name,82
+"settlement|Brougham extramural settlement|-2.71508,54.65263",settlement,Brougham extramural settlement,BROCAVVM,-2.71508,54.65263,https://pleiades.stoa.org/places/89127,Brocavum,BROCAVVM,Brocavum,100.0,roman name,150
+"settlement|Newland Mill, North Tawton|-3.90208,50.78729",settlement,"Newland Mill, North Tawton",NEMETO STATIO?,-3.90208,50.78729,https://pleiades.stoa.org/places/79607,Nemetotacio,Nemetotacio,‘Nemetotacio’,83.3,roman name,502
+"settlement|Pomeroy Wood/Gittisham Forge/Nag's Head Culvert|-3.23201,50.78676",settlement,Pomeroy Wood/Gittisham Forge/Nag's Head Culvert,,-3.23201,50.78676,https://pleiades.stoa.org/places/889232641,Pomeroy Wood,Gittisham Roman fort,Pomeroy Wood,100.0,modern name,28
+"settlement|Poundbury|-2.45129,50.71896",settlement,Poundbury,,-2.45129,50.71896,https://pleiades.stoa.org/places/24992539,Poundbury hillfort,Poundbury hillfort,Poundbury hillfort,100.0,modern name,24
+"settlement|Dorchester|-2.43742,50.71426",settlement,Dorchester,DVROVARIA,-2.43742,50.71426,https://pleiades.stoa.org/places/79431,Durno(no)varia,Durnovaria,Durno(no)varia,94.7,roman name,554
+"settlement|Badbury Rings|-2.05641,50.82468",settlement,Badbury Rings,,-2.05641,50.82468,https://pleiades.stoa.org/places/511968274,Badbury Rings,Badbury Rings,Badbury Rings,100.0,modern name,346
+"settlement|Holme Lea/The Annums, Bowes (Lavatris)|-2.01078,54.51680",settlement,"Holme Lea/The Annums, Bowes (Lavatris)",LAVATRIS,-2.01078,54.5168,https://pleiades.stoa.org/places/89224,Lavatris,Lavatris,Lavatris,100.0,roman name,188
+"settlement|Greta Bridge vicus|-1.86559,54.51403",settlement,Greta Bridge vicus,,-1.86559,54.51403,https://pleiades.stoa.org/places/496316189,Greta Bridge,Greta Bridge,Greta Bridge,100.0,modern name,354
+"settlement|Lanchester vicus (Longovicium)|-1.75316,54.81814",settlement,Lanchester vicus (Longovicium),LONGOVIVIVM,-1.75316,54.81814,https://pleiades.stoa.org/places/89230,Longovicium,Longovicium,Longovicium,90.9,roman name,172
+"settlement|Binchester vicus (vinovia)|-1.67586,54.67633",settlement,Binchester vicus (vinovia),VINOVIA,-1.67586,54.67633,https://pleiades.stoa.org/places/89316,Vinovia,Vinovia,Vinovia,100.0,roman name,58
+"settlement|Piercebridge|-1.67431,54.53650",settlement,Piercebridge,,-1.67431,54.5365,https://pleiades.stoa.org/places/89274,Piercebridge,Bermesio,Piercebridge,100.0,modern name,160
+"settlement|Dolaucothi-Pumsaint|-3.94945,52.04405",settlement,Dolaucothi-Pumsaint,LVENTINVM?,-3.94945,52.04405,https://pleiades.stoa.org/places/79578,Pumsaint Roman Fort (ancient Louentinon?),Louentinon,Pumsaint Roman Fort (ancient Louentinon?),93.3,roman name,844
+"settlement|Shiptonthorpe|-0.70632,53.87105",settlement,Shiptonthorpe,,-0.70632,53.87105,https://pleiades.stoa.org/places/89290,Shiptonthorpe,Shiptonthorpe,Shiptonthorpe,100.0,modern name,666
+"settlement|Rudstone Dale, Newbald (Ganstead to Asselby Plots 103 and 104)|-0.61447,53.80149",settlement,"Rudstone Dale, Newbald (Ganstead to Asselby Plots 103 and 104)",,-0.61447,53.80149,https://pleiades.stoa.org/places/79611,Newbald,Newbald,Newbald,100.0,modern name,1740
+"settlement|Harlow|0.13001,51.79325",settlement,Harlow,,0.13001,51.79325,https://pleiades.stoa.org/places/79502,Harlow,Harlow,Harlow,100.0,modern name,1335
+"settlement|Great Dunmow|0.36242,51.87085",settlement,Great Dunmow,,0.36242,51.87085,https://pleiades.stoa.org/places/79489,Great Dunmow,Great Dunmow,Great Dunmow,100.0,modern name,114
+"settlement|Braintree|0.54876,51.87877",settlement,Braintree,,0.54876,51.87877,https://pleiades.stoa.org/places/79344,Braintree,Braintree,Braintree,100.0,modern name,621
+"settlement|Kelvedon|0.70423,51.83849",settlement,Kelvedon,CANONIVM,0.70423,51.83849,https://pleiades.stoa.org/places/79373,Canonium,Canonium,Canonium,100.0,roman name,99
+"settlement|Othona|0.93944,51.73779",settlement,Othona,OTHONA,0.93944,51.73779,https://pleiades.stoa.org/places/79631,Othona,Othona,Othona,100.0,roman name,252
+"settlement|Neath vicus|-3.81181,51.66499",settlement,Neath vicus,NIDVM?,-3.81181,51.66499,https://pleiades.stoa.org/places/79616,Nido,Nido,‘Nido’,100.0,roman name,121
+"settlement|Caergwanaf near Miskin|-3.37918,51.51755",settlement,Caergwanaf near Miskin,,-3.37918,51.51755,https://pleiades.stoa.org/places/333113314,Miskin,Caergwanaf,Miskin,100.0,modern name,32
+"settlement|Great Bulmore|-2.92725,51.61875",settlement,Great Bulmore,,-2.92725,51.61875,https://pleiades.stoa.org/places/972561590,Great Bulmore,Great Bulmore,Great Bulmore,100.0,modern name,1
+"settlement|Usk (Burrium)|-2.90550,51.70146",settlement,Usk (Burrium),BVRRIVM,-2.9055,51.70146,https://pleiades.stoa.org/places/79360,Burrium,Burrium,Burrium,100.0,roman name,338
+"settlement|Usk (Burrium)|-2.90550,51.70146",settlement,Usk (Burrium),BVRRIVM,-2.9055,51.70146,https://pleiades.stoa.org/places/79360,Burrium,Burrium,Burrium,100.0,roman name,338
+"settlement|Sea Mills|-2.64657,51.48048",settlement,Sea Mills,ABONAE,-2.64657,51.48048,https://pleiades.stoa.org/places/79280,Abone,Abone,‘Abone’,100.0,roman name,1420
+"settlement|Chessals, Kingscote|-2.28326,51.66269",settlement,"Chessals, Kingscote",,-2.28326,51.66269,https://pleiades.stoa.org/places/79547,Kingscote,Kingscote,Kingscote,100.0,modern name,1222
+"settlement|Cirencester|-1.96672,51.71606",settlement,Cirencester,CORINIVM DOBVNNORVM,-1.96672,51.71606,https://pleiades.stoa.org/places/79549,Korinion/Cironium,Corinium Dobunnorum,Korinion/Cironium,100.0,roman name,627
+"settlement|Bourton-on-the-water, Lower Slaughter (Chessels)|-1.76976,51.89835",settlement,"Bourton-on-the-water, Lower Slaughter (Chessels)",,-1.76976,51.89835,https://pleiades.stoa.org/places/79339,Bourton-on-the-Water,Bourton-on-the-Water,Bourton-on-the-Water,100.0,modern name,1706
+"settlement|Bourton Bridge, Bourton-on-the-Water|-1.76768,51.88748",settlement,"Bourton Bridge, Bourton-on-the-Water",,-1.76768,51.88748,https://pleiades.stoa.org/places/79339,Bourton-on-the-Water,Bourton-on-the-Water,Bourton-on-the-Water,100.0,modern name,727
+"settlement|Dorn|-1.70056,52.00268",settlement,Dorn,,-1.70056,52.00268,https://pleiades.stoa.org/places/79425,Dorn,Dorn,Dorn,100.0,modern name,1492
+"settlement|Brockley Hill, Stanmore|-0.30541,51.63284",settlement,"Brockley Hill, Stanmore",SULLONIACIS,-0.30541,51.63284,https://pleiades.stoa.org/places/79701,Sulloniacis,Sulloniacis,Sulloniacis,100.0,roman name,72
+"settlement|Brockley Hill|-0.29600,51.62472",settlement,Brockley Hill,SULLONIACIS,-0.296,51.62472,https://pleiades.stoa.org/places/79701,Sulloniacis,Sulloniacis,Sulloniacis,100.0,roman name,1129
+"settlement|Shadwell|-0.05781,51.50941",settlement,Shadwell,,-0.05781,51.50941,https://pleiades.stoa.org/places/662780373,Shadwell Roman Bathhouse,Shadwell Roman Bathhouse,Shadwell Roman Bathhouse,100.0,modern name,51
+"settlement|Wigan|-2.63033,53.54582",settlement,Wigan,COCCIVM,-2.63033,53.54582,https://pleiades.stoa.org/places/662928353,Coccium?,Coccium,Coccium?,100.0,roman name,256
+"settlement|Manchester|-2.25337,53.47595",settlement,Manchester,MAMVCIVM,-2.25337,53.47595,https://pleiades.stoa.org/places/79590,Mamucio,Mamucio,‘Mamucio’,100.0,roman name,95
+"settlement|Caernarfon, Newborough Street|-4.27083,53.13826",settlement,"Caernarfon, Newborough Street",SEGONTIVM,-4.27083,53.13826,https://pleiades.stoa.org/places/79678,Segontium,Segontium,Segontium,100.0,roman name,354
+"settlement|Cefn Caer, Pennal|-3.91094,52.58460",settlement,"Cefn Caer, Pennal",,-3.91094,52.5846,https://pleiades.stoa.org/places/865964169,Cefn Caer,Cefn Caer,Cefn Caer,100.0,modern name,210
+"settlement|Tomen-y-Mur|-3.92420,52.92854",settlement,Tomen-y-Mur,,-3.9242,52.92854,https://pleiades.stoa.org/places/142376597,Tomen y mur,Tomen y mur,Tomen y mur,100.0,modern name,217
+"settlement|Caerhun|-3.83339,53.21742",settlement,Caerhun,CANOVIVM,-3.83339,53.21742,https://pleiades.stoa.org/places/79542,Kanovium/Conovium,Canovium,Kanovium/Conovium,100.0,roman name,165
+"settlement|Caer Gai, Llanwchlyn|-3.66678,52.86996",settlement,"Caer Gai, Llanwchlyn",,-3.66678,52.86996,https://pleiades.stoa.org/places/42633537,Caer Gai,Caer Gai,Caer Gai,100.0,modern name,178
+"settlement|Bitterne|-1.38372,50.91815",settlement,Bitterne,CLAVSENTVM?,-1.38372,50.91815,https://pleiades.stoa.org/places/79331,Bitterne,Bitterne,Bitterne,100.0,modern name,933
+"settlement|Winchester|-1.31495,51.06354",settlement,Winchester,VENTA BELGARVM,-1.31495,51.06354,https://pleiades.stoa.org/places/79734,Venta,Venta,Venta,100.0,roman name,155
+"settlement|Silchester|-1.08335,51.35741",settlement,Silchester,Calleva Atrebatvm,-1.08335,51.35741,https://pleiades.stoa.org/places/79368,Calleva,Calleva Atrebatum,Calleva,100.0,roman name,70
+"settlement|Blackwardine|-2.68481,52.20653",settlement,Blackwardine,,-2.68481,52.20653,https://pleiades.stoa.org/places/79332,Blackwardine,Blackwardine,Blackwardine,100.0,modern name,499
+"settlement|Weston Under Penyard|-2.51742,51.91212",settlement,Weston Under Penyard,ARICONIVM,-2.51742,51.91212,https://pleiades.stoa.org/places/79302,Ariconium,Ariconium,Ariconium,100.0,roman name,138
+"settlement|St. Albans|-0.35849,51.75257",settlement,St. Albans,VERVLAMIVM,-0.35849,51.75257,https://pleiades.stoa.org/places/79739,Verulamium,Verulamium,Verulamium,100.0,roman name,60
+"settlement|Welwyn, West Manor, Ellesfield|-0.21857,51.83163",settlement,"Welwyn, West Manor, Ellesfield",,-0.21857,51.83163,https://pleiades.stoa.org/places/399911223,Welwyn,Welwyn,Welwyn,100.0,modern name,760
+"settlement|Baldock|-0.18428,51.99054",settlement,Baldock,,-0.18428,51.99054,https://pleiades.stoa.org/places/79311,Baldock,Baldock,Baldock,100.0,modern name,245
+"settlement|Wickham, or Braughing|0.01778,51.89946",settlement,"Wickham, or Braughing",,0.01778,51.89946,https://pleiades.stoa.org/places/79349,Braughing,Braughing,Braughing,100.0,modern name,1003
+"settlement|Springhead|0.32193,51.42901",settlement,Springhead,VAGNIACIS,0.32193,51.42901,https://pleiades.stoa.org/places/79729,Vagniacis,Vagniacis,Vagniacis,100.0,roman name,327
+"settlement|Rochester|0.50847,51.38670",settlement,Rochester,DUROBRIVAE,0.50847,51.3867,https://pleiades.stoa.org/places/79433,Durobrivae,Durobrivae,Durobrivae,100.0,roman name,523
+"settlement|Lympne|1.03037,51.07204",settlement,Lympne,PORTVS LEMANIS,1.03037,51.07204,https://pleiades.stoa.org/places/79647,Portus Lemanis,Portus Lemanis,Portus Lemanis,100.0,roman name,757
+"settlement|Canterbury|1.07805,51.27851",settlement,Canterbury,Durovernum Cantiacorum,1.07805,51.27851,https://pleiades.stoa.org/places/79439,Durovernum,Durovernum,*Durovernum,100.0,roman name,432
+"settlement|Dover|1.30708,51.12810",settlement,Dover,DVBRIS,1.30708,51.1281,https://pleiades.stoa.org/places/79646,Portus Dubris,Dubris,Portus Dubris,100.0,roman name,567
+"settlement|Richborough|1.32979,51.29309",settlement,Richborough,RVTVPIAE,1.32979,51.29309,https://pleiades.stoa.org/places/79664,Rutupiae,Rutupiae,Rutupiae,100.0,roman name,184
+"settlement|Lancaster vicus|-2.80359,54.05070",settlement,Lancaster vicus,,-2.80359,54.0507,https://pleiades.stoa.org/places/89222,Lancaster,Lancaster,Lancaster,100.0,modern name,165
+"settlement|Ribchester|-2.53419,53.81082",settlement,Ribchester,BREMETENNACVN VETERANORVM,-2.53419,53.81082,https://pleiades.stoa.org/places/79352,Bremetennacum Veteranorum,Bremetennacum Veteranorum,Bremetennacum Veteranorum,100.0,roman name,178
+"settlement|Lockington, Warren Farm|-1.30933,52.85918",settlement,"Lockington, Warren Farm",,-1.30933,52.85918,https://pleiades.stoa.org/places/79572,Lockington,Lockington,Lockington,100.0,modern name,1391
+"settlement|High Cross|-1.30453,52.49352",settlement,High Cross,VENONIS,-1.30453,52.49352,https://pleiades.stoa.org/places/79732,Venonis,Venonis,Venonis,100.0,roman name,237
+"settlement|Leicester|-1.13782,52.63364",settlement,Leicester,Ratae Corieltavorvm,-1.13782,52.63364,https://pleiades.stoa.org/places/79651,Ratae,Ratae Corieltauvorum,Ratae,100.0,roman name,205
+"settlement|Medbourne|-0.83696,52.52993",settlement,Medbourne,,-0.83696,52.52993,https://pleiades.stoa.org/places/79596,Medbourne,Medbourne,Medbourne,100.0,modern name,989
+"settlement|Brough|-0.75043,53.11638",settlement,Brough,CROCOCOLANA,-0.75043,53.11638,https://pleiades.stoa.org/places/79407,Crococalana,Crococalana,Crococalana,90.9,roman name,334
+"settlement|Dragonby|-0.63348,53.61308",settlement,Dragonby,,-0.63348,53.61308,https://pleiades.stoa.org/places/79427,Dragonby,Dragonby,Dragonby,100.0,modern name,270
+"settlement|Winteringham|-0.57075,53.68053",settlement,Winteringham,,-0.57075,53.68053,https://pleiades.stoa.org/places/308048141,Old Winteringham,Old Winteringham,Old Winteringham,100.0,modern name,223
+"settlement|Lincoln|-0.53828,53.23590",settlement,Lincoln,Lindum,-0.53828,53.2359,https://pleiades.stoa.org/places/79395,Col. Lindum,Col. Lindum,Col. Lindum,100.0,roman name,121
+"settlement|Ancaster|-0.53978,52.98036",settlement,Ancaster,,-0.53978,52.98036,https://pleiades.stoa.org/places/79292,Ancaster,Ancaster,Ancaster,100.0,modern name,362
+"settlement|Sapperton|-0.48876,52.88451",settlement,Sapperton,,-0.48876,52.88451,https://pleiades.stoa.org/places/79672,Sapperton,Sapperton,Sapperton,100.0,modern name,987
+"settlement|Sleaford, East Banks Car Park, Boston Road|-0.40428,52.99845",settlement,"Sleaford, East Banks Car Park, Boston Road",,-0.40428,52.99845,https://pleiades.stoa.org/places/79687,Sleaford,Sleaford,Sleaford,100.0,modern name,459
+"settlement|Sleaford|-0.39399,53.00262",settlement,Sleaford,,-0.39399,53.00262,https://pleiades.stoa.org/places/79687,Sleaford,Sleaford,Sleaford,100.0,modern name,1203
+"settlement|Humberside Airport, Kirmington|-0.35268,53.58064",settlement,"Humberside Airport, Kirmington",,-0.35268,53.58064,https://pleiades.stoa.org/places/849071429,Kirmington,Kirmington,Kirmington,100.0,modern name,911
+"settlement|Kirmington|-0.34575,53.58774",settlement,Kirmington,,-0.34575,53.58774,https://pleiades.stoa.org/places/849071429,Kirmington,Kirmington,Kirmington,100.0,modern name,90
+"settlement|Bourne|-0.37581,52.76620",settlement,Bourne,,-0.37581,52.7662,https://pleiades.stoa.org/places/79338,Bourne,Bourne,Bourne,100.0,modern name,235
+"settlement|London|-0.08799,51.51348",settlement,London,Londinium,-0.08799,51.51348,https://pleiades.stoa.org/places/79574,Londinium/Augusta,Londinium,Londinium/Augusta,100.0,roman name,68
+"settlement|Snettisham 2|0.48926,52.86779",settlement,Snettisham 2,,0.48926,52.86779,https://pleiades.stoa.org/places/487909247,Snettisham,Snettisham,Snettisham,100.0,modern name,1274
+"settlement|Snettisham|0.49146,52.87326",settlement,Snettisham,,0.49146,52.87326,https://pleiades.stoa.org/places/487909247,Snettisham,Snettisham,Snettisham,100.0,modern name,780
+"settlement|Hockwold-cum-Wilton|0.51069,52.46260",settlement,Hockwold-cum-Wilton,,0.51069,52.4626,https://pleiades.stoa.org/places/79516,Hockwold,Hockwold,Hockwold,100.0,modern name,1835
+"settlement|Brancaster|0.65630,52.96460",settlement,Brancaster,BRANODVNVM,0.6563,52.9646,https://pleiades.stoa.org/places/79346,Branodunum,Branodunum,Branodunum,100.0,roman name,261
+"settlement|Scole|1.15357,52.36447",settlement,Scole,,1.15357,52.36447,https://pleiades.stoa.org/places/79675,Scole,Scole,Scole,100.0,modern name,278
+"settlement|Brampton|1.29424,52.76489",settlement,Brampton,,1.29424,52.76489,https://pleiades.stoa.org/places/79345,Brampton,Brampton,Brampton,100.0,modern name,946
+"settlement|Burgh Castle|1.65606,52.58081",settlement,Burgh Castle,GARIANNVM,1.65606,52.58081,https://pleiades.stoa.org/places/79475,Gariann(on)um,Gariannum,*Gariann(on)um,100.0,roman name,369
+"settlement|Caistor-on-Sea|1.72427,52.64848",settlement,Caistor-on-Sea,,1.72427,52.64848,https://pleiades.stoa.org/places/79365,Caister-on-Sea,Caister-on-Sea,Caister-on-Sea,90.9,modern name,372
+"settlement|Healam Bridge|-1.50562,54.24643",settlement,Healam Bridge,,-1.50562,54.24643,https://pleiades.stoa.org/places/594235292,Healam Bridge Roman Fort,Healam Bridge Roman Fort,Healam Bridge Roman Fort,100.0,modern name,184
+"settlement|Whilton Lodge|-1.10551,52.27542",settlement,Whilton Lodge,BANNAVENTA,-1.10551,52.27542,https://pleiades.stoa.org/places/79313,Bannaventa,Bannaventa,Bannaventa,100.0,roman name,1359
+"settlement|Towcester|-0.98977,52.13338",settlement,Towcester,LACTODVRVM,-0.98977,52.13338,https://pleiades.stoa.org/places/79552,Lactodorum,Lactodorum,Lactodorum,90.0,roman name,223
+"settlement|Stony Stratford|-0.86218,52.06173",settlement,Stony Stratford,,-0.86218,52.06173,https://pleiades.stoa.org/places/164195342,Stony Stratford,Stony Stratford,Stony Stratford,100.0,modern name,650
+"settlement|Irchester|-0.65687,52.29001",settlement,Irchester,,-0.65687,52.29001,https://pleiades.stoa.org/places/79530,Irchester,Irchester,Irchester,100.0,modern name,95
+"settlement|Stanwick|-0.57492,52.33389",settlement,Stanwick,,-0.57492,52.33389,https://pleiades.stoa.org/places/79695,Stanwick,Stanwick,Stanwick,100.0,modern name,440
+"settlement|Ashton|-0.45798,52.48873",settlement,Ashton,,-0.45798,52.48873,https://pleiades.stoa.org/places/79304,Ashton,Ashton,Ashton,100.0,modern name,1005
+"settlement|Broughton Lodge, Willoughby|-1.03991,52.81865",settlement,"Broughton Lodge, Willoughby",VERNEMETVM,-1.03991,52.81865,https://pleiades.stoa.org/places/79737,Vernemeto,Vernemeto,‘Vernemeto’,100.0,roman name,1123
+"settlement|East Bridgeford|-0.95787,52.96759",settlement,East Bridgeford,MARGIDVNVM,-0.95787,52.96759,https://pleiades.stoa.org/places/79595,Margidunum,Margidunum,Margidunum,100.0,roman name,820
+"settlement|East Stoke|-0.87035,53.04476",settlement,East Stoke,AD PONTEM,-0.87035,53.04476,https://pleiades.stoa.org/places/79285,Ad Pontem,Ad Pontem,Ad Pontem,100.0,roman name,887
+"settlement|Asthall|-1.58030,51.79911",settlement,Asthall,,-1.5803,51.79911,https://pleiades.stoa.org/places/79305,Asthall,Asthall,Asthall,100.0,modern name,289
+"settlement|Marcham/Frilford|-1.36678,51.66330",settlement,Marcham/Frilford,,-1.36678,51.6633,https://pleiades.stoa.org/places/79470,Frilford,Frilford,Frilford,100.0,modern name,883
+"settlement|Alchester|-1.16973,51.87835",settlement,Alchester,,-1.16973,51.87835,https://pleiades.stoa.org/places/79289,Alchester,Alchester,Alchester,100.0,modern name,133
+"settlement|Dorchester on Thames|-1.16651,51.64291",settlement,Dorchester on Thames,,-1.16651,51.64291,https://pleiades.stoa.org/places/79424,Dorchester-on-Thames,Dorchester-on-Thames,Dorchester-on-Thames,100.0,modern name,186
+"settlement|Thistleton|-0.65568,52.74428",settlement,Thistleton,,-0.65568,52.74428,https://pleiades.stoa.org/places/79712,Thistleton Roman Town,Market Overton,Thistleton Roman Town,100.0,modern name,986
+"settlement|Great Casterton|-0.51865,52.66987",settlement,Great Casterton,,-0.51865,52.66987,https://pleiades.stoa.org/places/79487,Great Casterton,Great Casterton,Great Casterton,100.0,modern name,279
+"settlement|Whitchurch|-2.68449,52.96994",settlement,Whitchurch,MEDIOLANVM,-2.68449,52.96994,https://pleiades.stoa.org/places/79597,Mediolanum,Mediolanum,Mediolanum,100.0,roman name,402
+"settlement|Wroxeter|-2.64439,52.67411",settlement,Wroxeter,VIRICONIVM,-2.64439,52.67411,https://pleiades.stoa.org/places/79741,Viroconium,Viroconium,Viroconium,90.0,roman name,57
+"settlement|Redhill, Telford|-2.40672,52.69571",settlement,"Redhill, Telford",VXACONA,-2.40672,52.69571,https://pleiades.stoa.org/places/79727,Uxacona,Uxacona,Uxacona,100.0,roman name,71
+"settlement|Charterhouse-on-Mendip|-2.71860,51.30271",settlement,Charterhouse-on-Mendip,ISCALIS?,-2.7186,51.30271,https://pleiades.stoa.org/places/79534,Ischalis?,Ischalis,Ischalis?,93.3,roman name,404
+"settlement|Catsgore|-2.70421,51.03497",settlement,Catsgore,,-2.70421,51.03497,https://pleiades.stoa.org/places/79380,Catsgore,Catsgore,Catsgore,100.0,modern name,365
+"settlement|Ilchester|-2.67772,51.00163",settlement,Ilchester,LINDINIS,-2.67772,51.00163,https://pleiades.stoa.org/places/79565,Lindinis,Lindinis,Lindinis,100.0,roman name,332
+"settlement|Gatcombe|-2.68128,51.42657",settlement,Gatcombe,,-2.68128,51.42657,https://pleiades.stoa.org/places/79477,Gatcombe,Gatcombe,Gatcombe,100.0,modern name,1229
+"settlement|St Cuthbert's, Priddy|-2.65329,51.25206",settlement,"St Cuthbert's, Priddy",,-2.65329,51.25206,https://pleiades.stoa.org/places/55227237,Priddy,Priddy,Priddy,100.0,modern name,1692
+"settlement|Yeovil|-2.64367,50.93873",settlement,Yeovil,,-2.64367,50.93873,https://pleiades.stoa.org/places/333121794,Yeovil Roman settlement,Yeovil Roman settlement,Yeovil Roman settlement,100.0,modern name,19
+"settlement|Shepton Mallet, Fosse lane|-2.53114,51.18125",settlement,"Shepton Mallet, Fosse lane",,-2.53114,51.18125,https://pleiades.stoa.org/places/79682,Shepton Mallet,Shepton Mallet,Shepton Mallet,100.0,modern name,1472
+"settlement|Castle Farm, South Cadbury|-2.52568,51.02678",settlement,"Castle Farm, South Cadbury",,-2.52568,51.02678,https://pleiades.stoa.org/places/859366031,Cadbury Castle,Cadbury Castle,Cadbury Castle,100.0,modern name,485
+"settlement|Camerton|-2.44894,51.30406",settlement,Camerton,,-2.44894,51.30406,https://pleiades.stoa.org/places/79370,Camerton,Camerton,Camerton,100.0,modern name,144
+"settlement|Holditch|-2.24301,53.03084",settlement,Holditch,,-2.24301,53.03084,https://pleiades.stoa.org/places/79384,Chesterton/Holditch,Chesterton,Chesterton/Holditch,100.0,modern name,184
+"settlement|Penkridge|-2.14552,52.69469",settlement,Penkridge,PENNOCRVCIVM,-2.14552,52.69469,https://pleiades.stoa.org/places/79638,Pennocrucium,Pennocrucium,Pennocrucium,100.0,roman name,78
+"settlement|Wall|-1.85548,52.65648",settlement,Wall,LETOCETVM,-1.85548,52.65648,https://pleiades.stoa.org/places/79559,Letocetum,Letocetum,*Letocetum,100.0,roman name,86
+"settlement|Rocester|-1.83653,52.95211",settlement,Rocester,,-1.83653,52.95211,https://pleiades.stoa.org/places/79658,Rocester,Rocester,Rocester,100.0,modern name,127
+"settlement|Icklingham|0.61328,52.31707",settlement,Icklingham,,0.61328,52.31707,https://pleiades.stoa.org/places/79525,Icklingham,Icklingham,Icklingham,100.0,modern name,174
+"settlement|Long Melford|0.71561,52.07420",settlement,Long Melford,,0.71561,52.0742,https://pleiades.stoa.org/places/79576,Long Melford,Long Melford,Long Melford,100.0,modern name,1502
+"settlement|Pakenham / Ixworth|0.82748,52.29335",settlement,Pakenham / Ixworth,SITOMAGVS,0.82748,52.29335,https://pleiades.stoa.org/places/79538,Ixworth,Ixworth,Ixworth,100.0,modern name,567
+"settlement|Coddenham|1.08453,52.13402",settlement,Coddenham,COMBRETOVIVM,1.08453,52.13402,https://pleiades.stoa.org/places/79399,Combretovium,Combretovium,Combretovium,100.0,roman name,18
+"settlement|Hacheston|1.37896,52.16094",settlement,Hacheston,,1.37896,52.16094,https://pleiades.stoa.org/places/514227899,Hacheston,Hacheston,Hacheston,100.0,modern name,80
+"settlement|Staines|-0.51468,51.43352",settlement,Staines,PONTES,-0.51468,51.43352,https://pleiades.stoa.org/places/79642,Pontes,Pontes,Pontes,100.0,roman name,258
+"settlement|Ewell|-0.24810,51.35125",settlement,Ewell,,-0.2481,51.35125,https://pleiades.stoa.org/places/79455,Ewell,Ewell,Ewell,100.0,modern name,168
+"settlement|Caves Inn|-1.21574,52.41069",settlement,Caves Inn,TRIPONTIVM,-1.21574,52.41069,https://pleiades.stoa.org/places/79722,Tripontio,Tripontio,‘Tripontio’,100.0,roman name,268
+"settlement|Hardham|-0.53392,50.94719",settlement,Hardham,,-0.53392,50.94719,https://pleiades.stoa.org/places/79501,Hardham,Hardham,Hardham,100.0,modern name,649
+"settlement|Alfoldean|-0.40563,51.08571",settlement,Alfoldean,,-0.40563,51.08571,https://pleiades.stoa.org/places/79290,Alfoldean,Alfoldean,Alfoldean,100.0,modern name,17
+"settlement|Hassocks, Former Hassocks sand pit|-0.15698,50.92498",settlement,"Hassocks, Former Hassocks sand pit",,-0.15698,50.92498,https://pleiades.stoa.org/places/44671977,Hassocks,Hassocks,Hassocks,100.0,modern name,820
+"settlement|Slack|-1.87561,53.65391",settlement,Slack,,-1.87561,53.65391,https://pleiades.stoa.org/places/79371,Slack Roman Fort (Camulodonum?),Camulodonum,Slack Roman Fort (Camulodonum?),100.0,modern name,136
+"settlement|Adel|-1.58027,53.86538",settlement,Adel,,-1.58027,53.86538,https://pleiades.stoa.org/places/285857973,Adel,Adel,Adel,100.0,modern name,72
+"settlement|Easton Grey|-2.16058,51.58248",settlement,Easton Grey,,-2.16058,51.58248,https://pleiades.stoa.org/places/79757,Easton Grey,Easton Grey,Easton Grey,100.0,modern name,270
+"settlement|Whitewalls, Easton Grey|-2.16015,51.58265",settlement,"Whitewalls, Easton Grey",,-2.16015,51.58265,https://pleiades.stoa.org/places/79757,Easton Grey,Easton Grey,Easton Grey,100.0,modern name,249
+"settlement|Sandy Lane|-2.04747,51.40602",settlement,Sandy Lane,VERLVCIO,-2.04747,51.40602,https://pleiades.stoa.org/places/79736,Verlucio,Verlucio,Verlucio,100.0,roman name,706
+"settlement|Cricklade|-1.85688,51.64381",settlement,Cricklade,,-1.85688,51.64381,https://pleiades.stoa.org/places/305841385,Cricklade,Cricklade,Cricklade,100.0,modern name,65
+"settlement|Avebury, Winterbourne, Silbury Hill|-1.85645,51.41469",settlement,"Avebury, Winterbourne, Silbury Hill",,-1.85645,51.41469,https://pleiades.stoa.org/places/943692804,Silbury Hill,Silbury Hill,Silbury Hill,100.0,modern name,138
+"settlement|Old Sarum|-1.80428,51.09350",settlement,Old Sarum,SORVIODVNVM,-1.80428,51.0935,https://pleiades.stoa.org/places/79688,Sorviodunum,Sorviodunum,Sorviodunum,100.0,roman name,43
+"settlement|Wanborough|-1.72187,51.56704",settlement,Wanborough,DVROCORNOVIVM?,-1.72187,51.56704,https://pleiades.stoa.org/places/79435,Durocornovium,Durocornovium,Durocornovium,100.0,roman name,144
+"settlement|Mildenhall|-1.68961,51.42311",settlement,Mildenhall,CVNETIO,-1.68961,51.42311,https://pleiades.stoa.org/places/79409,Cunetio,Cunetio,Cunetio,100.0,roman name,59
+"settlement|Newton Kyme|-1.30667,53.89974",settlement,Newton Kyme,,-1.30667,53.89974,https://pleiades.stoa.org/places/89251,Newton Kyme,Newton Kyme,Newton Kyme,100.0,modern name,334
+"settlement|York|-1.08629,53.95715",settlement,York,,-1.08629,53.95715,https://pleiades.stoa.org/places/299493181,Roman colonia at York,Roman colonia at York,Roman colonia at York,100.0,modern name,184
+"settlement|Metchley|-1.93902,52.45045",settlement,Metchley,,-1.93902,52.45045,https://pleiades.stoa.org/places/973041326,Metchley Fort,Metchley Fort,Metchley Fort,100.0,modern name,73
+"settlement|Dolaucothi|-3.95926,52.04775",settlement,Dolaucothi,,-3.95926,52.04775,https://pleiades.stoa.org/places/82301,"Gold Mines at Dolaucothi, Wales","Gold Mines at Dolaucothi, Wales","Gold Mines at Dolaucothi, Wales",100.0,modern name,736
+"settlement|Bulmore|-2.93088,51.61638",settlement,Bulmore,,-2.93088,51.61638,https://pleiades.stoa.org/places/972561590,Great Bulmore,Great Bulmore,Great Bulmore,100.0,modern name,364
+"settlement|Caerwent|-2.76836,51.61133",settlement,Caerwent,VENTA SILVRVM,-2.76836,51.61133,https://pleiades.stoa.org/places/79733,Venta,Venta,Venta,100.0,roman name,32
+"settlement|Leintwardine|-2.87672,52.36140",settlement,Leintwardine,BRAVONIVM,-2.87672,52.3614,https://pleiades.stoa.org/places/79347,Branogenium,Bravonium,Branogenium,100.0,roman name,152
+"settlement|Canon Frome|-2.53219,52.08629",settlement,Canon Frome,,-2.53219,52.08629,https://pleiades.stoa.org/places/134603098,Canon Frome,Canon Frome,Canon Frome,100.0,modern name,1490
+"settlement|Worcester|-2.21978,52.18979",settlement,Worcester,VERTIS,-2.21978,52.18979,https://pleiades.stoa.org/places/79738,Vertis?,Vertis,Vertis?,100.0,roman name,359
+"settlement|Colchester|0.89629,51.88847",settlement,Colchester,CAMELODVNVM,0.89629,51.88847,https://pleiades.stoa.org/places/79393,Col. Camulodunum,Col. Camulodunum,Col. Camulodunum,90.9,roman name,374
+"settlement|Aldborough|-1.38039,54.09214",settlement,Aldborough,ISVRIVM BRIGANTVM,-1.38039,54.09214,https://pleiades.stoa.org/places/89209,Isurium,Isurium,Isurium,100.0,roman name,256
+"settlement|Caistor St. Edmund|1.29100,52.58366",settlement,Caistor St. Edmund,VENTA ICENORVM,1.291,52.58366,https://pleiades.stoa.org/places/79735,Venta,Venta Icenorum,Venta,100.0,roman name,20
+"settlement|Chichester|-0.77911,50.83653",settlement,Chichester,NOVIOMAGVS REGINORVM,-0.77911,50.83653,https://pleiades.stoa.org/places/79622,Noviomagus,Noviomagus,Noviomagus,100.0,roman name,779
+"settlement|ISCA DVMNONIORVM|-3.53277,50.72164",settlement,ISCA DVMNONIORVM,ISCA DVMNONIORVM,-3.53277,50.72164,https://pleiades.stoa.org/places/79531,Isca Dumnoniorum,Isca Dumnoniorum,Isca Dumnoniorum,100.0,roman name,600
+"settlement|nan|-2.24537,51.86508",settlement,,GLEVVM,-2.24537,51.86508,https://pleiades.stoa.org/places/79394,Col. Glevum,Col. Glevum,Col. Glevum,100.0,roman name,67
+"settlement|Littleborough|-0.76450,53.33537",settlement,Littleborough,SEGELOCVM,-0.7645,53.33537,https://pleiades.stoa.org/places/79677,Segelocum,Segelocum,Segelocum,100.0,roman name,50
+"settlement|Hibaldstow|-0.55520,53.51644",settlement,Hibaldstow,,-0.5552,53.51644,https://pleiades.stoa.org/places/79510,Hibaldstow,Hibaldstow,Hibaldstow,100.0,modern name,1973
+"settlement|Horncastle|-0.11643,53.20782",settlement,Horncastle,,-0.11643,53.20782,https://pleiades.stoa.org/places/938435888,Horncastle,Horncastle,Horncastle,100.0,modern name,93
+"settlement|Caistor|-0.31806,53.49648",settlement,Caistor,,-0.31806,53.49648,https://pleiades.stoa.org/places/79366,Caistor,Caistor,Caistor,100.0,modern name,195
+"settlement|Corbridge|-2.02799,54.97806",settlement,Corbridge,CORIA,-2.02799,54.97806,https://pleiades.stoa.org/places/89152,Coriosopitum/Coria,Coria,*Coriosopitum/Coria,100.0,roman name,84
+"settlement|Papcastle|-3.38280,54.66912",settlement,Papcastle,DERVENTIO,-3.3828,54.66912,https://pleiades.stoa.org/places/89165,Derventio,Deruentio,Derventio,100.0,roman name,169
+"settlement|Buxton|-1.91438,53.25801",settlement,Buxton,AQUAE AERNEMETIAE,-1.91438,53.25801,https://pleiades.stoa.org/places/79298,Aquae Arnemetiae,Aquae Arnemetiae,Aquae *Arnemetiae,100.0,roman name,424
+"settlement|Cambridge|0.11530,52.21150",settlement,Cambridge,DVRILOPONTE,0.1153,52.2115,https://pleiades.stoa.org/places/79436,Duroliponte,Duroliponte,Duroliponte,81.8,roman name,135
+"settlement|Chelmsford|0.47284,51.72851",settlement,Chelmsford,CAESAROMAGVS,0.47284,51.72851,https://pleiades.stoa.org/places/79364,Caesaromagus,Caesaromagus,Caesaromagus,100.0,roman name,851
+"settlement|Fernny Stratford|-0.70472,51.99362",settlement,Fernny Stratford,MAGIOVINIVM,-0.70472,51.99362,https://pleiades.stoa.org/places/79586,Magiovinium,Magiovinium,Magiovinium,100.0,roman name,962
+"settlement|nan|0.19068,52.06793",settlement,,Great Chesterford,0.19068,52.06793,https://pleiades.stoa.org/places/79488,Great Chesterford,Great Chesterford,Great Chesterford,100.0,roman name,198
+"settlement|Kenchester|-2.81773,52.08061",settlement,Kenchester,MAGNIS,-2.81773,52.08061,https://pleiades.stoa.org/places/79587,Magnis,Magnis,Magnis,100.0,roman name,165
+"settlement|Wilderspool|-2.58587,53.37359",settlement,Wilderspool,,-2.58587,53.37359,https://pleiades.stoa.org/places/79763,Wilderspool,Wilderspool,Wilderspool,100.0,modern name,1155
+"settlement|Rivenhall|0.65373,51.82863",settlement,Rivenhall,,0.65373,51.82863,https://pleiades.stoa.org/places/79657,Rivenhall,Rivenhall,Rivenhall,100.0,modern name,271
+"settlement|Dorn|-1.70067,52.00274",settlement,Dorn,,-1.70067,52.00274,https://pleiades.stoa.org/places/79425,Dorn,Dorn,Dorn,100.0,modern name,1497
+"settlement|Mancetter|-1.51804,52.56856",settlement,Mancetter,MANDVESSIDVM,-1.51804,52.56856,https://pleiades.stoa.org/places/79592,Manduessedum,Manduessedum,Manduessedum,91.7,roman name,780
+"settlement|Sea Mills|-2.64958,51.48108",settlement,Sea Mills,ABONA,-2.64958,51.48108,https://pleiades.stoa.org/places/79280,Abone,Abone,‘Abone’,100.0,roman name,1283
+"settlement|Pomeroy Wood|-3.23010,50.78806",settlement,Pomeroy Wood,MORIDUNUM,-3.2301,50.78806,https://pleiades.stoa.org/places/889232641,Pomeroy Wood,Gittisham Roman fort,Pomeroy Wood,100.0,modern name,189
+"settlement|Pen-y-Gaer|-3.20952,51.88890",settlement,Pen-y-Gaer,,-3.20952,51.8889,https://pleiades.stoa.org/places/776990479,Pen-y-Gaer Roman fort,Pen y Gaer,Pen-y-Gaer Roman fort,100.0,modern name,96
+"settlement|nan|-3.98789,52.18886",settlement,,BREMIA?,-3.98789,52.18886,https://pleiades.stoa.org/places/79353,Bremia,Bremia,Bremia,100.0,roman name,229
+"settlement|Netherby|-2.94807,55.03655",settlement,Netherby,CASTRA EXPLORATORVM,-2.94807,55.03655,https://pleiades.stoa.org/places/89142,Castra Exploratorum,Castra Exploratorum,Castra Exploratorum,100.0,roman name,140
+"settlement|Carriden|-3.56554,56.00993",settlement,Carriden,VELVNIATE,-3.56554,56.00993,https://pleiades.stoa.org/places/89309,Velunia(te),Veluniate,Velunia(te),100.0,roman name,94
+"settlement|Cramond|-3.29879,55.97786",settlement,Cramond,,-3.29879,55.97786,https://pleiades.stoa.org/places/89153,Cramond,Cramond,Cramond,100.0,modern name,86
+"settlement|Croy Hill|-4.03051,55.96385",settlement,Croy Hill,,-4.03051,55.96385,https://pleiades.stoa.org/places/89155,Croy Hill,Croy Hill,Croy Hill,100.0,modern name,119
+"settlement|Easter Happrew|-3.27946,55.64839",settlement,Easter Happrew,,-3.27946,55.64839,https://pleiades.stoa.org/places/89173,Easter Happrew Roman Fort,Easter Happrew,Easter Happrew Roman Fort,100.0,modern name,124
+"settlement|Newstead|-2.68460,55.60007",settlement,Newstead,TRIMONTIVM,-2.6846,55.60007,https://pleiades.stoa.org/places/89304,Trimontium,Trimontium,Trimontium,100.0,roman name,416
+"settlement|nan|-2.26080,55.28030",settlement,,BREMENIVM,-2.2608,55.2803,https://pleiades.stoa.org/places/89124,Bremenium,Bremenium,Bremenium,100.0,roman name,285
+"settlement|Risingham|-2.17199,55.16850",settlement,Risingham,HABITANCVM,-2.17199,55.1685,https://pleiades.stoa.org/places/89196,Habitancum,Habitancum,Habitancum,100.0,roman name,207
+"settlement|South Shields|-1.43219,55.00367",settlement,South Shields,ARBEIA,-1.43219,55.00367,https://pleiades.stoa.org/places/89104,Arbeia,Arbeia,Arbeia,100.0,roman name,113
+"settlement|Wallsend military vicus|-1.53121,54.98670",settlement,Wallsend military vicus,SEGEDVNVM,-1.53121,54.9867,https://pleiades.stoa.org/places/89288,Segedunum,Segedunum,Segedunum,100.0,roman name,150
+"settlement|Newcastle military vicus|-1.61270,54.96771",settlement,Newcastle military vicus,PONS AELIUS,-1.6127,54.96771,https://pleiades.stoa.org/places/89275,Pons Aeli,Pons Aelius,Pons Aeli,100.0,roman name,209
+"settlement|Benwell extra-mural settlement|-1.66410,54.97656",settlement,Benwell extra-mural settlement,CONDERCVM,-1.6641,54.97656,https://pleiades.stoa.org/places/89150,Condercum,Condercum,Condercum,100.0,roman name,60
+"settlement|Rudchester|-1.82584,55.00113",settlement,Rudchester,VINDOBALA,-1.82584,55.00113,https://pleiades.stoa.org/places/89315,Vindovala,Vindobala,Vindovala,100.0,roman name,143
+"settlement|Haltonchesters|-2.00571,55.00967",settlement,Haltonchesters,ONNVM,-2.00571,55.00967,https://pleiades.stoa.org/places/89201,Onnum,Onnum,Onnum,100.0,roman name,81
+"settlement|Chesters extra-mural settlement|-2.14073,55.02453",settlement,Chesters extra-mural settlement,CILVRNVM,-2.14073,55.02453,https://pleiades.stoa.org/places/89144,Cilurnum,Cilurnum,Cilurnum,100.0,roman name,164
+"settlement|Carrawburgh|-2.22342,55.03427",settlement,Carrawburgh,BROCOLITIA,-2.22342,55.03427,https://pleiades.stoa.org/places/89128,Brocolitia,Brocolitia,*Brocolitia,100.0,roman name,87
+"settlement|Housesteads|-2.33104,55.01219",settlement,Housesteads,VERCOVICIVM,-2.33104,55.01219,https://pleiades.stoa.org/places/89311,Vercovicium,Vercouicium,*Vercovicium,100.0,roman name,134
+"settlement|Chesterholm|-2.36199,54.99108",settlement,Chesterholm,VINDOLANDA,-2.36199,54.99108,https://pleiades.stoa.org/places/89313,Vindolanda,Vindolanda,Vindolanda,100.0,roman name,115
+"settlement|Whitley Castle|-2.47912,54.83188",settlement,Whitley Castle,EPIACVM?,-2.47912,54.83188,https://pleiades.stoa.org/places/89176,Epiakon (Epiacum),Epiacum,Epiakon (Epiacum),100.0,roman name,178
+"settlement|Ebchester|-1.84171,54.89228",settlement,Ebchester,VINDOMORA,-1.84171,54.89228,https://pleiades.stoa.org/places/89314,Vindomora,Vindomora,Vindomora,100.0,roman name,233
+"settlement|Great Chesters|-2.46319,54.99366",settlement,Great Chesters,AESICA,-2.46319,54.99366,https://pleiades.stoa.org/places/89095,(A)Esica,AEsica,(A)Esica,100.0,roman name,159
+"settlement|Carvoran|-2.52108,54.98377",settlement,Carvoran,MAGNA,-2.52108,54.98377,https://pleiades.stoa.org/places/89238,Magnis,Magna,Magnis,100.0,roman name,236
+"settlement|Birdoswald|-2.59977,54.99007",settlement,Birdoswald,BANNA,-2.59977,54.99007,https://pleiades.stoa.org/places/89109,Banna,Banna,Banna,100.0,roman name,182
+"settlement|Nether Denton|-2.63661,54.97333",settlement,Nether Denton,,-2.63661,54.97333,https://pleiades.stoa.org/places/24547397,Nether Denton Roman fort,Nether Denton Roman fort,Nether Denton Roman fort,100.0,modern name,209
+"settlement|Castlesteads|-2.76156,54.96427",settlement,Castlesteads,CAMBOGLANNA,-2.76156,54.96427,https://pleiades.stoa.org/places/89133,Camboglanna,Camboglanna,*Camboglanna,100.0,roman name,151
+"settlement|Stanwix|-2.93599,54.90417",settlement,Stanwix,VXELODVNVM / PETRIANA,-2.93599,54.90417,https://pleiades.stoa.org/places/89307,Uxelodu(nu)m,Uxelodunum,Uxelodu(nu)m,100.0,roman name,148
+"settlement|Kirkbride|-3.20032,54.90430",settlement,Kirkbride,,-3.20032,54.9043,https://pleiades.stoa.org/places/774886524,Kirkbride,Kirkbride,Kirkbride,100.0,modern name,106
+"settlement|Bowness|-3.21460,54.95221",settlement,Bowness,MAIA,-3.2146,54.95221,https://pleiades.stoa.org/places/89239,Maia,Maia,Maia,100.0,roman name,85
+"settlement|Moresby|-3.57407,54.57415",settlement,Moresby,GABROSENTVM,-3.57407,54.57415,https://pleiades.stoa.org/places/89189,Gabrosentum,Gabrosentum,Gabrosentum,100.0,roman name,145
+"settlement|Ravenglass|-3.40542,54.35119",settlement,Ravenglass,GLANNAVENTA or ITVNOCELVM,-3.40542,54.35119,https://pleiades.stoa.org/places/89193,Glannoventa,Glannoventa,*Glannoventa,90.9,roman name,184
+"settlement|Watercrook|-2.74632,54.30845",settlement,Watercrook,ALAVANA?,-2.74632,54.30845,https://pleiades.stoa.org/places/89102,Watercrook Roman Fort and Settlement,Alauna,Watercrook Roman Fort and Settlement,92.3,roman name,210
+"settlement|Low Borrowbridge|-2.60163,54.40297",settlement,Low Borrowbridge,,-2.60163,54.40297,https://pleiades.stoa.org/places/89232,Low Borrowbridge,Low Borrowbridge,Low Borrowbridge,100.0,modern name,283
+"settlement|Burrow-in-Lonsdale or Overburrow|-2.59382,54.17766",settlement,Burrow-in-Lonsdale or Overburrow,GALACVM,-2.59382,54.17766,https://pleiades.stoa.org/places/89215,Kalagon/Galacum,Galacum,Kalagon/Galacum,100.0,roman name,706
+"settlement|Ilkley|-1.82453,53.92481",settlement,Ilkley,,-1.82453,53.92481,https://pleiades.stoa.org/places/89205,Ilkley (Verbeia?),Ilkley,Ilkley (Verbeia?),100.0,modern name,206
+"settlement|Roecliffe|-1.40992,54.09481",settlement,Roecliffe,,-1.40992,54.09481,https://pleiades.stoa.org/places/209534779,Roecliffe Fort,Roecliffe Fort,Roecliffe Fort,100.0,modern name,230
+"settlement|Melandra Castle|-1.98673,53.45076",settlement,Melandra Castle,ARDOTALIA?,-1.98673,53.45076,https://pleiades.stoa.org/places/79777,Ardotalia (Zerdotalia),Ardotalia,Ardotalia (Zerdotalia),100.0,roman name,179
+"settlement|Brough on Noe|-1.72758,53.34016",settlement,Brough on Noe,NAVIO,-1.72758,53.34016,https://pleiades.stoa.org/places/79605,Navio,Navio,Navio,100.0,roman name,155
+"settlement|Templeborough|-1.38705,53.41800",settlement,Templeborough,,-1.38705,53.418,https://pleiades.stoa.org/places/79710,Templebrough,Templeborough,Templebrough,96.0,modern name,496
+"settlement|Osmanthorpe|-0.98840,53.09815",settlement,Osmanthorpe,,-0.9884,53.09815,https://pleiades.stoa.org/places/28699541,Osmanthorpe Roman vexillation fortress,Osmanthorpe Roman vexillation fortress,Osmanthorpe Roman vexillation fortress,100.0,modern name,716
+"settlement|Bainbridge|-2.09602,54.30678",settlement,Bainbridge,VIROSIDVM,-2.09602,54.30678,https://pleiades.stoa.org/places/89317,Virosidum,Virosidum,Virosidum,100.0,roman name,123
+"settlement|Chester|-2.89098,53.18654",settlement,Chester,DEVA,-2.89098,53.18654,https://pleiades.stoa.org/places/79420,Deva,Deva,Deva,100.0,roman name,583
+"settlement|Prestatyn|-3.40875,53.32397",settlement,Prestatyn,,-3.40875,53.32397,https://pleiades.stoa.org/places/718938476,Prestatyn,Prestatyn,Prestatyn,100.0,modern name,65
+"settlement|Llanfor|-3.58196,52.91343",settlement,Llanfor,,-3.58196,52.91343,https://pleiades.stoa.org/places/975153391,Llanfor,Llanfor,Llanfor,100.0,modern name,108

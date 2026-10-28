@@ -1,0 +1,467 @@
+key,layer,modern_name,roman_name,lon,lat,nearest_title,nearest_place_title,nearest_score,nearest_basis,nearest_distance_m,nearest_uri
+"military|Alcester|-1.86661,52.20426",military,Alcester,unknown,-1.86661,52.20426,,,,,,
+"military|Ambleside|-2.96875,54.42252",military,Ambleside,uncertain,-2.96875,54.42252,Galava,Galava,26.7,modern name,29.0,https://pleiades.stoa.org/places/89191
+"military|Ardoch|-3.87528,56.26768",military,Ardoch,unknown,-3.87528,56.26768,Alauna,Alauna,16.7,modern name,18.0,https://pleiades.stoa.org/places/89096
+"military|Axminster (Woodbury)|-2.99637,50.77175",military,Axminster (Woodbury),,-2.99637,50.77175,Moridunum,Moridunum,33.3,roman name,14.0,https://pleiades.stoa.org/places/83868
+"military|Beattock fortlet|-3.44324,55.31124",military,Beattock fortlet,unknown,-3.44324,55.31124,Tassiesholm,Tassiesholm,21.1,modern name,1634.0,https://pleiades.stoa.org/places/292892276
+"military|Blackbush Farm|-2.89566,51.99098",military,Blackbush Farm,unknown,-2.89566,51.99098,,,,,,
+"military|Blakehope|-2.22378,55.24463",military,Blakehope,,-2.22378,55.24463,Dargues,Dargues,20.0,roman name,795.0,https://pleiades.stoa.org/places/811686778
+"military|Brithdir fortlet|-3.82091,52.75342",military,Brithdir fortlet,,-3.82091,52.75342,,,,,,
+"military|Brough-on-Humber|-0.57837,53.72955",military,Brough-on-Humber,PETVUARIA,-0.57837,53.72955,,,,,,
+"military|Bryn-y-Gefeilau|-3.87397,53.09768",military,Bryn-y-Gefeilau,,-3.87397,53.09768,Caer Llugwy,Caer Llugwy,28.6,roman name,18.0,https://pleiades.stoa.org/places/601039653
+"military|Buckton|-2.89688,52.35462",military,Buckton,,-2.89688,52.35462,Brandon Camp,Brandon Camp,40.0,roman name,1351.0,https://pleiades.stoa.org/places/134603097
+"military|Burgh-by-Sands I|-3.05642,54.91406",military,Burgh-by-Sands I,,-3.05642,54.91406,Aballava,Aballava,50.0,roman name,1005.0,https://pleiades.stoa.org/places/89092
+"military|Camelon|-3.82464,56.00818",military,Camelon,,-3.82464,56.00818,Colani(c)a?,Colani(c)a?,40.0,roman name,20.0,https://pleiades.stoa.org/places/89148
+"military|Cardean|-3.16127,56.60053",military,Cardean,,-3.16127,56.60053,,,,,,
+"military|Castle Hill|-4.36242,55.92433",military,Castle Hill,,-4.36242,55.92433,Castlehill,Castlehill,50.0,roman name,53.0,https://pleiades.stoa.org/places/89141
+"military|Castledykes|-3.70564,55.67987",military,Castledykes,,-3.70564,55.67987,Corda?,Corda?,25.0,roman name,11.0,https://pleiades.stoa.org/places/89139
+"military|Castleshaw fort/fortlet|-2.00327,53.58321",military,Castleshaw fort/fortlet,,-2.00327,53.58321,Rigodounon?,Rigodounon?,50.0,roman name,5.0,https://pleiades.stoa.org/places/79656
+"military|CHESTER|-2.89178,53.19020",military,CHESTER,,-2.89178,53.1902,Roman amphitheater at Deva,Roman amphitheater at Deva,50.0,roman name,339.0,https://pleiades.stoa.org/places/989985175
+"military|Chesterfield|-1.42507,53.23547",military,Chesterfield,,-1.42507,53.23547,,,,,,
+"military|Chichester|-0.77927,50.83693",military,Chichester,,-0.77927,50.83693,Noviomagus,Noviomagus,30.8,roman name,779.0,https://pleiades.stoa.org/places/79622
+"military|Clifford|-3.09861,52.11271",military,Clifford,,-3.09861,52.11271,,,,,,
+"military|COLCHESTER|0.89772,51.89034",military,COLCHESTER,,0.89772,51.89034,Ad Ansam,Ad Ansam,50.0,roman name,247.0,https://pleiades.stoa.org/places/79283
+"military|Corbridge Red House|-2.04564,54.98097",military,Corbridge Red House,,-2.04564,54.98097,Coriosopitum/Coria,*Coriosopitum/Coria,25.0,roman name,1088.0,https://pleiades.stoa.org/places/89152
+"military|Dalginross|-3.98797,56.36604",military,Dalginross,,-3.98797,56.36604,Bannatia?,Bannatia?,36.4,roman name,35.0,https://pleiades.stoa.org/places/89112
+"military|Droitwich|-2.14547,52.27149",military,Droitwich,,-2.14547,52.27149,Salinae,Salinae,40.0,roman name,676.0,https://pleiades.stoa.org/places/79668
+"military|Drumquhassle|-4.43628,56.05578",military,Drumquhassle,,-4.43628,56.05578,Lindon?,Lindon?,44.4,roman name,1365.0,https://pleiades.stoa.org/places/89226
+"military|Eaton Constantine|-2.59493,52.64284",military,Eaton Constantine,,-2.59493,52.64284,,,,,,
+"military|Fendoch|-3.75460,56.43400",military,Fendoch,,-3.7546,56.434,Sma Glen Signal Station,Sma' Glen Signal Station,44.4,roman name,1038.0,https://pleiades.stoa.org/places/445439617
+"military|Fendoch fortlet|-3.76782,56.42997",military,Fendoch fortlet,,-3.76782,56.42997,Sma Glen Signal Station,Sma' Glen Signal Station,44.4,roman name,708.0,https://pleiades.stoa.org/places/445439617
+"military|Forden Gaer|-3.17027,52.58218",military,Forden Gaer,,-3.17027,52.58218,Lavobrinta?,‘Lavobrinta’?,30.8,roman name,49.0,https://pleiades.stoa.org/places/79556
+"military|Godmanchester|-0.17280,52.31869",military,Godmanchester,,-0.1728,52.31869,Durovigutum,Durovigutum,0.0,roman name,95.0,https://pleiades.stoa.org/places/79440
+"military|Greensforge A|-2.20273,52.49311",military,Greensforge A,,-2.20273,52.49311,,,,,,
+"military|Greensforge B|-2.20289,52.49576",military,Greensforge B,,-2.20289,52.49576,,,,,,
+"military|Hayton|-0.75882,53.89852",military,Hayton,,-0.75882,53.89852,,,,,,
+"military|Hirfynydd fortlet|-3.69814,51.74645",military,Hirfynydd fortlet,,-3.69814,51.74645,,,,,,
+"military|Inchtuthil|-3.42483,56.54130",military,Inchtuthil,,-3.42483,56.5413,Pinnata Castra,Pinnata Castra,40.0,roman name,107.0,https://pleiades.stoa.org/places/92179
+"military|Kelvedon|0.70357,51.83442",military,Kelvedon,,0.70357,51.83442,Canonium,Canonium,36.4,roman name,529.0,https://pleiades.stoa.org/places/79373
+"military|Learchild|-1.84250,55.39569",military,Learchild,Alione,-1.8425,55.39569,Alauna,Alauna,60.0,roman name,1397.0,https://pleiades.stoa.org/places/89099
+"military|Lease Rigg|-0.74691,54.42691",military,Lease Rigg,,-0.74691,54.42691,,,,,,
+"military|LINCOLN|-0.53824,53.23526",military,LINCOLN,,-0.53824,53.23526,Newport Arch city gate,Newport Arch city gate,28.6,roman name,222.0,https://pleiades.stoa.org/places/670424966
+"military|Kirkton, Livingston|-3.53687,55.88337",military,"Kirkton, Livingston",,-3.53687,55.88337,,,,,,
+"military|Longshaws|-1.79030,55.19002",military,Longshaws,,-1.7903,55.19002,,,,,,
+"military|Low Hesket / Barrock Fell|-2.83442,54.81398",military,Low Hesket / Barrock Fell,,-2.83442,54.81398,,,,,,
+"military|Malton|-0.79111,54.13548",military,Malton,DELGOVICIA,-0.79111,54.13548,Derventio,Derventio,42.1,roman name,170.0,https://pleiades.stoa.org/places/89166
+"military|Marton|-0.75300,53.32908",military,Marton,,-0.753,53.32908,Segelocum,Segelocum,0.0,roman name,996.0,https://pleiades.stoa.org/places/79677
+"military|Melandra|-1.98775,53.45221",military,Melandra,,-1.98775,53.45221,Ardotalia (Zerdotalia),Ardotalia (Zerdotalia),36.4,roman name,3.0,https://pleiades.stoa.org/places/79777
+"military|Neath|-3.81329,51.66379",military,Neath,,-3.81329,51.66379,Nido,‘Nido’,28.6,roman name,64.0,https://pleiades.stoa.org/places/79616
+"military|Newbrough fortlet|-2.20733,55.00612",military,Newbrough fortlet,,-2.20733,55.00612,Red House Roman Camp,Red House Roman Camp,50.0,roman name,1066.0,https://pleiades.stoa.org/places/64136857
+"military|Newton on Trent|-0.76851,53.25536",military,Newton on Trent,,-0.76851,53.25536,,,,,,
+"military|Orchard Hill Farm|-1.69498,52.17142",military,Orchard Hill Farm,,-1.69498,52.17142,,,,,,
+"military|Penycrocbren fortlet|-3.68764,52.52720",military,Penycrocbren fortlet,,-3.68764,52.5272,,,,,,
+"military|Pen-y-Darren|-3.37743,51.75127",military,Pen-y-Darren,,-3.37743,51.75127,Penydarren Roman fort,Penydarren Roman fort,50.0,roman name,63.0,https://pleiades.stoa.org/places/100271079
+"military|Pen Min Cae|-3.45590,52.17494",military,Pen Min Cae,,-3.4559,52.17494,,,,,,
+"military|Pennal|-3.91261,52.58326",military,Pennal,,-3.91261,52.58326,Cefn Caer,Cefn Caer,33.3,roman name,28.0,https://pleiades.stoa.org/places/865964169
+"military|Rhyn Park|-3.03488,52.92514",military,Rhyn Park,,-3.03488,52.92514,,,,,,
+"military|Rossington Bridge|-1.05427,53.48453",military,Rossington Bridge,,-1.05427,53.48453,,,,,,
+"military|Scaftworth fortlet|-1.00949,53.42750",military,Scaftworth fortlet,,-1.00949,53.4275,Bawtry Roman fort,Bawtry Roman fort,50.0,roman name,2.0,https://pleiades.stoa.org/places/691963965
+"military|Stamford Bridge|-0.93100,53.98249",military,Stamford Bridge,DERVENTIO,-0.931,53.98249,,,,,,
+"military|Stretford Bridge|-2.84170,52.45633",military,Stretford Bridge,,-2.8417,52.45633,,,,,,
+"military|Thorny Hill fortlet|-3.58796,56.36601",military,Thorny Hill fortlet,,-3.58796,56.36601,,,,,,
+"military|Throp fortlet|-2.57761,54.98687",military,Throp fortlet,,-2.57761,54.98687,Banna,Banna,50.0,roman name,1609.0,https://pleiades.stoa.org/places/89109
+"military|Troutbeck|-2.95843,54.63610",military,Troutbeck,,-2.95843,54.6361,,,,,,
+"military|Walton-le-Dale|-2.68164,53.74799",military,Walton-le-Dale,,-2.68164,53.74799,,,,,,
+"military|Whickham (Washingwells)|-1.66018,54.93615",military,Whickham (Washingwells),,-1.66018,54.93615,Washing Wells Roman Fort,Washing Wells Roman Fort,50.0,roman name,102.0,https://pleiades.stoa.org/places/455355586
+"military|Bishopton, Whitemoss|-4.53124,55.91576",military,"Bishopton, Whitemoss",unknown,-4.53124,55.91576,Whitemoss Roman auxiliary fort,Whitemoss Roman auxiliary fort,64.3,modern name,106.0,https://pleiades.stoa.org/places/933587195
+"military|Whitley Castle|-2.47634,54.83219",military,Whitley Castle,,-2.47634,54.83219,Epiakon (Epiacum),Epiakon (Epiacum),40.0,roman name,6.0,https://pleiades.stoa.org/places/89176
+"military|Wigan|-2.63030,53.55023",military,Wigan,,-2.6303,53.55023,Coccium?,Coccium?,0.0,roman name,562.0,https://pleiades.stoa.org/places/662928353
+"military|Wigston Parva|-1.31935,52.49978",military,Wigston Parva,,-1.31935,52.49978,Venonis,Venonis,40.0,roman name,1353.0,https://pleiades.stoa.org/places/79732
+"military|Wreay (aka Park House)|-2.86989,54.83798",military,Wreay (aka Park House),,-2.86989,54.83798,,,,,,
+"military|Wroxeter fort|-2.64854,52.66586",military,Wroxeter fort,,-2.64854,52.66586,Viroconium,Viroconium,15.4,roman name,1010.0,https://pleiades.stoa.org/places/79741
+"military|Brecon Gaer|-3.45158,51.95644",military,Brecon Gaer,,-3.45158,51.95644,Cicutio,‘Cicutio’,0.0,roman name,10.0,https://pleiades.stoa.org/places/79389
+"military|Y Pigwn / Waun Ddu|-3.71783,51.96544",military,Y Pigwn / Waun Ddu,,-3.71783,51.96544,,,,,,
+"military|Thirkleby|-1.27683,54.18918",military,Thirkleby,,-1.27683,54.18918,,,,,,
+"military|Carkin Moor|-1.74165,54.46639",military,Carkin Moor,,-1.74165,54.46639,,,,,,
+"military|Kirkham|-2.86463,53.78066",military,Kirkham,,-2.86463,53.78066,,,,,,
+"military|Burscough|-2.83610,53.59128",military,Burscough,,-2.8361,53.59128,,,,,,
+"military|Long Sandall|-1.09397,53.55007",military,Long Sandall,,-1.09397,53.55007,,,,,,
+"military|Thorp Audlin|-1.28635,53.64385",military,Thorp Audlin,,-1.28635,53.64385,,,,,,
+"military|Burghwallis|-1.21748,53.60169",military,Burghwallis,,-1.21748,53.60169,,,,,,
+"military|Staxton|-0.43321,54.20066",military,Staxton,,-0.43321,54.20066,,,,,,
+"military|Highstones|-1.90457,53.48780",military,Highstones,,-1.90457,53.4878,,,,,,
+"military|Worlow|-1.94482,53.58993",military,Worlow,,-1.94482,53.58993,,,,,,
+"military|Fenny Stratford|-0.70179,51.99307",military,Fenny Stratford,,-0.70179,51.99307,Magiovinium,Magiovinium,28.6,roman name,1162.0,https://pleiades.stoa.org/places/79586
+"military|Parkneuk|-3.75423,56.34610",military,Parkneuk,,-3.75423,56.3461,Strageath,Strageath,16.7,roman name,1840.0,https://pleiades.stoa.org/places/89293
+"military|Roundlaw|-3.68760,56.35088",military,Roundlaw,,-3.6876,56.35088,Kirkhill Roman signal station,Kirkhill Roman signal station,50.0,roman name,958.0,https://pleiades.stoa.org/places/121620025
+"military|Witch Knowe|-3.62380,56.35749",military,Witch Knowe,,-3.6238,56.35749,Muir O Fauld,Muir O' Fauld,25.0,roman name,1645.0,https://pleiades.stoa.org/places/814043436
+"military|Raith|-3.72967,56.34698",military,Raith,,-3.72967,56.34698,,,,,,
+"military|Ardunie|-3.70550,56.34947",military,Ardunie,,-3.7055,56.34947,,,,,,
+"military|Moss Side|-3.60748,56.36120",military,Moss Side,,-3.60748,56.3612,,,,,,
+"military|Black Hill|-3.34138,56.53715",military,Black Hill,unknown,-3.34138,56.53715,,,,,,
+"military|Black Hill|-3.86646,56.27517",military,Black Hill,unknown,-3.86646,56.27517,Alauna,Alauna,36.4,modern name,995.0,https://pleiades.stoa.org/places/89096
+"military|Gask House|-3.63548,56.35428",military,Gask House,,-3.63548,56.35428,Muir O Fauld,Muir O' Fauld,25.0,roman name,848.0,https://pleiades.stoa.org/places/814043436
+"military|Thorny Hill|-3.58692,56.36605",military,Thorny Hill,,-3.58692,56.36605,,,,,,
+"military|Westmuir|-3.57395,56.36936",military,Westmuir,,-3.57395,56.36936,,,,,,
+"military|Rubers Law|-2.66470,55.43215",military,Rubers Law,,-2.6647,55.43215,,,,,,
+"military|Craik Cross Hill|-3.09915,55.33167",military,Craik Cross Hill,,-3.09915,55.33167,,,,,,
+"military|Shielhill North (Westerton)|-3.84974,56.28840",military,Shielhill North (Westerton),,-3.84974,56.2884,Kaims Castle,Kaims Castle,25.0,roman name,888.0,https://pleiades.stoa.org/places/224098652
+"military|Peel|-3.52346,56.39189",military,Peel,,-3.52346,56.39189,,,,,,
+"military|Woodlea|-3.88875,56.24257",military,Woodlea,,-3.88875,56.24257,,,,,,
+"military|Shielhill South|-3.85923,56.28199",military,Shielhill South,,-3.85923,56.28199,Alauna,Alauna,44.4,roman name,1873.0,https://pleiades.stoa.org/places/89096
+"military|West Mains of Huntingtower|-3.50579,56.40497",military,West Mains of Huntingtower,,-3.50579,56.40497,,,,,,
+"military|Tollpark|-3.95729,55.97874",military,Tollpark,,-3.95729,55.97874,Castlecary,Castlecary,15.4,roman name,1115.0,https://pleiades.stoa.org/places/89138
+"military|Beattock Summit|-3.58302,55.42155",military,Beattock Summit,unknown,-3.58302,55.42155,,,,,,
+"military|Westerton|-3.82312,56.31031",military,Westerton,,-3.82312,56.31031,,,,,,
+"military|Woodhead, or Woodhead Cottage|-3.39229,56.49615",military,"Woodhead, or Woodhead Cottage",,-3.39229,56.49615,,,,,,
+"military|Coats Hill|-3.46055,55.32873",military,Coats Hill,,-3.46055,55.32873,,,,,,
+"military|White Type|-3.49237,55.39213",military,White Type,,-3.49237,55.39213,,,,,,
+"military|Carmaben Hill|-3.41949,55.70791",military,Carmaben Hill,,-3.41949,55.70791,,,,,,
+"military|Westmuir|-3.03845,56.65933",military,Westmuir,,-3.03845,56.65933,,,,,,
+"military|Netherwood|-3.97180,55.97659",military,Netherwood,,-3.9718,55.97659,Westerwood,Westerwood,0.0,roman name,1411.0,https://pleiades.stoa.org/places/89321
+"military|Greenhill|-3.90268,56.05796",military,Greenhill,,-3.90268,56.05796,,,,,,
+"military|Burnshot|-3.53052,56.00208",military,Burnshot,,-3.53052,56.00208,,,,,,
+"military|Soutra Aisle|-2.87370,55.81710",military,Soutra Aisle,,-2.8737,55.8171,,,,,,
+"military|Thornhill (or Templand Mains)|-3.76791,55.23464",military,Thornhill (or Templand Mains),,-3.76791,55.23464,,,,,,
+"military|Summerston|-4.28336,55.92401",military,Summerston,,-4.28336,55.92401,Balmuildy Roman Fort,Balmuildy Roman Fort,50.0,roman name,1031.0,https://pleiades.stoa.org/places/89108
+"military|Bonnyside East signal platform|-3.86469,55.99704",military,Bonnyside East signal platform,,-3.86469,55.99704,Rough Castle,Rough Castle,22.2,roman name,594.0,https://pleiades.stoa.org/places/89282
+"military|Bonnyside|-3.86020,55.99732",military,Bonnyside,,-3.8602,55.99732,Rough Castle,Rough Castle,22.2,roman name,313.0,https://pleiades.stoa.org/places/89282
+"military|Tentfield East signal platform|-3.83640,55.99761",military,Tentfield East signal platform,,-3.8364,55.99761,Colani(c)a?,Colani(c)a?,40.0,roman name,1372.0,https://pleiades.stoa.org/places/89148
+"military|Tentfield West signal platform|-3.84537,55.99825",military,Tentfield West signal platform,,-3.84537,55.99825,Colani(c)a?,Colani(c)a?,40.0,roman name,1682.0,https://pleiades.stoa.org/places/89148
+"military|Bonnyside West signal platform|-3.86999,55.99703",military,Bonnyside West signal platform,,-3.86999,55.99703,Rough Castle,Rough Castle,22.2,roman name,921.0,https://pleiades.stoa.org/places/89282
+"military|Tower 25b (Fothergill)|-3.51354,54.69616",military,Tower 25b (Fothergill),,-3.51354,54.69616,,,,,,
+"military|Tower 25a (Risehow)|-3.51184,54.70074",military,Tower 25a (Risehow),,-3.51184,54.70074,,,,,,
+"military|Milefortlet 23 (Sea Brows)|-3.48476,54.72784",military,Milefortlet 23 (Sea Brows),,-3.48476,54.72784,Alauna/Alione,Alauna/Alione,44.4,roman name,966.0,https://pleiades.stoa.org/places/89097
+"military|Milefortlet 22 (Brownrigg)|-3.46601,54.73630",military,Milefortlet 22 (Brownrigg),,-3.46601,54.7363,Swarthy Hill,Swarthy Hill,20.0,roman name,1524.0,https://pleiades.stoa.org/places/590945140
+"military|Brownrigg North Tower 21b|-3.46025,54.73890",military,Brownrigg North Tower 21b,,-3.46025,54.7389,Swarthy Hill,Swarthy Hill,20.0,roman name,1065.0,https://pleiades.stoa.org/places/590945140
+"military|Maryport Golf Course tower 22a|-3.47226,54.73358",military,Maryport Golf Course tower 22a,,-3.47226,54.73358,Alauna/Alione,Alauna/Alione,44.4,roman name,1976.0,https://pleiades.stoa.org/places/89097
+"military|Milefortlet 20 (Low Mire, Heather Bank)|-3.43616,54.75654",military,"Milefortlet 20 (Low Mire, Heather Bank)",,-3.43616,54.75654,Swarthy Hill,Swarthy Hill,20.0,roman name,1432.0,https://pleiades.stoa.org/places/590945140
+"military|Milefortlet 17 (Dubmill Point)|-3.43689,54.79705",military,Milefortlet 17 (Dubmill Point),,-3.43689,54.79705,Coastal Tower 16b (Old Mawbray),Coastal Tower 16b (Old Mawbray),40.0,roman name,496.0,https://pleiades.stoa.org/places/748146994
+"military|Tower 16b (Mawbray Sandpit)|-3.43523,54.80133",military,Tower 16b (Mawbray Sandpit),,-3.43523,54.80133,Coastal Tower 16b (Old Mawbray),Coastal Tower 16b (Old Mawbray),40.0,roman name,12.0,https://pleiades.stoa.org/places/748146994
+"military|Tower 16A (Cote Howe)|-3.43091,54.80535",military,Tower 16A (Cote Howe),,-3.43091,54.80535,Coastal Tower 16b (Old Mawbray),Coastal Tower 16b (Old Mawbray),40.0,roman name,514.0,https://pleiades.stoa.org/places/748146994
+"military|Milefortlet 16 (Mawbray)|-3.42830,54.80963",military,Milefortlet 16 (Mawbray),,-3.4283,54.80963,B(r)ibra?,B(r)ibra?,50.0,roman name,1936.0,https://pleiades.stoa.org/places/89125
+"military|Tower 15a (Bank Mill)|-3.42542,54.81796",military,Tower 15a (Bank Mill),,-3.42542,54.81796,B(r)ibra?,B(r)ibra?,50.0,roman name,1006.0,https://pleiades.stoa.org/places/89125
+"military|Milefortlet 15, Holme St. Cuthbert|-3.42165,54.82220",military,"Milefortlet 15, Holme St. Cuthbert",,-3.42165,54.8222,B(r)ibra?,B(r)ibra?,50.0,roman name,477.0,https://pleiades.stoa.org/places/89125
+"military|Tower 13b (Wolsty South)|-3.40829,54.83803",military,Tower 13b (Wolsty South),,-3.40829,54.83803,B(r)ibra?,B(r)ibra?,50.0,roman name,1481.0,https://pleiades.stoa.org/places/89125
+"military|Tower 15a (Wolsty North)|-3.40566,54.84261",military,Tower 15a (Wolsty North),,-3.40566,54.84261,,,,,,
+"military|Silloth Golf Course Tower 12b (Blitterlees South)|-3.40190,54.85131",military,Silloth Golf Course Tower 12b (Blitterlees South),,-3.4019,54.85131,,,,,,
+"military|Silloth Golf Course tower 12a (Blitterlees 12a)|-3.39935,54.85582",military,Silloth Golf Course tower 12a (Blitterlees 12a),,-3.39935,54.85582,,,,,,
+"military|Milefortlet 12 (Blitterlees)|-3.39712,54.85979",military,Milefortlet 12 (Blitterlees),,-3.39712,54.85979,,,,,,
+"military|Milefortlet 5 (Cardurnock)|-3.29546,54.91345",military,Milefortlet 5 (Cardurnock),,-3.29546,54.91345,,,,,,
+"military|Tower 4b (Cardurnock)|-3.29466,54.91717",military,Tower 4b (Cardurnock),,-3.29466,54.91717,,,,,,
+"military|Tower 4a (Pow Drain)|-3.29189,54.92260",military,Tower 4a (Pow Drain),,-3.29189,54.9226,Pasture House Turret 3A,Pasture House Turret 3A,20.0,roman name,1613.0,https://pleiades.stoa.org/places/189058537
+"military|Milefortlet 4 (Herd Hill)|-3.28953,54.92623",military,Milefortlet 4 (Herd Hill),,-3.28953,54.92623,Pasture House Turret 3A,Pasture House Turret 3A,20.0,roman name,1245.0,https://pleiades.stoa.org/places/189058537
+"military|Tower 3b (Herd Hill North)|-3.28670,54.93079",military,Tower 3b (Herd Hill North),,-3.2867,54.93079,Pasture House Turret 3A,Pasture House Turret 3A,20.0,roman name,877.0,https://pleiades.stoa.org/places/189058537
+"military|Tower 3a (Pasture House West)|-3.27925,54.93153",military,Tower 3a (Pasture House West),,-3.27925,54.93153,Pasture House Turret 3A,Pasture House Turret 3A,20.0,roman name,395.0,https://pleiades.stoa.org/places/189058537
+"military|Milefortlet 3 (Pasture House)|-3.27165,54.93271",military,Milefortlet 3 (Pasture House),,-3.27165,54.93271,Pasture House Turret 3A,Pasture House Turret 3A,20.0,roman name,109.0,https://pleiades.stoa.org/places/189058537
+"military|Tower 2b (Campfield)|-3.26530,54.93514",military,Tower 2b (Campfield),,-3.2653,54.93514,Pasture House Turret 3A,Pasture House Turret 3A,20.0,roman name,593.0,https://pleiades.stoa.org/places/189058537
+"military|Llandeilo|-4.00388,51.88425",military,Llandeilo,,-4.00388,51.88425,Dynevor Park,Dynevor Park,28.6,roman name,10.0,https://pleiades.stoa.org/places/522959909
+"military|Blaenos|-3.81596,51.99242",military,Blaenos,,-3.81596,51.99242,Alabum,Alabum,36.4,roman name,1807.0,https://pleiades.stoa.org/places/79287
+"military|St. Sidwell's, Exeter|-3.52394,50.72577",military,"St. Sidwell's, Exeter",,-3.52394,50.72577,"Unnamed Roman fort, Cheeke Street, Exeter","Unnamed Roman fort, Cheeke Street, Exeter",50.0,roman name,36.0,https://pleiades.stoa.org/places/467104240
+"military|St. Loyes, Exeter|-3.50689,50.70741",military,"St. Loyes, Exeter",,-3.50689,50.70741,,,,,,
+"military|Upperton Farm, Drewsteignton|-3.75224,50.69914",military,"Upperton Farm, Drewsteignton",,-3.75224,50.69914,,,,,,
+"military|Higher Woodhall, Exbourne|-4.00122,50.80713",military,"Higher Woodhall, Exbourne",,-4.00122,50.80713,,,,,,
+"military|Bishop's Tawton|-4.02460,51.03023",military,Bishop's Tawton,,-4.0246,51.03023,,,,,,
+"military|Clayhanger or Bampton (Cudmore Farm)|-3.41478,50.98838",military,Clayhanger or Bampton (Cudmore Farm),,-3.41478,50.98838,,,,,,
+"military|Shute|-3.08164,50.78495",military,Shute,,-3.08164,50.78495,,,,,,
+"military|Whimple (Whimple Wood Farm)|-3.34230,50.75936",military,Whimple (Whimple Wood Farm),,-3.3423,50.75936,,,,,,
+"military|Sandford Orleigh, Newton Abbot|-3.61493,50.53795",military,"Sandford Orleigh, Newton Abbot",,-3.61493,50.53795,,,,,,
+"military|Rainsbury, Upton|-3.44208,51.05312",military,"Rainsbury, Upton",,-3.44208,51.05312,,,,,,
+"military|Budlake Farm, Killerton|-3.44900,50.79244",military,"Budlake Farm, Killerton",,-3.449,50.79244,,,,,,
+"military|Ide, Exeter|-3.57873,50.68909",military,"Ide, Exeter",,-3.57873,50.68909,,,,,,
+"military|Cemlyn|-4.52201,53.40148",military,Cemlyn,,-4.52201,53.40148,,,,,,
+"military|E of Vellow, Stogumber|-3.28855,51.13958",military,"E of Vellow, Stogumber",,-3.28855,51.13958,,,,,,
+"military|N of Hinton, Mudford|-2.60604,50.98695",military,"N of Hinton, Mudford",,-2.60604,50.98695,,,,,,
+"military|Row Moor, Kingsdon|-2.71594,51.01740",military,"Row Moor, Kingsdon",,-2.71594,51.0174,Catsgore,Catsgore,18.2,roman name,1754.0,https://pleiades.stoa.org/places/79380
+"military|Porthkea|-5.04857,50.24038",military,Porthkea,,-5.04857,50.24038,,,,,,
+"military|Kea|-5.11281,50.25095",military,Kea,,-5.11281,50.25095,,,,,,
+"military|Hamworthy|-1.99803,50.71166",military,Hamworthy,,-1.99803,50.71166,,,,,,
+"military|Saighton|-2.85912,53.16768",military,Saighton,,-2.85912,53.16768,Heronbridge,Heronbridge,14.3,roman name,1619.0,https://pleiades.stoa.org/places/79509
+"military|Punchbowl|-2.26512,54.52871",military,Punchbowl,,-2.26512,54.52871,,,,,,
+"military|Johnson's Plain|-2.24215,54.52957",military,Johnson's Plain,,-2.24215,54.52957,,,,,,
+"military|Augill Bridge|-2.28207,54.52713",military,Augill Bridge,,-2.28207,54.52713,,,,,,
+"military|Middleton Hall|-2.56857,54.28174",military,Middleton Hall,,-2.56857,54.28174,,,,,,
+"military|Aldoth, Raise Howe|-3.34571,54.82364",military,"Aldoth, Raise Howe",,-3.34571,54.82364,,,,,,
+"military|Burgh-by-Sands III|-3.06709,54.91840",military,Burgh-by-Sands III,,-3.06709,54.9184,Aballava,Aballava,50.0,roman name,1191.0,https://pleiades.stoa.org/places/89092
+"military|Kingsholm|-2.24227,51.87472",military,Kingsholm,,-2.24227,51.87472,Roman tilery at St Oswalds Priory,Roman tilery at St Oswald's Priory,50.0,roman name,699.0,https://pleiades.stoa.org/places/336635574
+"military|nan|-0.71095,54.52461",military,,,-0.71095,54.52461,Goldsborough Roman Signal Station,Goldsborough Roman Signal Station,50.0,roman name,4.0,https://pleiades.stoa.org/places/89194
+"military|nan|-0.93903,54.58837",military,,,-0.93903,54.58837,Huntcliff,Huntcliff,16.7,roman name,1885.0,https://pleiades.stoa.org/places/89202
+"military|nan|-2.86037,54.82646",military,,Wreay,-2.86037,54.82646,,,,,,
+"military|Wreay 2 (Scalesceugh Enclosure), Hesket|-2.86593,54.83494",military,"Wreay 2 (Scalesceugh Enclosure), Hesket",,-2.86593,54.83494,,,,,,
+"military|Trent Vale|-2.19831,52.98695",military,Trent Vale,,-2.19831,52.98695,,,,,,
+"military|Erglodd Fortlet, Llangynfelyn|-3.98617,52.49420",military,"Erglodd Fortlet, Llangynfelyn",,-3.98617,52.4942,,,,,,
+"military|Trawsgoed|-3.95240,52.33641",military,Trawsgoed,,-3.9524,52.33641,Trawscoed fort,Trawscoed fort,16.7,roman name,1340.0,https://pleiades.stoa.org/places/964510417
+"military|Llanlliwe|-4.64123,51.82818",military,Llanlliwe,,-4.64123,51.82818,,,,,,
+"military|Yet wen|-4.63152,51.78937",military,Yet wen,,-4.63152,51.78937,,,,,,
+"military|Castell Waun Withan|-4.36728,52.00871",military,Castell Waun Withan,,-4.36728,52.00871,,,,,,
+"military|Crychan Forest, Abererbwll|-3.67970,52.06008",military,"Crychan Forest, Abererbwll",,-3.6797,52.06008,,,,,,
+"military|nan|-3.59858,51.49712",military,,BOMIVM??,-3.59858,51.49712,,,,,,
+"military|Llanwern|-2.90258,51.59103",military,Llanwern,,-2.90258,51.59103,,,,,,
+"military|Grosmont|-2.83203,51.90120",military,Grosmont,,-2.83203,51.9012,,,,,,
+"military|Hafan|-3.41771,52.68668",military,Hafan,,-3.41771,52.68668,,,,,,
+"military|Llwyn Cadwgan|-3.57921,52.13727",military,Llwyn Cadwgan,,-3.57921,52.13727,Caerau,Caerau,22.2,roman name,438.0,https://pleiades.stoa.org/places/882133969
+"military|Holt|-2.88808,53.08483",military,Holt,,-2.88808,53.08483,Unnamed Roman Villa,Unnamed Roman Villa,50.0,roman name,58.0,https://pleiades.stoa.org/places/821460578
+"military|Holywell, Coedmawr|-3.22443,53.29597",military,"Holywell, Coedmawr",,-3.22443,53.29597,,,,,,
+"military|Bryn Sisyllt|-4.28506,53.03997",military,Bryn Sisyllt,,-4.28506,53.03997,,,,,,
+"military|Annelshope|-3.09439,55.44007",military,Annelshope,,-3.09439,55.44007,,,,,,
+"military|Apperley Dene|-1.91468,54.91683",military,Apperley Dene,,-1.91468,54.91683,,,,,,
+"military|Gillalees|-2.65938,55.03876",military,Gillalees,,-2.65938,55.03876,,,,,,
+"military|Barron's Pike|-2.63440,55.06926",military,Barron's Pike,,-2.6344,55.06926,,,,,,
+"military|Roper Castle|-2.18342,54.49557",military,Roper Castle,,-2.18342,54.49557,,,,,,
+"military|Wall Town Camp|-2.45344,52.40184",military,Wall Town Camp,,-2.45344,52.40184,,,,,,
+"military|Sapey Common, Clifton upon Teme|-2.43616,52.26864",military,"Sapey Common, Clifton upon Teme",,-2.43616,52.26864,,,,,,
+"military|Lydbury North|-2.96166,52.46700",military,Lydbury North,,-2.96166,52.467,,,,,,
+"military|Tedstone Wafer|-2.47526,52.23928",military,Tedstone Wafer,,-2.47526,52.23928,,,,,,
+"military|Wayoh Bridge|-2.40630,53.65940",military,Wayoh Bridge,,-2.4063,53.6594,,,,,,
+"military|Swanton Morley fort|0.97944,52.73324",military,Swanton Morley fort,,0.97944,52.73324,,,,,,
+"military|Trezaise|-4.83300,50.39533",military,Trezaise,,-4.833,50.39533,,,,,,
+"military|The Middles, Stanley|-1.69354,54.85563",military,"The Middles, Stanley",,-1.69354,54.85563,,,,,,
+"military|Gweryfed|-3.20351,52.03058",military,Gweryfed,,-3.20351,52.03058,Three Cocks Roman fort,Three Cocks Roman fort,50.0,roman name,552.0,https://pleiades.stoa.org/places/963064754
+"military|nan|-3.80985,52.03285",military,,,-3.80985,52.03285,,,,,,
+"military|Rheola Forest|-3.72027,51.72252",military,Rheola Forest,,-3.72027,51.72252,,,,,,
+"military|Gaer Dolau|-3.43960,52.28804",military,Gaer Dolau,unkonwn,-3.4396,52.28804,,,,,,
+"military|Bedw-hirion|-4.24293,51.98929",military,Bedw-hirion,,-4.24293,51.98929,,,,,,
+"military|nan|-3.97900,52.11289",military,,,-3.979,52.11289,,,,,,
+"military|Basingwerk Abbey|-3.20829,53.28838",military,Basingwerk Abbey,,-3.20829,53.28838,,,,,,
+"military|Ewes Doors|-2.98920,55.27758",military,Ewes Doors,,-2.9892,55.27758,,,,,,
+"military|Dryfesdalegate|-3.38659,55.12847",military,Dryfesdalegate,,-3.38659,55.12847,Ladyward Roman Fort,Ladyward Roman Fort,50.0,roman name,607.0,https://pleiades.stoa.org/places/89227
+"military|Caerau|-3.63865,52.05157",military,Caerau,,-3.63865,52.05157,,,,,,
+"military|Kidwelly|-4.30719,51.73879",military,Kidwelly,,-4.30719,51.73879,,,,,,
+"military|Duncot 'fort'|-2.62813,52.70127",military,Duncot 'fort',,-2.62813,52.70127,,,,,,
+"settlement|Kempston, Box End|-0.52106,52.12688",settlement,"Kempston, Box End",,-0.52106,52.12688,,,,,,
+"settlement|Eastcotts|-0.42843,52.11894",settlement,Eastcotts,,-0.42843,52.11894,,,,,,
+"settlement|Knighton Bushes, Lambourn|-1.57108,51.54610",settlement,"Knighton Bushes, Lambourn",,-1.57108,51.5461,,,,,,
+"settlement|Wickham|-1.43729,51.44371",settlement,Wickham,SPINIS?,-1.43729,51.44371,,,,,,
+"settlement|Lower Basildon|-1.12322,51.50666",settlement,Lower Basildon,,-1.12322,51.50666,,,,,,
+"settlement|Fleet Marston|-0.86615,51.83200",settlement,Fleet Marston,,-0.86615,51.832,,,,,,
+"settlement|Aylesbury|-0.82444,51.80112",settlement,Aylesbury,,-0.82444,51.80112,,,,,,
+"settlement|Renny Lodge, Newport Pagnell, Milton Keynes|-0.70749,52.08052",settlement,"Renny Lodge, Newport Pagnell, Milton Keynes",,-0.70749,52.08052,,,,,,
+"settlement|Olney|-0.69632,52.16478",settlement,Olney,,-0.69632,52.16478,,,,,,
+"settlement|Great Staughton|-0.34416,52.26131",settlement,Great Staughton,unknown,-0.34416,52.26131,,,,,,
+"settlement|Tort Hill|-0.27707,52.44737",settlement,Tort Hill,,-0.27707,52.44737,Sawtry,Sawtry,22.2,roman name,106.0,https://pleiades.stoa.org/places/427880377
+"settlement|Stilton|-0.27205,52.49798",settlement,Stilton,,-0.27205,52.49798,,,,,,
+"settlement|Love's Farm St Neots|-0.24245,52.24219",settlement,Love's Farm St Neots,,-0.24245,52.24219,,,,,,
+"settlement|Wimpole|-0.05475,52.12011",settlement,Wimpole,,-0.05475,52.12011,,,,,,
+"settlement|Earith|0.02257,52.38496",settlement,Earith,,0.02257,52.38496,,,,,,
+"settlement|Earith|0.04248,52.36421",settlement,Earith,,0.04248,52.36421,,,,,,
+"settlement|Longstanton site XIX|0.05983,52.28381",settlement,Longstanton site XIX,,0.05983,52.28381,,,,,,
+"settlement|Chatteris|0.08498,52.44637",settlement,Chatteris,,0.08498,52.44637,,,,,,
+"settlement|Cambridge|0.08317,52.22412",settlement,Cambridge,,0.08317,52.22412,,,,,,
+"settlement|Hurst Lane Reservoir, Ely|0.23928,52.41061",settlement,"Hurst Lane Reservoir, Ely",,0.23928,52.41061,,,,,,
+"settlement|Llandeilo|-4.00327,51.88454",settlement,Llandeilo,,-4.00327,51.88454,Dynevor Park,Dynevor Park,28.6,roman name,43.0,https://pleiades.stoa.org/places/522959909
+"settlement|Tilston|-2.81594,53.05911",settlement,Tilston,BOVIVM??,-2.81594,53.05911,,,,,,
+"settlement|Nantwich|-2.52976,53.06856",settlement,Nantwich,,-2.52976,53.06856,,,,,,
+"settlement|Brecon Gaer|-3.45184,51.95646",settlement,Brecon Gaer,,-3.45184,51.95646,Cicutio,‘Cicutio’,0.0,roman name,10.0,https://pleiades.stoa.org/places/79389
+"settlement|Forden Gaer|-3.17045,52.58167",settlement,Forden Gaer,,-3.17045,52.58167,Lavobrinta?,‘Lavobrinta’?,30.8,roman name,57.0,https://pleiades.stoa.org/places/79556
+"settlement|Carvossa, Probus|-4.92329,50.29786",settlement,"Carvossa, Probus",,-4.92329,50.29786,,,,,,
+"settlement|Maryport|-3.48984,54.72287",settlement,Maryport,,-3.48984,54.72287,Alauna/Alione,Alauna/Alione,44.4,roman name,337.0,https://pleiades.stoa.org/places/89097
+"settlement|Old Carlisle Farm, Wigton|-3.15132,54.80593",settlement,"Old Carlisle Farm, Wigton",,-3.15132,54.80593,Maglone,‘Maglone’,40.0,roman name,204.0,https://pleiades.stoa.org/places/89236
+"settlement|Borrans Road, Ambleside|-2.96935,54.42124",settlement,"Borrans Road, Ambleside",,-2.96935,54.42124,Galava,Galava,22.2,roman name,121.0,https://pleiades.stoa.org/places/89191
+"settlement|Old Penrith Fort|-2.78896,54.73800",settlement,Old Penrith Fort,,-2.78896,54.738,Voreda,Voreda,22.2,roman name,68.0,https://pleiades.stoa.org/places/89318
+"settlement|Kirkby Thore|-2.56251,54.62558",settlement,Kirkby Thore,,-2.56251,54.62558,Brav(o)niacum,Brav(o)niacum,30.8,roman name,151.0,https://pleiades.stoa.org/places/89123
+"settlement|Brough under Stainmore|-2.32251,54.52158",settlement,Brough under Stainmore,,-2.32251,54.52158,Verteris,Verteris,33.3,roman name,88.0,https://pleiades.stoa.org/places/89312
+"settlement|Children's Hospital, North Street, Derby|-1.48122,52.92972",settlement,"Children's Hospital, North Street, Derby",,-1.48122,52.92972,Strutts Park Roman fort,Strutt's Park Roman fort,50.0,roman name,430.0,https://pleiades.stoa.org/places/827577267
+"settlement|Derby Racecourse|-1.46238,52.93400",settlement,Derby Racecourse,,-1.46238,52.934,Strutts Park Roman fort,Strutt's Park Roman fort,50.0,roman name,1337.0,https://pleiades.stoa.org/places/827577267
+"settlement|Ipplepen|-3.62623,50.48694",settlement,Ipplepen,,-3.62623,50.48694,,,,,,
+"settlement|St Loyes, Topsham Road, Exeter|-3.50609,50.70710",settlement,"St Loyes, Topsham Road, Exeter",,-3.50609,50.7071,,,,,,
+"settlement|Topsham, M5 motorway|-3.47797,50.69127",settlement,"Topsham, M5 motorway",,-3.47797,50.69127,"Park Field, Topsham","Park Field, Topsham",28.6,roman name,1100.0,https://pleiades.stoa.org/places/830662331
+"settlement|Woodbury Great Close, near Axminster|-2.99833,50.77191",settlement,"Woodbury Great Close, near Axminster",,-2.99833,50.77191,Moridunum,Moridunum,33.3,roman name,126.0,https://pleiades.stoa.org/places/83868
+"settlement|Portland, Royal Manor Arts College|-2.44662,50.54421",settlement,"Portland, Royal Manor Arts College",,-2.44662,50.54421,,,,,,
+"settlement|Gillingham, Common Mead Lane|-2.28660,51.03570",settlement,"Gillingham, Common Mead Lane",,-2.2866,51.0357,,,,,,
+"settlement|Shapwick|-2.07900,50.81962",settlement,Shapwick,VINDOCLADIA,-2.079,50.81962,,,,,,
+"settlement|Woodcuts|-2.05417,50.96245",settlement,Woodcuts,,-2.05417,50.96245,,,,,,
+"settlement|Ower|-2.00199,50.67392",settlement,Ower,,-2.00199,50.67392,,,,,,
+"settlement|Hamworthy|-1.99853,50.71323",settlement,Hamworthy,,-1.99853,50.71323,,,,,,
+"settlement|Woodyates, Bokerly Dyke|-1.95555,50.97894",settlement,"Woodyates, Bokerly Dyke",,-1.95555,50.97894,Bokerley Dyke,Bokerley Dyke,0.0,roman name,1558.0,https://pleiades.stoa.org/places/409109463
+"settlement|Park View School , Chester-le-Street|-1.56791,54.85303",settlement,"Park View School , Chester-le-Street",,-1.56791,54.85303,Cocanges/Concangios,‘Cocanges’/‘Concangios’,46.2,roman name,405.0,https://pleiades.stoa.org/places/89146
+"settlement|East Park, Sedgefield|-1.45810,54.65735",settlement,"East Park, Sedgefield",,-1.4581,54.65735,,,,,,
+"settlement|Gateholm|-5.22959,51.71917",settlement,Gateholm,,-5.22959,51.71917,,,,,,
+"settlement|Wheldrake 2|-0.92412,53.89455",settlement,Wheldrake 2,,-0.92412,53.89455,,,,,,
+"settlement|Stamford Bridge, Moor Lane|-0.90615,53.98925",settlement,"Stamford Bridge, Moor Lane",,-0.90615,53.98925,,,,,,
+"settlement|Hayton, Bridge Farm and Grove Farm|-0.74967,53.90039",settlement,"Hayton, Bridge Farm and Grove Farm",,-0.74967,53.90039,,,,,,
+"settlement|Burton Fleming, water treatment works|-0.33852,54.13188",settlement,"Burton Fleming, water treatment works",,-0.33852,54.13188,,,,,,
+"settlement|Low Caythorpe, gas pipeline storage facility (Area 1)|-0.28371,54.09441",settlement,"Low Caythorpe, gas pipeline storage facility (Area 1)",,-0.28371,54.09441,,,,,,
+"settlement|Bridge Farm, Barcombe|0.03555,50.91131",settlement,"Bridge Farm, Barcombe",,0.03555,50.91131,,,,,,
+"settlement|Wilbees Farm, Arlington|0.18763,50.83993",settlement,"Wilbees Farm, Arlington",,0.18763,50.83993,,,,,,
+"settlement|Chigwell|0.10144,51.64398",settlement,Chigwell,,0.10144,51.64398,,,,,,
+"settlement|The Rodings|0.29291,51.79476",settlement,The Rodings,,0.29291,51.79476,,,,,,
+"settlement|Radwinter|0.34241,52.01267",settlement,Radwinter,,0.34241,52.01267,,,,,,
+"settlement|Mucking|0.40875,51.49689",settlement,Mucking,,0.40875,51.49689,,,,,,
+"settlement|Billericay|0.41787,51.61451",settlement,Billericay,,0.41787,51.61451,,,,,,
+"settlement|Little Waltham|0.47164,51.78628",settlement,Little Waltham,,0.47164,51.78628,,,,,,
+"settlement|Heybridge|0.67686,51.74196",settlement,Heybridge,,0.67686,51.74196,,,,,,
+"settlement|Cowbridge|-3.45120,51.46320",settlement,Cowbridge,,-3.4512,51.4632,Bomio,‘Bomio’,0.0,roman name,314.0,https://pleiades.stoa.org/places/79335
+"settlement|Lower Machen|-3.11707,51.58463",settlement,Lower Machen,,-3.11707,51.58463,,,,,,
+"settlement|Abergavenny|-3.01699,51.82085",settlement,Abergavenny,,-3.01699,51.82085,Gobannio,‘Gobannio’,36.4,roman name,332.0,https://pleiades.stoa.org/places/79484
+"settlement|Monnow Street, Monmouth|-2.71801,51.81054",settlement,"Monnow Street, Monmouth",,-2.71801,51.81054,Blestium,Blestium,0.0,roman name,540.0,https://pleiades.stoa.org/places/79333
+"settlement|Inns Court/Filwood Park, Knowle West, Bristol|-2.59463,51.42041",settlement,"Inns Court/Filwood Park, Knowle West, Bristol",,-2.59463,51.42041,,,,,,
+"settlement|Oldbury-on-Severn|-2.57224,51.64340",settlement,Oldbury-on-Severn,,-2.57224,51.6434,,,,,,
+"settlement|Wickwar, Hall End Farm|-2.42848,51.58629",settlement,"Wickwar, Hall End Farm",,-2.42848,51.58629,,,,,,
+"settlement|Dymock|-2.43417,51.97837",settlement,Dymock,,-2.43417,51.97837,,,,,,
+"settlement|Tewkesbury, Cinema site|-2.15488,51.99598",settlement,"Tewkesbury, Cinema site",,-2.15488,51.99598,,,,,,
+"settlement|Stoke Orchard, Tredington Rise|-2.12802,51.95851",settlement,"Stoke Orchard, Tredington Rise",,-2.12802,51.95851,,,,,,
+"settlement|Birdlip Quarry|-2.07609,51.81943",settlement,Birdlip Quarry,,-2.07609,51.81943,Cowley Roundabout Roman Settlement,Cowley Roundabout Roman Settlement,50.0,roman name,25.0,https://pleiades.stoa.org/places/536914754
+"settlement|Bishop's Cleeve|-2.06700,51.94729",settlement,Bishop's Cleeve,,-2.067,51.94729,,,,,,
+"settlement|Wycomb (Syreford Mill)|-1.96044,51.87979",settlement,Wycomb (Syreford Mill),,-1.96044,51.87979,Whittington,Whittington,28.6,roman name,1599.0,https://pleiades.stoa.org/places/79758
+"settlement|Farmington Quarry|-1.81486,51.84857",settlement,Farmington Quarry,,-1.81486,51.84857,,,,,,
+"settlement|Quenington|-1.80383,51.74686",settlement,Quenington,,-1.80383,51.74686,,,,,,
+"settlement|Brentford, London Road|-0.31262,51.48221",settlement,"Brentford, London Road",,-0.31262,51.48221,,,,,,
+"settlement|Brentford, Gasworks|-0.29356,51.48786",settlement,"Brentford, Gasworks",,-0.29356,51.48786,,,,,,
+"settlement|Croydon|-0.10128,51.37085",settlement,Croydon,,-0.10128,51.37085,,,,,,
+"settlement|Lincoln Road, Enfield|-0.06329,51.64606",settlement,"Lincoln Road, Enfield",,-0.06329,51.64606,,,,,,
+"settlement|Old Ford, Tower Hamlets|-0.02678,51.53415",settlement,"Old Ford, Tower Hamlets",,-0.02678,51.53415,,,,,,
+"settlement|Old Ford, Wick Lane|-0.02135,51.53596",settlement,"Old Ford, Wick Lane",,-0.02135,51.53596,,,,,,
+"settlement|Castleshaw|-2.00275,53.58278",settlement,Castleshaw,,-2.00275,53.58278,Rigodounon?,Rigodounon?,50.0,roman name,58.0,https://pleiades.stoa.org/places/79656
+"settlement|Tai Cochion, Anglesey|-4.27388,53.16603",settlement,"Tai Cochion, Anglesey",,-4.27388,53.16603,,,,,,
+"settlement|Brithdir, Dolgellau|-3.81943,52.75284",settlement,"Brithdir, Dolgellau",,-3.81943,52.75284,,,,,,
+"settlement|Nursling|-1.49224,50.94278",settlement,Nursling,ONNA?,-1.49224,50.94278,,,,,,
+"settlement|East Anton, Andover|-1.46864,51.22773",settlement,"East Anton, Andover",,-1.46864,51.22773,Leucomagus,*Leucomagus,15.4,roman name,247.0,https://pleiades.stoa.org/places/79562
+"settlement|Wickham|-1.18947,50.89769",settlement,Wickham,CLAVSENTVM?,-1.18947,50.89769,,,,,,
+"settlement|Latchmere Green|-1.09012,51.33718",settlement,Latchmere Green,,-1.09012,51.33718,,,,,,
+"settlement|Alton, 89 High Street|-0.97786,51.14629",settlement,"Alton, 89 High Street",,-0.97786,51.14629,Neatham,Neatham,40.0,roman name,535.0,https://pleiades.stoa.org/places/79606
+"settlement|Chalton|-0.95623,50.95134",settlement,Chalton,,-0.95623,50.95134,,,,,,
+"settlement|Neatham|-0.94434,51.16652",settlement,Neatham,,-0.94434,51.16652,,,,,,
+"settlement|Cow Roast|-0.61586,51.78231",settlement,Cow Roast,,-0.61586,51.78231,,,,,,
+"settlement|Ware (Ware Lock, Ware Library, White Swan Yard)|-0.03456,51.81113",settlement,"Ware (Ware Lock, Ware Library, White Swan Yard)",,-0.03456,51.81113,,,,,,
+"settlement|Bishop's Stortford, Grange Paddocks|0.16243,51.87731",settlement,"Bishop's Stortford, Grange Paddocks",,0.16243,51.87731,,,,,,
+"settlement|West Wickham|-0.00958,51.36579",settlement,West Wickham,NOVIOMAGVS?,-0.00958,51.36579,,,,,,
+"settlement|Crayford|0.17836,51.45126",settlement,Crayford,,0.17836,51.45126,Noviomagus,Noviomagus,30.8,roman name,858.0,https://pleiades.stoa.org/places/79623
+"settlement|Dartford, Spital Street|0.21491,51.44513",settlement,"Dartford, Spital Street",,0.21491,51.44513,,,,,,
+"settlement|Springhead, Pepper Hill|0.32728,51.42479",settlement,"Springhead, Pepper Hill",,0.32728,51.42479,Vagniacis,Vagniacis,33.3,roman name,867.0,https://pleiades.stoa.org/places/79729
+"settlement|Newington|0.66969,51.35241",settlement,Newington,,0.66969,51.35241,Boxted Roman villa,Boxted Roman villa,50.0,roman name,1524.0,https://pleiades.stoa.org/places/82140844
+"settlement|Ospringe|0.86119,51.31455",settlement,Ospringe,DVROLEVVM,0.86119,51.31455,,,,,,
+"settlement|Ashford|0.85662,51.12346",settlement,Ashford,,0.85662,51.12346,,,,,,
+"settlement|Park Farm East, Ashford|0.88235,51.11309",settlement,"Park Farm East, Ashford",,0.88235,51.11309,,,,,,
+"settlement|Island Road, Westbere|1.17444,51.31721",settlement,"Island Road, Westbere",,1.17444,51.31721,,,,,,
+"settlement|Ickham|1.19812,51.28732",settlement,Ickham,,1.19812,51.28732,Wingham,Wingham,40.0,roman name,1948.0,https://pleiades.stoa.org/places/79765
+"settlement|Wickhambreaux|1.20631,51.28793",settlement,Wickhambreaux,,1.20631,51.28793,Wingham,Wingham,40.0,roman name,1728.0,https://pleiades.stoa.org/places/79765
+"settlement|Monkton|1.29930,51.34420",settlement,Monkton,,1.2993,51.3442,,,,,,
+"settlement|Each End, Ash|1.30102,51.27958",settlement,"Each End, Ash",,1.30102,51.27958,,,,,,
+"settlement|East Kent Access (Zone 6 and 7)|1.34686,51.32138",settlement,East Kent Access (Zone 6 and 7),,1.34686,51.32138,,,,,,
+"settlement|Kirkham|-2.86241,53.78149",settlement,Kirkham,,-2.86241,53.78149,,,,,,
+"settlement|Walton le Dale|-2.67956,53.74956",settlement,Walton le Dale,,-2.67956,53.74956,,,,,,
+"settlement|Ibstock|-1.40088,52.69894",settlement,Ibstock,,-1.40088,52.69894,,,,,,
+"settlement|Lockington, Lockington-Hemington western cropmark|-1.28852,52.85996",settlement,"Lockington, Lockington-Hemington western cropmark",,-1.28852,52.85996,Red Hill Roman Temple,Red Hill Roman Temple,50.0,roman name,1769.0,https://pleiades.stoa.org/places/461726240
+"settlement|Quorn / Barrow on Soar|-1.15394,52.74282",settlement,Quorn / Barrow on Soar,,-1.15394,52.74282,,,,,,
+"settlement|Elms Farm, Humberstone, Leicester|-1.06870,52.65167",settlement,"Elms Farm, Humberstone, Leicester",,-1.0687,52.65167,,,,,,
+"settlement|Kirby Bellars|-0.94777,52.74598",settlement,Kirby Bellars,,-0.94777,52.74598,,,,,,
+"settlement|Goadby Marwood|-0.84319,52.83382",settlement,Goadby Marwood,,-0.84319,52.83382,,,,,,
+"settlement|Long Bennington|-0.74127,52.98775",settlement,Long Bennington,,-0.74127,52.98775,,,,,,
+"settlement|Saltersford|-0.62885,52.88949",settlement,Saltersford,,-0.62885,52.88949,,,,,,
+"settlement|Easton roadside settlement|-0.60979,52.82617",settlement,Easton roadside settlement,,-0.60979,52.82617,,,,,,
+"settlement|Newport, Lincoln, Bishop Grosseteste College|-0.53741,53.24306",settlement,"Newport, Lincoln, Bishop Grosseteste College",,-0.53741,53.24306,Newport Arch city gate,Newport Arch city gate,28.6,roman name,648.0,https://pleiades.stoa.org/places/670424966
+"settlement|Navenby|-0.51779,53.10728",settlement,Navenby,,-0.51779,53.10728,,,,,,
+"settlement|Settlement near the junction of RR26 and the supposed RR58b|-0.50743,52.91960",settlement,Settlement near the junction of RR26 and the supposed RR58b,,-0.50743,52.9196,,,,,,
+"settlement|Stainfield, Hangman's Lane|-0.40771,52.80772",settlement,"Stainfield, Hangman's Lane",,-0.40771,52.80772,Untitled,Untitled,18.2,roman name,484.0,https://pleiades.stoa.org/places/83055
+"settlement|Mount Pleasant House, Nettleton and Rothwell|-0.29781,53.46212",settlement,"Mount Pleasant House, Nettleton and Rothwell",,-0.29781,53.46212,,,,,,
+"settlement|Denver|0.34732,52.57972",settlement,Denver,,0.34732,52.57972,,,,,,
+"settlement|Thetford|0.74631,52.41532",settlement,Thetford,,0.74631,52.41532,,,,,,
+"settlement|Saham Toney|0.78420,52.57465",settlement,Saham Toney,,0.7842,52.57465,Woodcock Hall,Woodcock Hall,28.6,roman name,448.0,https://pleiades.stoa.org/places/4091848
+"settlement|Great Walsingham|0.88325,52.91010",settlement,Great Walsingham,unknown,0.88325,52.9101,,,,,,
+"settlement|Brettenham|0.85229,52.42135",settlement,Brettenham,,0.85229,52.42135,,,,,,
+"settlement|Billingford|0.95256,52.73013",settlement,Billingford,,0.95256,52.73013,,,,,,
+"settlement|Billingford 2|0.97517,52.73896",settlement,Billingford 2,,0.97517,52.73896,,,,,,
+"settlement|Wicklewood|1.08088,52.58352",settlement,Wicklewood,,1.08088,52.58352,,,,,,
+"settlement|Needham|1.28277,52.39168",settlement,Needham,,1.28277,52.39168,,,,,,
+"settlement|Bainesse (Site 46), Catterick|-1.63240,54.37083",settlement,"Bainesse (Site 46), Catterick",,-1.6324,54.37083,,,,,,
+"settlement|Freemans Way, Leeming Bar|-1.55832,54.30273",settlement,"Freemans Way, Leeming Bar",,-1.55832,54.30273,,,,,,
+"settlement|Dringhouses, 42-50 Tadcaster Road|-1.10744,53.93974",settlement,"Dringhouses, 42-50 Tadcaster Road",,-1.10744,53.93974,,,,,,
+"settlement|Malton, Orchard Fields|-0.78832,54.13461",settlement,"Malton, Orchard Fields",DELGOVICIA,-0.78832,54.13461,Derventio,Derventio,42.1,roman name,58.0,https://pleiades.stoa.org/places/89166
+"settlement|Norton Community Primary School|-0.78456,54.13060",settlement,Norton Community Primary School,,-0.78456,54.1306,Derventio,Derventio,16.7,roman name,523.0,https://pleiades.stoa.org/places/89166
+"settlement|West Heslerton|-0.56404,54.18283",settlement,West Heslerton,,-0.56404,54.18283,,,,,,
+"settlement|Duston|-0.93389,52.23804",settlement,Duston,unknown,-0.93389,52.23804,,,,,,
+"settlement|Brackmills Point|-0.84937,52.22288",settlement,Brackmills Point,unknown,-0.84937,52.22288,,,,,,
+"settlement|Kettering, Kipling Road|-0.71682,52.41441",settlement,"Kettering, Kipling Road",,-0.71682,52.41441,,,,,,
+"settlement|Higham Ferrers OA|-0.60142,52.31271",settlement,Higham Ferrers OA,,-0.60142,52.31271,,,,,,
+"settlement|A45 Roadside Settlement (Middle Sands Iron Age and Roman settlement)|-0.58097,52.32856",settlement,A45 Roadside Settlement (Middle Sands Iron Age and Roman settlement),,-0.58097,52.32856,Stanwick,Stanwick,36.4,roman name,1128.0,https://pleiades.stoa.org/places/79695
+"settlement|Mallows Cotton|-0.56463,52.34763",settlement,Mallows Cotton,,-0.56463,52.34763,Stanwick,Stanwick,36.4,roman name,1269.0,https://pleiades.stoa.org/places/79695
+"settlement|Thrapston (alt. Titchmarsh)|-0.52341,52.40377",settlement,Thrapston (alt. Titchmarsh),,-0.52341,52.40377,,,,,,
+"settlement|Hetha Burn|-2.19013,55.54107",settlement,Hetha Burn,,-2.19013,55.54107,,,,,,
+"settlement|Red Hill, Ratcliffe on Soar|-1.26726,52.86890",settlement,"Red Hill, Ratcliffe on Soar",,-1.26726,52.8689,Red Hill Roman Temple,Red Hill Roman Temple,50.0,roman name,149.0,https://pleiades.stoa.org/places/461726240
+"settlement|Newark, Trent Lane|-0.80334,53.08431",settlement,"Newark, Trent Lane",,-0.80334,53.08431,,,,,,
+"settlement|Bowling Green Farm|-1.54753,51.65247",settlement,Bowling Green Farm,,-1.54753,51.65247,,,,,,
+"settlement|Wilcote|-1.47079,51.83728",settlement,Wilcote,,-1.47079,51.83728,,,,,,
+"settlement|Gill Mill, Ducklington|-1.46307,51.76478",settlement,"Gill Mill, Ducklington",,-1.46307,51.76478,,,,,,
+"settlement|Madmarston Camp/Swalcliffe Lea|-1.43857,52.04716",settlement,Madmarston Camp/Swalcliffe Lea,,-1.43857,52.04716,Lower Lea,Lower Lea,33.3,roman name,598.0,https://pleiades.stoa.org/places/79580
+"settlement|Wantage, Denchworth Road and Mill Street|-1.43264,51.59218",settlement,"Wantage, Denchworth Road and Mill Street",,-1.43264,51.59218,,,,,,
+"settlement|Cassington Big Enclosure|-1.34902,51.78686",settlement,Cassington Big Enclosure,,-1.34902,51.78686,,,,,,
+"settlement|Sansom's Platt|-1.34390,51.86778",settlement,Sansom's Platt,,-1.3439,51.86778,,,,,,
+"settlement|Abingdon, West Central Redevelopment|-1.28389,51.66977",settlement,"Abingdon, West Central Redevelopment",,-1.28389,51.66977,,,,,,
+"settlement|Appleford|-1.24749,51.63877",settlement,Appleford,,-1.24749,51.63877,,,,,,
+"settlement|Barton, Stowford Road, Oxford|-1.19243,51.76756",settlement,"Barton, Stowford Road, Oxford",,-1.19243,51.76756,,,,,,
+"settlement|Meole Brace|-2.75732,52.68257",settlement,Meole Brace,,-2.75732,52.68257,,,,,,
+"settlement|Heath Road, near Whitchurch|-2.67000,52.95252",settlement,"Heath Road, near Whitchurch",,-2.67,52.95252,Mediolanum,Mediolanum,30.8,roman name,1771.0,https://pleiades.stoa.org/places/79597
+"settlement|Crandon Bridge/Bush Marsh, Bawdrip|-2.96519,51.15886",settlement,"Crandon Bridge/Bush Marsh, Bawdrip",,-2.96519,51.15886,,,,,,
+"settlement|Wint Hill, Banwell|-2.86393,51.32034",settlement,"Wint Hill, Banwell",,-2.86393,51.32034,,,,,,
+"settlement|Kings of Wessex School, Cheddar|-2.77907,51.27310",settlement,"Kings of Wessex School, Cheddar",,-2.77907,51.2731,Goughs Cave,Gough's Cave,28.6,roman name,1369.0,https://pleiades.stoa.org/places/850427781
+"settlement|Somerdale|-2.49795,51.42499",settlement,Somerdale,TRAIECTVS,-2.49795,51.42499,Durley Hill,Durley Hill,30.8,roman name,1080.0,https://pleiades.stoa.org/places/847419768
+"settlement|Little Down Field, Lansdown|-2.39983,51.43012",settlement,"Little Down Field, Lansdown",,-2.39983,51.43012,,,,,,
+"settlement|Doncaster|-1.13482,53.52430",settlement,Doncaster,,-1.13482,53.5243,Danum?,Danum?,50.0,roman name,126.0,https://pleiades.stoa.org/places/79412
+"settlement|Rossington Bridge, pumping station|-1.05041,53.49113",settlement,"Rossington Bridge, pumping station",,-1.05041,53.49113,,,,,,
+"settlement|Greensforge|-2.21206,52.49512",settlement,Greensforge,,-2.21206,52.49512,,,,,,
+"settlement|Wixoe|0.49580,52.05938",settlement,Wixoe,,0.4958,52.05938,,,,,,
+"settlement|Lakenheath|0.54431,52.39871",settlement,Lakenheath,,0.54431,52.39871,,,,,,
+"settlement|West Stow|0.63405,52.31084",settlement,West Stow,,0.63405,52.31084,Icklingham,Icklingham,30.8,roman name,1398.0,https://pleiades.stoa.org/places/79525
+"settlement|Ipswich, Handford Road|1.13907,52.05748",settlement,"Ipswich, Handford Road",,1.13907,52.05748,,,,,,
+"settlement|Felixstowe|1.34360,51.96232",settlement,Felixstowe,,1.3436,51.96232,,,,,,
+"settlement|Wenhaston|1.56299,52.32326",settlement,Wenhaston,,1.56299,52.32326,,,,,,
+"settlement|Bodiam|0.54048,50.99895",settlement,Bodiam,,0.54048,50.99895,,,,,,
+"settlement|Alcester|-1.87409,52.21423",settlement,Alcester,unknown,-1.87409,52.21423,,,,,,
+"settlement|21 and 23 Icknield Street, Bidford|-1.85285,52.16550",settlement,"21 and 23 Icknield Street, Bidford",,-1.85285,52.1655,,,,,,
+"settlement|Billesley Manor Farm|-1.77902,52.20112",settlement,Billesley Manor Farm,,-1.77902,52.20112,,,,,,
+"settlement|Tiddington|-1.68559,52.19655",settlement,Tiddington,,-1.68559,52.19655,,,,,,
+"settlement|Chesterton Roman town, Chesterton & Kingston|-1.50149,52.23476",settlement,"Chesterton Roman town, Chesterton & Kingston",,-1.50149,52.23476,Chesterton villa,Chesterton villa,25.0,roman name,1678.0,https://pleiades.stoa.org/places/187106386
+"settlement|Princethorpe|-1.41414,52.33112",settlement,Princethorpe,,-1.41414,52.33112,,,,,,
+"settlement|Longdales Road, King's Norton, Birmingham|-1.92309,52.39648",settlement,"Longdales Road, King's Norton, Birmingham",,-1.92309,52.39648,,,,,,
+"settlement|Weston's Farm, Iping|-0.79802,51.02772",settlement,"Weston's Farm, Iping",,-0.79802,51.02772,,,,,,
+"settlement|Wetherby, St James' Street|-1.38758,53.92999",settlement,"Wetherby, St James' Street",,-1.38758,53.92999,,,,,,
+"settlement|Wattle Syke|-1.38297,53.90795",settlement,Wattle Syke,,-1.38297,53.90795,Dalton Parlours,Dalton Parlours,44.4,roman name,335.0,https://pleiades.stoa.org/places/89158
+"settlement|Castleford, Welbeck Street|-1.35599,53.72467",settlement,"Castleford, Welbeck Street",,-1.35599,53.72467,"Roman Bath House, Castleford","Roman Bath House, Castleford",50.0,roman name,327.0,https://pleiades.stoa.org/places/337037056
+"settlement|Stockton Down|-2.04425,51.12507",settlement,Stockton Down,,-2.04425,51.12507,,,,,,
+"settlement|Chapperton Down|-2.00611,51.23290",settlement,Chapperton Down,,-2.00611,51.2329,,,,,,
+"settlement|Rushall Down/Charlton Down & Upavon Down|-1.84755,51.26530",settlement,Rushall Down/Charlton Down & Upavon Down,,-1.84755,51.2653,,,,,,
+"settlement|Casterley Camp|-1.83536,51.28053",settlement,Casterley Camp,,-1.83536,51.28053,,,,,,
+"settlement|Amesbury, Butterfield Down|-1.76394,51.17160",settlement,"Amesbury, Butterfield Down",,-1.76394,51.1716,,,,,,
+"settlement|Chisenbury Warren|-1.74617,51.28217",settlement,Chisenbury Warren,,-1.74617,51.28217,,,,,,
+"settlement|Coombe Down South|-1.72547,51.26683",settlement,Coombe Down South,,-1.72547,51.26683,,,,,,
+"settlement|Baydon (M4 Sites 35-6)|-1.58192,51.49597",settlement,Baydon (M4 Sites 35-6),,-1.58192,51.49597,,,,,,
+"settlement|Droitwich, Old Bowling Green|-2.14914,52.26956",settlement,"Droitwich, Old Bowling Green",,-2.14914,52.26956,Salinae,Salinae,40.0,roman name,351.0,https://pleiades.stoa.org/places/79668
+"settlement|Beckford|-2.03056,52.02331",settlement,Beckford,,-2.03056,52.02331,,,,,,
+"settlement|Carlisle|-2.94039,54.89578",settlement,Carlisle,,-2.94039,54.89578,Milecastle 66 (Stanwix Bank),Milecastle 66 (Stanwix Bank),57.1,roman name,710.0,https://pleiades.stoa.org/places/967060430
+"settlement|Loughor|-4.07430,51.66335",settlement,Loughor,,-4.0743,51.66335,Leucaro,‘Leucaro’,20.0,roman name,304.0,https://pleiades.stoa.org/places/79561
+"settlement|Pentre Ffwrndan|-3.11732,53.24126",settlement,Pentre Ffwrndan,,-3.11732,53.24126,,,,,,
+"settlement|Brough|-0.57876,53.72838",settlement,Brough,PETVARIA,-0.57876,53.72838,,,,,,
+"settlement|Perlethorpe|-1.02526,53.23781",settlement,Perlethorpe,,-1.02526,53.23781,,,,,,
+"settlement|Owmby-by-Spital|-0.54492,53.36287",settlement,Owmby-by-Spital,,-0.54492,53.36287,,,,,,
+"settlement|Ludford|-0.19320,53.38586",settlement,Ludford,,-0.1932,53.38586,,,,,,
+"settlement|Ulceby|0.11274,53.23006",settlement,Ulceby,,0.11274,53.23006,,,,,,
+"settlement|Burgh-le-Marsh|0.24432,53.16166",settlement,Burgh-le-Marsh,,0.24432,53.16166,,,,,,
+"settlement|Green Hammerton|-1.28097,54.00120",settlement,Green Hammerton,,-1.28097,54.0012,,,,,,
+"settlement|Ewe Close|-2.60385,54.51521",settlement,Ewe Close,,-2.60385,54.51521,,,,,,
+"settlement|Kempstone|0.77524,52.71128",settlement,Kempstone,,0.77524,52.71128,,,,,,
+"settlement|Upwell|0.21680,52.56487",settlement,Upwell,,0.2168,52.56487,,,,,,
+"settlement|North Creake|0.74920,52.90300",settlement,North Creake,,0.7492,52.903,,,,,,
+"settlement|Well Hall|0.55381,52.75494",settlement,Well Hall,,0.55381,52.75494,Grimston,Grimston,18.2,roman name,1955.0,https://pleiades.stoa.org/places/79494
+"settlement|East Walton|0.60819,52.69953",settlement,East Walton,,0.60819,52.69953,,,,,,
+"settlement|Bath|-2.36081,51.38121",settlement,Bath,,-2.36081,51.38121,"So-called ""Buildings A and B""","So-called ""Buildings A and B""",66.7,roman name,30.0,https://pleiades.stoa.org/places/752550814
+"settlement|Frilford|-1.53455,51.93631",settlement,Frilford,,-1.53455,51.93631,,,,,,
+"settlement|Fen Farm, Hacconby Fen|-0.28827,52.81800",settlement,"Fen Farm, Hacconby Fen",,-0.28827,52.818,,,,,,
+"settlement|Ravenstone, Ibstock|-1.40270,52.69997",settlement,"Ravenstone, Ibstock",,-1.4027,52.69997,,,,,,
+"settlement|Wavendon Gate, Milton Keynes|-0.68588,52.02369",settlement,"Wavendon Gate, Milton Keynes",,-0.68588,52.02369,,,,,,
+"settlement|Grimstock Hill|-1.71205,52.51018",settlement,Grimstock Hill,,-1.71205,52.51018,Coleshill,Coleshill,0.0,roman name,1502.0,https://pleiades.stoa.org/places/79397
+"settlement|Coggeshall|0.69080,51.87228",settlement,Coggeshall,,0.6908,51.87228,,,,,,
+"settlement|Kings Sutton|-1.28554,52.03334",settlement,Kings Sutton,,-1.28554,52.03334,,,,,,
+"settlement|Nordelph|0.25161,52.57188",settlement,Nordelph,,0.25161,52.57188,,,,,,
+"settlement|Stamford Bridge|-0.92576,53.98226",settlement,Stamford Bridge,DERVENTIO,-0.92576,53.98226,,,,,,
+"settlement|Settrington|-0.72823,54.12879",settlement,Settrington,,-0.72823,54.12879,,,,,,
+"settlement|Ruston, RB Ladder settlement|-0.54329,54.22733",settlement,"Ruston, RB Ladder settlement",,-0.54329,54.22733,,,,,,
+"settlement|Bad Bargain Lane, Osbaldwick|-1.03628,53.97141",settlement,"Bad Bargain Lane, Osbaldwick",,-1.03628,53.97141,,,,,,
+"settlement|Toftrees|0.82062,52.80260",settlement,Toftrees,,0.82062,52.8026,,,,,,
+"settlement|Little Shelford|0.85554,51.57905",settlement,Little Shelford,,0.85554,51.57905,,,,,,
+"settlement|St. Algar's Farm|-2.31132,51.17581",settlement,St. Algar's Farm,,-2.31132,51.17581,,,,,,
+"settlement|Parlour Coppice AKA Upton Cresset|-2.51965,52.53133",settlement,Parlour Coppice AKA Upton Cresset,,-2.51965,52.53133,,,,,,
+"settlement|Wickhamford|-1.90904,52.07186",settlement,Wickhamford,,-1.90904,52.07186,,,,,,
+"settlement|Linton Farm, Over.|-2.28987,51.87125",settlement,"Linton Farm, Over.",,-2.28987,51.87125,,,,,,
+"settlement|Evesham|-1.95438,52.06983",settlement,Evesham,,-1.95438,52.06983,,,,,,
+"settlement|Marlcliffe, Bidford-on-Avon|-1.85671,52.14992",settlement,"Marlcliffe, Bidford-on-Avon",,-1.85671,52.14992,,,,,,
+"settlement|Hockwold|0.58436,52.45585",settlement,Hockwold,,0.58436,52.45585,,,,,,
+"settlement|St Denys Roman settlement|-1.38421,50.92076",settlement,St Denys Roman settlement,,-1.38421,50.92076,Bitterne,Bitterne,18.2,roman name,1058.0,https://pleiades.stoa.org/places/79331
+"settlement|Wellington|-2.72172,52.12312",settlement,Wellington,unknown,-2.72172,52.12312,,,,,,
+"settlement|Stoke Ash|1.09705,52.29463",settlement,Stoke Ash,,1.09705,52.29463,,,,,,
+"settlement|nan|-3.05490,55.93573",settlement,,,-3.0549,55.93573,Inveresk,Inveresk,18.2,roman name,160.0,https://pleiades.stoa.org/places/89207
+"settlement|Camelon|-3.82511,56.00876",settlement,Camelon,,-3.82511,56.00876,Colani(c)a?,Colani(c)a?,40.0,roman name,67.0,https://pleiades.stoa.org/places/89148
+"settlement|Castledykes|-3.70362,55.67978",settlement,Castledykes,,-3.70362,55.67978,Corda?,Corda?,25.0,roman name,116.0,https://pleiades.stoa.org/places/89139
+"settlement|nan|-2.68340,55.06217",settlement,,not known,-2.6834,55.06217,Bewcastle Roman Fort,Bewcastle Roman Fort,57.1,roman name,225.0,https://pleiades.stoa.org/places/89181
+"settlement|Burgh by Sands|-3.04835,54.92232",settlement,Burgh by Sands,,-3.04835,54.92232,Aballava,Aballava,50.0,roman name,87.0,https://pleiades.stoa.org/places/89092
+"settlement|Burghwallis|-1.21886,53.60142",settlement,Burghwallis,,-1.21886,53.60142,,,,,,
+"settlement|Chesterfield|-1.42377,53.23521",settlement,Chesterfield,,-1.42377,53.23521,,,,,,
