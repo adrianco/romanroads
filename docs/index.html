@@ -143,7 +143,13 @@
       <label class="row"><input type="checkbox" id="u-geo"> Bedrock geology <span class="note">(BGS)</span></label>
       <div class="slider-row"><input type="range" id="o-geo" min="0" max="100" value="55"><output id="o-geo-v">55%</output></div>
 
-      <label class="row"><input type="checkbox" id="u-terrain"> 3D terrain <span class="note">(right-drag to tilt)</span></label>
+      <label class="row"><input type="checkbox" id="u-terrain"> 3D terrain</label>
+      <div id="terrain-controls" hidden>
+        <div class="slider-row"><span class="note" style="width:62px">Tilt</span><input type="range" id="t-tilt" min="0" max="85" value="60"><output id="t-tilt-v">60°</output></div>
+        <div class="slider-row"><span class="note" style="width:62px">Rotation</span><input type="range" id="t-rot" min="-180" max="180" value="0"><output id="t-rot-v">0°</output></div>
+        <div class="slider-row"><span class="note" style="width:62px">Altitude</span><input type="range" id="t-zoom" min="5" max="18" step="0.1" value="12"><output id="t-zoom-v">z12</output></div>
+        <div class="slider-row"><span class="note" style="width:62px">Relief</span><input type="range" id="t-exag" min="1" max="5" step="0.1" value="1.5"><output id="t-exag-v">1.5×</output></div>
+      </div>
     </section>
 
     <section>
@@ -381,6 +387,7 @@ const map = new maplibregl.Map({
   center: [-2.2, 53.6],
   zoom: 5.6,
   maxZoom: 19,
+  maxPitch: 85, // MapLibre's default cap is 60°, too low for looking along a ridge in 3D
   hash: true,
   attributionControl: false,
 });
@@ -535,8 +542,30 @@ function applyUnderlays() {
 
 function applyTerrain() {
   const on = $("u-terrain").checked;
-  map.setTerrain(on ? { source: "terrain", exaggeration: 1.5 } : null);
-  map.easeTo({ pitch: on ? 60 : 0, duration: 800 });
+  $("terrain-controls").hidden = !on;
+  map.setTerrain(on ? { source: "terrain", exaggeration: +$("t-exag").value } : null);
+  // back to a flat, north-up map when 3D is switched off
+  map.easeTo(on ? { pitch: +$("t-tilt").value, bearing: +$("t-rot").value, duration: 800 }
+               : { pitch: 0, bearing: 0, duration: 800 });
+}
+
+// 3D camera sliders: drive the camera, and follow it when the user drags the map instead
+function syncTerrainSliders() {
+  if ($("terrain-controls").hidden) return;
+  const pitch = Math.round(map.getPitch()), bearing = Math.round(map.getBearing()), zoom = map.getZoom();
+  $("t-tilt").value = pitch; $("t-tilt-v").textContent = `${pitch}°`;
+  $("t-rot").value = bearing; $("t-rot-v").textContent = `${bearing}°`;
+  $("t-zoom").value = zoom.toFixed(1); $("t-zoom-v").textContent = `z${zoom.toFixed(1)}`;
+}
+function applyTerrainSliders(ev) {
+  const v = +ev.target.value;
+  if (ev.target.id === "t-tilt") map.setPitch(v);
+  else if (ev.target.id === "t-rot") map.setBearing(v);
+  else if (ev.target.id === "t-zoom") map.setZoom(v);
+  else if (ev.target.id === "t-exag") {
+    $("t-exag-v").textContent = `${v.toFixed(1)}×`;
+    if ($("u-terrain").checked) map.setTerrain({ source: "terrain", exaggeration: v });
+  }
 }
 
 // Historic England layers: query the features in view from the ArcGIS feature service
@@ -661,6 +690,8 @@ document.querySelectorAll('input[name="base"]').forEach(el => el.addEventListene
 ["u-lidar", "u-hist", "u-aerial", "u-dare", "u-geo", "hist-edition"].forEach(id => $(id).addEventListener("change", applyUnderlays));
 ["o-lidar", "o-hist", "o-aerial", "o-dare", "o-geo"].forEach(id => $(id).addEventListener("input", applyUnderlays));
 $("u-terrain").addEventListener("change", applyTerrain);
+["t-tilt", "t-rot", "t-zoom", "t-exag"].forEach(id => $(id).addEventListener("input", applyTerrainSliders));
+map.on("move", syncTerrainSliders);
 ["o-sam", "o-aim"].forEach(id => $(id).addEventListener("change", applyOverlays));
 map.on("moveend", () => { if (data.roads) DYNAMIC.forEach(loadDynamic); });
 ["l-roads", "l-conf0", "l-labels"].forEach(id => $(id).addEventListener("change", applyRoads));

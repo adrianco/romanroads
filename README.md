@@ -36,7 +36,10 @@ Then open http://localhost:8765.
 - **Underlays:** tick LiDAR hillshade, historic OS maps (choose the edition),
   aerial imagery, the Roman Empire map or geology, and set each one's opacity
   with its slider. Untick **Show roads** to look at the bare terrain. Tick
-  **3D terrain** and right-drag (or Ctrl-drag) to tilt the view.
+  **3D terrain** to show its sliders: **Tilt** (0–85°), **Rotation**,
+  **Altitude** (zoom) and **Relief** (vertical exaggeration, 1–5×). The
+  sliders follow the map as you move it, and turning 3D off returns to a flat,
+  north-up view.
 - **Heritage overlays:** scheduled monuments and Roman-period aerial mapping
   load for the area in view once you zoom in. The line under each one says how
   many features are showing.
