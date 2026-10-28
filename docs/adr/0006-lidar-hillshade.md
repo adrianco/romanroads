@@ -83,6 +83,36 @@ multi-directional hillshade where one is offered.
   `Access-Control-Allow-Origin: *`, so a WMS layer would drop straight in.
   Either change would be worth requesting.
 
+## Reliability: retries (added 2026-10-28)
+The EA WMS **fails some tiles transiently** when requested from a browser.
+- **Live viewer at Dorchester (z13):** 7 of 29 tiles ended up permanently
+  `errored`. Each failure shows up as a CORS error, because the failed
+  response carries no `Access-Control-Allow-Origin`.
+- **Bursts of 30 `fetch()` calls from a page:** 0, 1, 3 and 8 failures, with
+  or without MapLibre's `Accept: image/webp` header, so the header isn't the
+  cause.
+- **Retrying works:** the same URLs succeed when requested again.
+- **Outside a browser** (curl, also over HTTP/2, and parallel Python), every
+  request succeeded, so it can't be reproduced outside a browser.
+
+MapLibre never retries a failed raster tile, so each failure left a **hole**
+in the hillshade until the view changed. An earlier diagnosis blamed
+cancelled requests and survey patchwork; that was wrong for these tiles.
+
+**Decision:** both LiDAR sources load through a `retry://` protocol
+(`maplibregl.addProtocol`). It fetches the tile and, on a network error or
+non-2xx response, retries up to 3 times after about 0.4, 1.2 and 3 s, with
+jitter. An `AbortError` (the map moved and the tile is no longer needed) is
+passed straight through.
+
+**Verified:**
+- I patched `fetch` so the first attempt of every third LiDAR tile failed
+  (14 of 42). All 42 tiles loaded, using 56 fetches.
+- Three fresh loads (Dorchester, London, York) finished with every tile
+  `loaded`.
+- The browser still logs a CORS error for each failed *first* attempt. That's
+  expected, and the tile is fetched again.
+
 ## Rendering
 - Both live sources are MapLibre raster sources using WMS GetMap templates with
   `crs=EPSG:3857&bbox={bbox-epsg-3857}` and 256 px tiles.
