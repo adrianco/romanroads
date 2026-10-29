@@ -154,6 +154,9 @@ and `pleiades-names-latest.csv.gz` from
 `data/pleiades_matches.csv` and `data/unmatched_pleiades.csv`. Without
 them, it reuses the committed match table.
 
+## How
+A blog post records the development process over two days. [Dev.to blog](https://dev.to/adrianco_54/mapping-roman-britain-an-ai-built-viewer-for-digital-britannia-594g)
+
 ## Credits
 - Data: Digital Britannia v1 © Roman Roads Research Association / Mike Haken (CC BY-NC 4.0)
 - LiDAR (England): contains Environment Agency information © Environment Agency and/or database right
