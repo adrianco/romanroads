@@ -1,6 +1,6 @@
 # romanroads
 
-Visualisers for the RRRA's Roman road dataset.
+Visualiser for the RRRA's Roman road dataset.
 
 An **unofficial** web map viewer for
 [Digital Britannia v1](https://roadsofromanbritain.org/digital-britannia/downloads.html)
