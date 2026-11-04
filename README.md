@@ -28,6 +28,15 @@ python3 -m http.server 8765 --directory docs
 Then open http://localhost:8765.
 
 ### Using the viewer
+- **Views:** four buttons under the search box set up the map in one click:
+  - **LiDAR:** hillshade under the roads and sites, the plainest view.
+  - **Old maps:** the OS 6-inch map of about 1890–1910 blended with the
+    LiDAR.
+  - **Earthworks:** the 1 m local relief model, with scheduled monuments and
+    Roman aerial mapping.
+  - **3D:** tilted terrain from 1 m heights.
+
+  Everything else is under **All layers and settings**.
 - **Search** (top of the panel): a modern place name (`Housesteads`), a Roman
   name (`Vercovicium`) or a road number (`RR2`, `2a`). Road results zoom to the
   whole route.

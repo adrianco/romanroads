@@ -85,6 +85,19 @@
   .popup a { color: var(--accent); word-break: break-all; }
   .popup .route-btn { margin-top: 6px; }
 
+  .presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .presets button { padding: 7px 4px; border: 1px solid var(--line); border-radius: 6px; background: var(--chip);
+    color: var(--fg); font: inherit; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+  .presets button:hover { border-color: var(--accent); }
+  .presets button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  #preset-note { margin-top: 6px; min-height: 15px; }
+  #more, #legend-box { border-bottom: 1px solid var(--line); }
+  #more > summary, #legend-box > summary { cursor: pointer; padding: 8px 0; font-size: 12px; text-transform: uppercase;
+    letter-spacing: .04em; color: var(--muted); }
+  #more[open] > summary { border-bottom: 1px solid var(--line); }
+  #legend-box[open] > summary { padding-bottom: 4px; }
+  #legend-box #legend { padding-bottom: 8px; }
+  #more section:last-child { border-bottom: 0; }
   .slider-label { width: 74px; flex: none; }
   .slider-row[hidden] { display: none; }
   .popup .profile-btn { margin-top: 6px; margin-left: 4px; }
@@ -152,6 +165,18 @@
       </div>
     </section>
 
+    <section>
+      <div class="presets" role="group" aria-label="Views">
+        <button type="button" data-preset="lidar">LiDAR</button>
+        <button type="button" data-preset="maps">Old maps</button>
+        <button type="button" data-preset="heritage">Earthworks</button>
+        <button type="button" data-preset="3d">3D</button>
+      </div>
+      <div class="note" id="preset-note"></div>
+    </section>
+
+    <details id="more">
+      <summary>All layers and settings</summary>
     <section>
       <h2>Base map</h2>
       <label class="row"><input type="radio" name="base" value="light" checked> Light grey (Esri)</label>
@@ -249,11 +274,12 @@
       <input type="range" id="period" min="0" max="7" value="0" step="1">
       <div><span id="period-label">All periods</span> <span class="note" id="period-count"></span></div>
     </section>
+    </details>
 
-    <section>
-      <h2>Legend</h2>
+    <details id="legend-box">
+      <summary>Legend</summary>
       <div id="legend"></div>
-    </section>
+    </details>
 
     <section id="credit">
       Data: <a href="https://roadsofromanbritain.org/digital-britannia/downloads.html" target="_blank" rel="noopener">Digital Britannia v1</a>,
@@ -1178,6 +1204,49 @@ $("l-itinere").addEventListener("change", applyItinere);
 $("period").addEventListener("input", applySites);
 $("toggle-panel").addEventListener("click", () => $("panel").classList.toggle("collapsed"));
 if (window.innerWidth <= 700) $("panel").classList.add("collapsed"); // map first on phones
+
+// ---------------------------------------------------------------------------
+// Presets: four starting views, from plain LiDAR to 3D. Each resets every panel
+// setting to its default and then applies its own; "All layers and settings" fine-tunes.
+// ---------------------------------------------------------------------------
+const PRESETS = {
+  lidar: { note: "LiDAR hillshade under the roads and sites: the plainest view.", set: {} },
+  maps: { note: "The OS 6-inch map of c.1890–1910 blended over the LiDAR.",
+    set: { "u-hist": "1", "o-hist": "85", "o-lidar": "45" } },   // the map is drawn under the LiDAR
+  heritage: { note: "Local relief model from the live 1 m DTM (England, zoom 13+), with scheduled monuments and Roman aerial mapping. Zoom in to see the features.",
+    set: { "lidar-src": "live", "dtm-mode": "lrm", "o-lidar": "85", "o-sam": "1", "o-aim": "1" } },
+  "3d": { note: "Tilted 3D terrain from 1 m heights (England), lit from the north-west. Use the sliders under 3D terrain to fly around.",
+    set: { "u-terrain": "1", "t-exag": "2", "lidar-src": "live", "o-lidar": "80" } },
+};
+const presetValue = (name, id) => PRESETS[name].set[id] ?? stateDefaults.get(id);
+function markPreset(name) {
+  document.querySelectorAll(".presets button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.preset === name)));
+  $("preset-note").textContent = name ? PRESETS[name].note : "Custom view: see All layers and settings.";
+}
+function currentPreset() {
+  if (document.querySelector('input[name="base"]:checked').value !== "light") return null;
+  return Object.keys(PRESETS).find(name => stateInputs.every(el => stateValue(el) === presetValue(name, el.id))) || null;
+}
+function applyPreset(name) {
+  const terrainWas = $("u-terrain").checked;
+  for (const el of stateInputs) {
+    const v = presetValue(name, el.id);
+    if (el.type === "checkbox") el.checked = v === "1"; else el.value = v;
+  }
+  document.querySelector('input[name="base"][value="light"]').checked = true;
+  $("t-exag-v").textContent = `${(+$("t-exag").value).toFixed(1)}×`;
+  markPreset(name);
+  saveState();
+  if (!data.roads) return;   // still loading: the load step applies the panel as it stands
+  applyAll();
+  applyItinere();
+  if ($("u-terrain").checked || terrainWas) applyTerrain();   // tilts into 3D, or back to flat
+}
+document.querySelectorAll(".presets button").forEach(b => b.addEventListener("click", () => applyPreset(b.dataset.preset)));
+// any manual change makes it a custom view, unless it happens to match a preset
+["change", "input"].forEach(t => $("more").addEventListener(t, () => markPreset(currentPreset())));
+markPreset(currentPreset());
+if (!currentPreset()) $("more").open = true;   // a share link with custom settings: show them
 
 // ---------------------------------------------------------------------------
 // Legend
