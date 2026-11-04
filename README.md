@@ -28,7 +28,7 @@ python3 -m http.server 8765 --directory docs
 Then open http://localhost:8765.
 
 ### Using the viewer
-- **Views:** four buttons under the search box set up the map in one click:
+- **Views:** four buttons at the top of the panel (still showing on phones with the panel folded) set up the map in one click:
   - **LiDAR:** hillshade under the roads and sites, the plainest view.
   - **Old maps:** the OS 6-inch map of about 1890–1910 blended with the
     LiDAR.
