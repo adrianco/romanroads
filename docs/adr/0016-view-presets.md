@@ -19,7 +19,8 @@ period, and a long legend). Feedback: too many options to start with.
   | **3D** | 3D terrain (1 m EA heights) at 2×, tilted to 60°, with the live one-sun hillshade at 80%. Multi-direction looked flat at a tilt. |
 
 - **Collapsed sections:** everything else moves into a collapsed **All layers
-  and settings** section, and the legend into a collapsed **Legend**.
+  and settings** section, and the legend into a **Legend** section that starts
+  open on desktop and folded on phones.
 - **Highlighting:** the active preset is highlighted, with a one-line
   description under the buttons. Changing any setting by hand marks the view
   "custom", unless the result matches a preset.

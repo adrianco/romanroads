@@ -1203,6 +1203,7 @@ $("l-itinere").addEventListener("change", applyItinere);
 $("period").addEventListener("input", applySites);
 $("toggle-panel").addEventListener("click", () => $("panel").classList.toggle("collapsed"));
 if (window.innerWidth <= 700) $("panel").classList.add("collapsed"); // map first on phones
+if (window.innerWidth > 700) $("legend-box").open = true;   // room for the legend beside the map on desktop
 
 // ---------------------------------------------------------------------------
 // Presets: four starting views, from plain LiDAR to 3D. Each resets every panel
