@@ -19,3 +19,4 @@ context, decision, and consequences. Status is `Accepted` unless noted.
 | [0012](0012-optional-extras.md) | Optional extras: DARE, BGS geology, 3D terrain, scheduled monuments, HE aerial mapping, Pleiades, Itiner-e comparison; rejected candidates |
 | [0013](0013-itinere-datum-fix.md) | Itiner-e British segments are OSGB36 lat/lon labelled WGS84; corrected (median gap 81 m → 17 m) |
 | [0014](0014-pleiades-matching.md) | Pleiades links matched at build time: fuzzy Roman/modern-name match within 2 km (issue #1) |
+| [0015](0015-live-dtm.md) | Live 1 m EA DTM shaded in the browser (adjustable sun, multi-direction, slope, LRM, sky-view), 1 m 3D terrain, road elevation profiles, share links (issue #3) |

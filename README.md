@@ -39,14 +39,24 @@ Then open http://localhost:8765.
   **3D terrain** to show its sliders: **Tilt** (0–85°), **Rotation**,
   **Altitude** (zoom) and **Relief** (vertical exaggeration, 1–5×). The
   sliders follow the map as you move it, and turning 3D off returns to a flat,
-  north-up view.
+  north-up view. In England the 3D terrain uses the EA's 1 m heights from
+  zoom 13.
+- **Live LiDAR (England):** under LiDAR hillshade, switch the source from
+  *Ready-shaded by the EA* to *Live 1 m DTM*. From zoom 13 your browser
+  fetches raw 1 m heights from the EA and shades them itself, so you can move
+  the sun, raise the exaggeration, or change the visualisation:
+  multi-direction hillshade, slope, **local relief model** (best for aggers and
+  low earthworks) or sky-view factor. It's slower than the ready-shaded layer.
+- **Elevation profile:** click a road, then *Elevation profile*, to chart the
+  ground along that segment, with its climb, fall and steepest 100 m. Move
+  along the chart to see where you are on the map.
 - **Heritage overlays:** scheduled monuments and Roman-period aerial mapping
   load for the area in view once you zoom in. The line under each one says how
   many features are showing.
 - **Period slider:** shows only military sites occupied in the chosen period,
   coloured by their type in that period.
-- The URL keeps the current view (`#zoom/lat/lon`), so you can share a link to
-  a specific spot.
+- The URL keeps the current view (`#zoom/lat/lon`) and every panel setting you
+  change (`?lidar-src=live&dtm-mode=lrm`), so a link opens the same map.
 
 ## What was built, and how
 
@@ -86,7 +96,10 @@ Then open http://localhost:8765.
   4th century).
 - **Underlays**, each with an opacity slider:
   - LiDAR hillshade:
-    - **England:** Environment Agency 1 m composite.
+    - **England:** Environment Agency 1 m composite, either ready-shaded or
+      live: raw heights from the EA's WCS shaded in the browser with an
+      adjustable sun, multi-direction hillshade, slope, local relief model or
+      sky-view factor ([ADR 0015](docs/adr/0015-live-dtm.md), issue #3).
     - **Scotland** (from zoom 11): DTMs from the Scottish Remote Sensing
       Portal, shaded on the fly by its server.
     - **Wales:** not yet. The Welsh hillshades aren't available in any form a
@@ -97,7 +110,10 @@ Then open http://localhost:8765.
   - Roman Empire map: the Digital Atlas of the Roman Empire (DARE), with Latin
     place names
   - Bedrock geology: BGS, 1:625k zoomed out and 1:50k zoomed in
-  - 3D terrain: tilts the view with real elevation
+  - 3D terrain: tilts the view with real elevation (1 m EA heights in
+    England from zoom 13)
+- **Road elevation profiles** from the same 1 m heights, with climb, fall and
+  the steepest 100 m.
 - **Heritage overlays:**
   - Scheduled monuments for England (Historic England), Scotland (HES) and
     Wales (Cadw).
@@ -160,6 +176,7 @@ A blog post records the development process over two days. [Dev.to blog](https:/
 ## Credits
 - Data: Digital Britannia v1 © Roman Roads Research Association / Mike Haken (CC BY-NC 4.0)
 - LiDAR (England): contains Environment Agency information © Environment Agency and/or database right
+- Live DTM idea: [LiDAR Lens](https://lidarlens.sarsen.org/) by Tim Daw ([MIT](https://github.com/TimDaw37/lidar-lens)); the shading here is written separately, with the multi-direction hillshade following GDAL
 - LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the Scottish Remote Sensing Portal (OGL)
 - Historic maps: National Library of Scotland
 - Roman Empire map: Digital Atlas of the Roman Empire, Johan Åhlfeldt (CC BY 4.0)

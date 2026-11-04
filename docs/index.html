@@ -85,6 +85,23 @@
   .popup a { color: var(--accent); word-break: break-all; }
   .popup .route-btn { margin-top: 6px; }
 
+  .slider-label { width: 74px; flex: none; }
+  .slider-row[hidden] { display: none; }
+  .popup .profile-btn { margin-top: 6px; margin-left: 4px; }
+
+  #profile { position: absolute; z-index: 3; left: 350px; right: 60px; bottom: 34px; max-width: 900px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.15); padding: 8px 12px 6px; }
+  .profile-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .profile-head button { margin-left: auto; border: 1px solid var(--line); background: var(--chip); color: var(--fg);
+    border-radius: 6px; padding: 0 8px; font-size: 15px; line-height: 20px; cursor: pointer; }
+  #profile-svg { display: block; width: 100%; height: 170px; margin-top: 4px; }
+  #profile-svg text { font-size: 10px; fill: var(--muted); }
+  #profile-svg .area { fill: var(--accent); fill-opacity: .14; }
+  #profile-svg .line { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+  #profile-svg .grid { stroke: var(--line); stroke-width: 1; }
+  #profile-svg .cursor { stroke: var(--fg); stroke-width: 1; stroke-dasharray: 3 2; }
+
   #credit { font-size: 11px; color: var(--muted); }
   #credit a { color: inherit; }
 
@@ -95,11 +112,23 @@
     #toggle-panel { display: inline-block; float: right; border: 1px solid var(--line);
       background: var(--chip); color: var(--fg); border-radius: 6px; padding: 2px 8px; }
     .maplibregl-ctrl-bottom-right, .maplibregl-ctrl-bottom-left { bottom: 64px; }
+    #profile { left: 8px; right: 8px; top: 8px; bottom: auto; }
+    #profile-svg { height: 130px; }
   }
 </style>
 </head>
 <body>
 <div id="map"></div>
+
+<div id="profile" hidden>
+  <div class="profile-head">
+    <strong id="profile-title"></strong>
+    <span class="note" id="profile-stats"></span>
+    <button id="profile-close" aria-label="Close elevation profile">×</button>
+  </div>
+  <svg id="profile-svg" role="img" aria-label="Elevation profile"></svg>
+  <div class="note" id="profile-note"></div>
+</div>
 
 <aside id="panel">
   <header>
@@ -134,6 +163,28 @@
       <h2>Underlays</h2>
       <label class="row"><input type="checkbox" id="u-lidar" checked> LiDAR hillshade <span class="note">(England; Scotland from zoom 11)</span></label>
       <div class="slider-row"><input type="range" id="o-lidar" min="0" max="100" value="60"><output id="o-lidar-v">60%</output></div>
+      <div class="sub">
+        <select id="lidar-src" aria-label="LiDAR source">
+          <option value="wms">Ready-shaded by the EA (fast)</option>
+          <option value="live">Live 1 m DTM, adjustable (England, zoom 13+)</option>
+        </select>
+      </div>
+      <div id="dtm-controls" hidden>
+        <div class="sub">
+          <select id="dtm-mode" aria-label="LiDAR visualisation">
+            <option value="hs">Hillshade (one sun)</option>
+            <option value="multi">Multi-direction hillshade</option>
+            <option value="slope">Slope</option>
+            <option value="lrm">Local relief model</option>
+            <option value="svf">Sky-view factor</option>
+          </select>
+        </div>
+        <div class="slider-row" data-modes="hs"><span class="note slider-label">Sun from</span><input type="range" id="dtm-az" min="0" max="355" step="5" value="315"><output id="dtm-az-v">315°</output></div>
+        <div class="slider-row" data-modes="hs multi"><span class="note slider-label">Sun height</span><input type="range" id="dtm-el" min="5" max="75" step="5" value="35"><output id="dtm-el-v">35°</output></div>
+        <div class="slider-row" data-modes="hs multi slope lrm svf"><span class="note slider-label">Exaggeration</span><input type="range" id="dtm-ex" min="1" max="6" step="0.5" value="2"><output id="dtm-ex-v">2×</output></div>
+        <div class="slider-row" data-modes="lrm svf"><span class="note slider-label">Radius</span><input type="range" id="dtm-rad" min="5" max="50" step="5" value="15"><output id="dtm-rad-v">15 m</output></div>
+        <div class="sub note" id="dtm-status"></div>
+      </div>
 
       <label class="row"><input type="checkbox" id="u-hist"> Historic OS maps <span class="note">(NLS)</span></label>
       <div class="sub">
@@ -161,6 +212,7 @@
         <div class="slider-row"><span class="note" style="width:62px">Rotation</span><input type="range" id="t-rot" min="-180" max="180" value="0"><output id="t-rot-v">0°</output></div>
         <div class="slider-row"><span class="note" style="width:62px">Altitude</span><input type="range" id="t-zoom" min="5" max="18" step="0.1" value="12"><output id="t-zoom-v">z12</output></div>
         <div class="slider-row"><span class="note" style="width:62px">Relief</span><input type="range" id="t-exag" min="1" max="5" step="0.1" value="1.5"><output id="t-exag-v">1.5×</output></div>
+        <label class="row sub"><input type="checkbox" id="t-1m" checked> 1 m EA heights in England <span class="note">(zoom 13+, slower)</span></label>
       </div>
     </section>
 
@@ -247,15 +299,14 @@ const SCOT_WMS = "https://srsp-ows.jncc.gov.uk/ows?service=WMS&request=GetMap&ve
 // through a "retry://" protocol that re-fetches with backoff (ADR 0006).
 const RETRY_DELAYS_MS = [400, 1200, 3000];
 const retry = (url) => url.replace(/^https:\/\//, "retry://");
-maplibregl.addProtocol("retry", async (params, abortController) => {
-  const url = params.url.replace(/^retry:\/\//, "https://");
+async function fetchRetry(url, signal) {
   let lastError;
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
     if (attempt) await new Promise(r => setTimeout(r, RETRY_DELAYS_MS[attempt - 1] * (0.75 + Math.random() / 2)));
-    if (abortController.signal.aborted) throw new DOMException("tile request aborted", "AbortError");
+    if (signal?.aborted) throw new DOMException("tile request aborted", "AbortError");
     try {
-      const r = await fetch(url, { signal: abortController.signal });
-      if (r.ok) return { data: await r.arrayBuffer() };
+      const r = await fetch(url, { signal });
+      if (r.ok) return await r.arrayBuffer();
       lastError = new Error(`HTTP ${r.status}`);
     } catch (err) {
       if (err.name === "AbortError") throw err;   // tile no longer needed (map moved)
@@ -263,7 +314,320 @@ maplibregl.addProtocol("retry", async (params, abortController) => {
     }
   }
   throw lastError;
+}
+maplibregl.addProtocol("retry", async (params, abortController) =>
+  ({ data: await fetchRetry(params.url.replace(/^retry:\/\//, "https://"), abortController.signal) }));
+
+// ---------------------------------------------------------------------------
+// Live 1 m DTM (England), ADR 0015
+// ---------------------------------------------------------------------------
+// The EA's WCS returns raw heights (float32 GeoTIFF) and allows cross-origin requests, so
+// tiles are fetched in Web Mercator, scaled to 256 px plus a margin, and shaded here. That
+// gives an adjustable sun, other visualisations and 1 m heights for the 3D terrain.
+const EA_WCS = "https://environment.data.gov.uk/spatialdata/lidar-composite-digital-terrain-model-dtm-1m/wcs" +
+  "?service=WCS&version=2.0.1&request=GetCoverage&format=image/tiff&geotiff:compression=Deflate" +
+  "&CoverageId=13787b9a-26a4-4775-8523-806d13af58fc__Lidar_Composite_Elevation_DTM_1m" +
+  "&subsettingCrs=http://www.opengis.net/def/crs/EPSG/0/3857&outputCrs=http://www.opengis.net/def/crs/EPSG/0/3857";
+const DTM_MIN_Z = 13, DTM_MAX_Z = 17;
+const DTM_PAD = 16;                  // margin in pixels round each 256 px tile, for gradients, blur and horizons
+const DTM_GRID = 256 + 2 * DTM_PAD;
+const DTM_CONCURRENCY = 6;           // requests in flight to the EA at once
+const DTM_CACHE_TILES = 160;         // decoded tiles kept in memory (~330 KB each)
+const EA_BOUNDS = [-6.5, 49.8, 2.0, 55.9];
+const AWS_TERRARIUM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/";
+const MERC = 20037508.342789244, EARTH_R = 6378137;
+
+const tileBox = (z, x, y) => { const s = 2 * MERC / 2 ** z; return { minx: -MERC + x * s, maxy: MERC - y * s, size: s }; };
+const mercLat = (my) => (2 * Math.atan(Math.exp(my / EARTH_R)) - Math.PI / 2) * 180 / Math.PI;
+const mercLon = (mx) => mx / EARTH_R * 180 / Math.PI;
+const lonMerc = (lon) => lon * Math.PI / 180 * EARTH_R;
+const latMerc = (lat) => EARTH_R * Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
+function tileInEngland(z, x, y) {
+  const b = tileBox(z, x, y);
+  return mercLon(b.minx + b.size) > EA_BOUNDS[0] && mercLon(b.minx) < EA_BOUNDS[2] &&
+    mercLat(b.maxy) > EA_BOUNDS[1] && mercLat(b.maxy - b.size) < EA_BOUNDS[3];
+}
+
+// Minimal GeoTIFF reader for the WCS output: float32, tiled or stripped, deflate or none
+async function inflate(bytes) {
+  return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate"))).arrayBuffer());
+}
+async function decodeTiff(buf) {
+  const dv = new DataView(buf), le = dv.getUint16(0) === 0x4949;
+  const SIZE = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 11: 4, 12: 8, 16: 8 };
+  const ifd = dv.getUint32(4, le), n = dv.getUint16(ifd, le), tag = {};
+  for (let i = 0; i < n; i++) {
+    const e = ifd + 2 + i * 12, id = dv.getUint16(e, le), type = dv.getUint16(e + 2, le), count = dv.getUint32(e + 4, le);
+    const at = SIZE[type] * count <= 4 ? e + 8 : dv.getUint32(e + 8, le);
+    if (type === 2) { tag[id] = new TextDecoder().decode(new Uint8Array(buf, at, count)).replace(/\0+$/, ""); continue; }
+    tag[id] = Array.from({ length: count }, (_, k) =>
+      type === 3 ? dv.getUint16(at + 2 * k, le) : type === 4 ? dv.getUint32(at + 4 * k, le)
+        : type === 11 ? dv.getFloat32(at + 4 * k, le) : type === 12 ? dv.getFloat64(at + 8 * k, le) : dv.getUint8(at + k));
+  }
+  const W = tag[256][0], H = tag[257][0], comp = tag[259]?.[0] ?? 1;
+  if (tag[258][0] !== 32 || (tag[339]?.[0] ?? 1) !== 3) throw new Error("expected float32 heights");
+  if ((tag[317]?.[0] ?? 1) !== 1) throw new Error("TIFF predictor not supported");
+  const tiled = !!tag[322], TW = tiled ? tag[322][0] : W, TH = tiled ? tag[323][0] : (tag[278]?.[0] ?? H);
+  const offs = tiled ? tag[324] : tag[273], counts = tiled ? tag[325] : tag[279];
+  const across = Math.ceil(W / TW), out = new Float32Array(W * H);
+  for (let i = 0; i < offs.length; i++) {
+    let bytes = new Uint8Array(buf, offs[i], counts[i]);
+    if (comp === 8 || comp === 32946) bytes = await inflate(bytes);
+    else if (comp !== 1) throw new Error(`TIFF compression ${comp} not supported`);
+    const tv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const r0 = Math.floor(i / across) * TH, c0 = (i % across) * TW;
+    for (let r = 0; r < TH && r0 + r < H; r++) {
+      for (let c = 0; c < TW && c0 + c < W; c++) {
+        const v = tv.getFloat32((r * TW + c) * 4, le);
+        // outside the survey (sea, Wales, Scotland) the WCS returns exactly 0; gaps carry the nodata value
+        out[(r0 + r) * W + c0 + c] = v === 0 || v < -1e30 || !Number.isFinite(v) ? NaN : v;
+      }
+    }
+  }
+  let x0, dx, y0, dy;
+  if (tag[34264]) [dx, , , x0, , dy, , y0] = tag[34264];   // ModelTransformation
+  else { const [sx, sy] = tag[33550], t = tag[33922]; dx = sx; dy = -sy; x0 = t[3] - t[0] * sx; y0 = t[4] + t[1] * sy; }
+  return { W, H, data: out, x0, dx, y0, dy };
+}
+
+// Sample a decoded raster at fractional pixel (fc, fr), falling back to the nearest cell next to gaps
+function sampleGrid(data, W, H, fc, fr) {
+  const c0 = Math.max(0, Math.min(W - 1, Math.floor(fc))), r0 = Math.max(0, Math.min(H - 1, Math.floor(fr)));
+  const c1 = Math.min(W - 1, c0 + 1), r1 = Math.min(H - 1, r0 + 1);
+  const ax = Math.max(0, Math.min(1, fc - c0)), ay = Math.max(0, Math.min(1, fr - r0));
+  const v = data[r0 * W + c0] * (1 - ax) * (1 - ay) + data[r0 * W + c1] * ax * (1 - ay) +
+    data[r1 * W + c0] * (1 - ax) * ay + data[r1 * W + c1] * ax * ay;
+  if (!Number.isNaN(v)) return v;
+  return data[(ay < 0.5 ? r0 : r1) * W + (ax < 0.5 ? c0 : c1)];
+}
+
+// Shared queue: at most DTM_CONCURRENCY requests to the EA, and a queued tile that nobody
+// wants any more (the map moved on) is dropped before it is requested
+let dtmActive = 0, dtmInFlight = 0;
+const dtmQueue = [];
+const dtmSlot = () => new Promise(r => { if (dtmActive < DTM_CONCURRENCY) { dtmActive++; r(); } else dtmQueue.push(r); });
+const dtmRelease = () => { const next = dtmQueue.shift(); if (next) next(); else dtmActive--; };
+const dtmCache = new Map();
+
+async function loadDtm(z, x, y, entry) {
+  await dtmSlot();
+  let started = false;
+  try {
+    if (entry.waiters === 0) throw new DOMException("tile no longer needed", "AbortError");
+    started = true; dtmInFlight++; dtmStatus();
+    const b = tileBox(z, x, y), res = b.size / 256, pad = DTM_PAD * res;
+    const coslat = Math.cos(mercLat(b.maxy - b.size / 2) * Math.PI / 180);
+    const scale = Math.min(1, 1 / coslat / res);   // native cells are 1 m on the ground
+    const url = EA_WCS + `&subset=X(${(b.minx - pad).toFixed(2)},${(b.minx + b.size + pad).toFixed(2)})` +
+      `&subset=Y(${(b.maxy - b.size - pad).toFixed(2)},${(b.maxy + pad).toFixed(2)})&scaleFactor=${scale.toFixed(6)}`;
+    const t = await decodeTiff(await fetchRetry(url));
+    const h = new Float32Array(DTM_GRID * DTM_GRID);
+    let valid = 0;
+    for (let j = 0; j < DTM_GRID; j++) {
+      const fr = (b.maxy + pad - (j + 0.5) * res - t.y0) / t.dy - 0.5;
+      for (let i = 0; i < DTM_GRID; i++) {
+        const v = sampleGrid(t.data, t.W, t.H, (b.minx - pad + (i + 0.5) * res - t.x0) / t.dx - 0.5, fr);
+        h[j * DTM_GRID + i] = v;
+        if (!Number.isNaN(v)) valid++;
+      }
+    }
+    return { z, h, resM: res * coslat, empty: valid === 0 };
+  } finally { if (started) dtmInFlight--; dtmRelease(); dtmStatus(); }
+}
+
+// Heights for one tile (DTM_GRID² with margin), shared by the shading, the 3D terrain and profiles
+function dtmTile(z, x, y, signal) {
+  const key = `${z}/${x}/${y}`;
+  let e = dtmCache.get(key);
+  if (e) { dtmCache.delete(key); dtmCache.set(key, e); }   // most recently used last
+  else {
+    e = { waiters: 0 };
+    e.promise = loadDtm(z, x, y, e);
+    e.promise.catch(() => dtmCache.delete(key));
+    dtmCache.set(key, e);
+    if (dtmCache.size > DTM_CACHE_TILES) dtmCache.delete(dtmCache.keys().next().value);
+  }
+  e.waiters++;
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (fn, v) => { if (settled) return; settled = true; e.waiters--; signal?.removeEventListener("abort", onAbort); fn(v); };
+    const onAbort = () => finish(reject, new DOMException("tile request aborted", "AbortError"));
+    if (signal?.aborted) return onAbort();
+    signal?.addEventListener("abort", onAbort, { once: true });
+    e.promise.then(v => finish(resolve, v), err => finish(reject, err));
+  });
+}
+
+// Mapzen/AWS terrarium heights: the fallback outside the EA survey, and below zoom 13
+const awsCache = new Map();
+function awsTile(z, x, y) {
+  const key = `${z}/${x}/${y}`;
+  if (!awsCache.has(key)) {
+    const p = fetchRetry(`${AWS_TERRARIUM}${key}.png`).then(async (buf) => {
+      const bmp = await createImageBitmap(new Blob([buf]), { colorSpaceConversion: "none", premultiplyAlpha: "none" });
+      const c = new OffscreenCanvas(256, 256), ctx = c.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(bmp, 0, 0);
+      const px = ctx.getImageData(0, 0, 256, 256).data, h = new Float32Array(65536);
+      for (let i = 0; i < 65536; i++) h[i] = px[4 * i] * 256 + px[4 * i + 1] + px[4 * i + 2] / 256 - 32768;
+      return h;
+    });
+    p.catch(() => awsCache.delete(key));
+    awsCache.set(key, p);
+    if (awsCache.size > 64) awsCache.delete(awsCache.keys().next().value);
+  }
+  return awsCache.get(key);
+}
+async function awsHeights(z, x, y) {
+  if (z <= 15) return awsTile(z, x, y);
+  const k = 2 ** (z - 15), px = Math.floor(x / k), py = Math.floor(y / k), parent = await awsTile(15, px, py);
+  const out = new Float32Array(65536), ox = (x - px * k) * 256 / k, oy = (y - py * k) * 256 / k;
+  for (let j = 0; j < 256; j++) for (let i = 0; i < 256; i++)
+    out[j * 256 + i] = sampleGrid(parent, 256, 256, ox + (i + 0.5) / k - 0.5, oy + (j + 0.5) / k - 0.5);
+  return out;
+}
+
+// 256² heights for a tile: EA 1 m DTM where surveyed, AWS terrain elsewhere. eaShare is 0-1.
+async function demHeights(z, x, y, signal) {
+  let h = null, ea = 0;
+  if (z >= DTM_MIN_Z && tileInEngland(z, x, y)) {
+    const t = await dtmTile(Math.min(z, DTM_MAX_Z), x, y, signal);
+    if (!t.empty) {
+      h = new Float32Array(65536);
+      for (let j = 0; j < 256; j++) h.set(t.h.subarray((j + DTM_PAD) * DTM_GRID + DTM_PAD, (j + DTM_PAD) * DTM_GRID + DTM_PAD + 256), j * 256);
+    }
+  }
+  if (h) for (let i = 0; i < 65536; i++) if (!Number.isNaN(h[i])) ea++;
+  if (!h || ea < 65536) {
+    const a = await awsHeights(z, x, y);
+    if (!h) h = a;
+    else for (let i = 0; i < 65536; i++) if (Number.isNaN(h[i])) h[i] = a[i];
+  }
+  return { h, eaShare: ea / 65536 };
+}
+
+async function toPng(rgba, w = 256, h = 256) {
+  const c = new OffscreenCanvas(w, h);
+  c.getContext("2d").putImageData(new ImageData(rgba, w, h), 0, 0);
+  return (await c.convertToBlob({ type: "image/png" })).arrayBuffer();
+}
+let blankPng = null;
+const blank = () => (blankPng = blankPng || toPng(new Uint8ClampedArray(256 * 256 * 4)));
+
+// Normalised Gaussian blur that ignores gaps (NaN), for the local relief model
+function gaussBlur(h, G, sigma) {
+  const r = Math.min(DTM_PAD, Math.ceil(2.5 * sigma)), k = [];
+  for (let i = -r; i <= r; i++) k.push(Math.exp(-i * i / (2 * sigma * sigma)));
+  const num = new Float32Array(G * G), den = new Float32Array(G * G), out = new Float32Array(G * G);
+  for (let j = 0; j < G; j++) for (let i = 0; i < G; i++) {
+    let s = 0, w = 0;
+    for (let d = -r; d <= r; d++) {
+      const ii = i + d; if (ii < 0 || ii >= G) continue;
+      const v = h[j * G + ii]; if (Number.isNaN(v)) continue;
+      s += v * k[d + r]; w += k[d + r];
+    }
+    num[j * G + i] = s; den[j * G + i] = w;
+  }
+  for (let j = 0; j < G; j++) for (let i = 0; i < G; i++) {
+    let s = 0, w = 0;
+    for (let d = -r; d <= r; d++) {
+      const jj = j + d; if (jj < 0 || jj >= G) continue;
+      s += num[jj * G + i] * k[d + r]; w += den[jj * G + i] * k[d + r];
+    }
+    out[j * G + i] = w ? s / w : NaN;
+  }
+  return out;
+}
+
+// One shaded 256 px tile. o: mode (hs | multi | slope | lrm | svf), az, el (degrees), ex, rad (metres)
+function shadeTile(t, o) {
+  const G = DTM_GRID, P = DTM_PAD, h = t.h, rm = t.resM, ex = +o.ex;
+  const rgba = new Uint8ClampedArray(256 * 256 * 4);
+  const el = +o.el * Math.PI / 180;
+  // multi-direction follows GDAL's -multidirectional: suns at 225, 270, 315 and 360°, each
+  // weighted by sin²(aspect − sun), so every slope is lit obliquely by some of them
+  const suns = (o.mode === "multi" ? [225, 270, 315, 360] : [+o.az]).map(a => {
+    const az = a * Math.PI / 180;
+    return [Math.sin(az) * Math.cos(el), Math.cos(az) * Math.cos(el), Math.sin(el), az];
+  });
+  const radPx = Math.max(1, Math.min(P, +o.rad / rm));
+  const blur = o.mode === "lrm" ? gaussBlur(h, G, Math.max(0.7, radPx / 2.5)) : null;
+  const dirs = o.mode === "svf" ? Array.from({ length: 16 }, (_, d) => [Math.cos(d * Math.PI / 8), Math.sin(d * Math.PI / 8)]) : null;
+  const steps = Math.max(2, Math.round(radPx));
+  for (let j = 0; j < 256; j++) {
+    for (let i = 0; i < 256; i++) {
+      const c = (j + P) * G + i + P, z0 = h[c], px = 4 * (j * 256 + i);
+      if (Number.isNaN(z0)) continue;   // transparent: no survey here
+      const at = (d) => { const v = h[c + d]; return Number.isNaN(v) ? z0 : v; };
+      let g;
+      if (o.mode === "lrm") {
+        g = 128 + 127 * Math.max(-1, Math.min(1, (z0 - blur[c]) * ex));   // ±1 m full scale at 1×
+      } else if (o.mode === "svf") {
+        let sum = 0;
+        for (const [dx, dy] of dirs) {
+          let best = 0;
+          for (let k = 1; k <= steps; k++) {
+            const v = h[(j + P + Math.round(k * dy)) * G + i + P + Math.round(k * dx)];
+            if (Number.isNaN(v)) continue;
+            const tan = (v - z0) * ex / (k * rm);
+            if (tan > best) best = tan;
+          }
+          sum += best / Math.sqrt(1 + best * best);   // sin of the horizon angle
+        }
+        g = 255 * Math.max(0, Math.min(1, (1 - sum / dirs.length - 0.75) / 0.25));
+      } else {
+        // Horn gradients; rows run south, so north is -row
+        const a = at(-G - 1), b = at(-G), cc = at(-G + 1), d = at(-1), f = at(1), gg = at(G - 1), hh = at(G), ii = at(G + 1);
+        const east = ((cc + 2 * f + ii) - (a + 2 * d + gg)) / (8 * rm) * ex;
+        const north = ((a + 2 * b + cc) - (gg + 2 * hh + ii)) / (8 * rm) * ex;
+        if (o.mode === "slope") {
+          g = 255 * (1 - Math.min(1, Math.atan(Math.hypot(east, north)) * 180 / Math.PI / 40));
+        } else {
+          const len = Math.hypot(east, north, 1);
+          if (suns.length === 1) {
+            const [lx, ly, lz] = suns[0];
+            g = 255 * Math.max(0, (-east * lx - north * ly + lz) / len);
+          } else {
+            const aspect = Math.atan2(-east, -north);   // the way the slope faces, clockwise from north
+            let s = 0;
+            for (const [lx, ly, lz, az] of suns) s += Math.sin(aspect - az) ** 2 * Math.max(0, (-east * lx - north * ly + lz) / len);
+            g = 255 * s / 2;   // the four weights sum to 2
+          }
+        }
+      }
+      rgba[px] = rgba[px + 1] = rgba[px + 2] = g;
+      rgba[px + 3] = 255;
+    }
+  }
+  return rgba;
+}
+
+maplibregl.addProtocol("dtm", async (params, abortController) => {
+  const [, z, x, y, q] = params.url.match(/^dtm:\/\/(\d+)\/(\d+)\/(\d+)\?(.*)$/);
+  if (!tileInEngland(+z, +x, +y)) return { data: await blank() };
+  const t = await dtmTile(+z, +x, +y, abortController.signal);
+  return { data: t.empty ? await blank() : await toPng(shadeTile(t, Object.fromEntries(new URLSearchParams(q)))) };
 });
+
+// 3D terrain: terrarium-encoded tiles, 1 m EA heights from zoom 13 in England
+maplibregl.addProtocol("dem1m", async (params, abortController) => {
+  const [z, x, y] = params.url.match(/(\d+)\/(\d+)\/(\d+)$/).slice(1).map(Number);
+  if (z < DTM_MIN_Z) return { data: await fetchRetry(`${AWS_TERRARIUM}${z}/${x}/${y}.png`, abortController.signal) };
+  const { h } = await demHeights(z, x, y, abortController.signal);
+  const rgba = new Uint8ClampedArray(256 * 256 * 4);
+  for (let i = 0; i < 65536; i++) {
+    const v = Math.max(0, Math.min(65535.99, h[i] + 32768)), fl = Math.floor(v);
+    rgba[4 * i] = fl >> 8; rgba[4 * i + 1] = fl & 255; rgba[4 * i + 2] = Math.floor((v - fl) * 256); rgba[4 * i + 3] = 255;
+  }
+  return { data: await toPng(rgba) };
+});
+
+function dtmStatus() {
+  const el = document.getElementById("dtm-status");
+  if (!el || typeof map === "undefined") return;
+  if (map.getZoom() < DTM_MIN_Z) el.textContent = `Zoom in to ${DTM_MIN_Z}+ for the live DTM; the ready-shaded layer shows until then.`;
+  else if (dtmInFlight || dtmQueue.length) el.textContent = `Fetching heights from the EA: ${dtmInFlight + dtmQueue.length} tile${dtmInFlight + dtmQueue.length > 1 ? "s" : ""}…`;
+  else el.textContent = "EA LiDAR Composite DTM 1 m, shaded in your browser (England only).";
+}
 
 // Historic England ArcGIS Online feature services: no tiles, so the features in view are
 // queried on demand once zoomed in (see loadDynamic)
@@ -362,6 +726,36 @@ const lineWidth = (w6, w12, w16) => ["interpolate", ["linear"], ["zoom"], 6, w6,
 const esriCanvas = (name) => [`https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/${name}/MapServer/tile/{z}/{y}/{x}`];
 const ESRI_CANVAS_ATTR = "Base map © Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community";
 
+// ---------------------------------------------------------------------------
+// Share links: every panel setting that differs from its default goes in the query
+// string (?lidar-src=live&dtm-mode=lrm); MapLibre keeps the view in the #hash
+// ---------------------------------------------------------------------------
+const STATE_SKIP = new Set(["search", "t-tilt", "t-rot", "t-zoom"]);   // the camera is in the hash
+const stateInputs = [...document.querySelectorAll("#panel input[id], #panel select[id]")]
+  .filter(el => !STATE_SKIP.has(el.id) && el.type !== "radio");
+const stateValue = (el) => el.type === "checkbox" ? (el.checked ? "1" : "0") : el.value;
+const stateDefaults = new Map(stateInputs.map(el => [el.id, stateValue(el)]));
+function saveState() {
+  const q = new URLSearchParams();
+  const base = document.querySelector('input[name="base"]:checked').value;
+  if (base !== "light") q.set("base", base);
+  for (const el of stateInputs) if (stateValue(el) !== stateDefaults.get(el.id)) q.set(el.id, stateValue(el));
+  const s = q.toString();
+  history.replaceState(history.state, "", location.pathname + (s ? "?" + s : "") + location.hash);
+}
+(function restoreState() {
+  const q = new URLSearchParams(location.search);
+  const base = q.get("base"), radio = base && document.querySelector(`input[name="base"][value="${CSS.escape(base)}"]`);
+  if (radio) radio.checked = true;
+  for (const el of stateInputs) {
+    if (!q.has(el.id)) continue;
+    if (el.type === "checkbox") el.checked = q.get(el.id) === "1";
+    else if (el.tagName !== "SELECT" || [...el.options].some(o => o.value === q.get(el.id))) el.value = q.get(el.id);
+  }
+})();
+const dtmQuery = () => new URLSearchParams({ mode: document.getElementById("dtm-mode").value,
+  ...Object.fromEntries(["az", "el", "ex", "rad"].map(k => [k, document.getElementById("dtm-" + k).value])) }).toString();
+
 const style = {
   version: 8,
   glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
@@ -392,6 +786,12 @@ const style = {
     "terrain": { type: "raster-dem", encoding: "terrarium", tileSize: 256, maxzoom: 15,
       tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
       attribution: "Terrain: Mapzen terrain tiles (AWS Open Data); United Kingdom terrain data © Environment Agency copyright and/or database right 2015; EU-DEM produced using Copernicus data; SRTM and GMTED2010 courtesy of the U.S. Geological Survey" },
+    "terrain-1m": { type: "raster-dem", encoding: "terrarium", tileSize: 256, maxzoom: DTM_MAX_Z,
+      tiles: ["dem1m://{z}/{x}/{y}"],
+      attribution: "Terrain: EA LiDAR Composite DTM 1 m, contains Environment Agency information © Environment Agency and/or database right; elsewhere Mapzen terrain tiles (AWS Open Data; EU-DEM produced using Copernicus data; SRTM and GMTED2010 courtesy of the U.S. Geological Survey)" },
+    "dtm": { type: "raster", tiles: [`dtm://{z}/{x}/{y}?${dtmQuery()}`], tileSize: 256,
+      minzoom: DTM_MIN_Z, maxzoom: DTM_MAX_Z, bounds: EA_BOUNDS,
+      attribution: "LiDAR (live DTM): Contains Environment Agency information © Environment Agency and/or database right" },
   },
   layers: [
     { id: "base-light", type: "raster", source: "light" },
@@ -414,6 +814,8 @@ style.layers.push({ id: "u-lidar", type: "raster", source: "lidar", paint: { "ra
 // GeoServer's shading is paler than the EA's; pull its highlights down to match across the border
 style.layers.push({ id: "u-lidar-scot", type: "raster", source: "lidar-scot",
   paint: { "raster-opacity": 0.6, "raster-brightness-max": 0.8, "raster-contrast": 0.2 } });
+style.layers.push({ id: "u-dtm", type: "raster", source: "dtm", layout: { visibility: "none" },
+  paint: { "raster-opacity": 0.6, "raster-fade-duration": 0 } });
 for (const id of ["sam-scot", "sam-wales"]) {
   style.layers.push({ id: "o-" + id, type: "raster", source: id, layout: { visibility: "none" }, paint: { "raster-opacity": 0.7 } });
 }
@@ -453,7 +855,8 @@ map.once("style.load", async () => {
   const loaded = await dataFetch;
   FILES.forEach((f, i) => {
     data[f] = loaded[i];
-    map.addSource(f, { type: "geojson", data: loaded[i] });
+    // roads get ids (their index in the file) so a click can find the full, unclipped line for a profile
+    map.addSource(f, { type: "geojson", data: loaded[i], generateId: f === "roads" });
   });
 
   // heritage overlays filled on demand by loadDynamic(); drawn under the Digital Britannia layers
@@ -530,13 +933,16 @@ map.once("style.load", async () => {
   buildSearchIndex();
   if (input.value) input.dispatchEvent(new Event("input")); // query typed while data was loading
   applyAll();
+  // settings restored from a share link that the general apply step doesn't cover
+  if ($("u-terrain").checked) setTerrainSource();
+  if ($("l-itinere").checked) applyItinere();
   buildLegend();
   wireClicks();
 });
 
 map.on("error", (e) => {
   // tile errors for rasters outside coverage are expected; surface the rest
-  if (e && e.sourceId && ["lidar", "lidar-scot", "aerial", "osm", "dare", "geo-625k", "geo-50k", "sam-scot", "sam-wales", "terrain"].includes(e.sourceId) || /^nls-/.test(e?.sourceId || "")) return;
+  if (e && e.sourceId && ["lidar", "lidar-scot", "dtm", "aerial", "osm", "dare", "geo-625k", "geo-50k", "sam-scot", "sam-wales", "terrain", "terrain-1m"].includes(e.sourceId) || /^nls-/.test(e?.sourceId || "")) return;
   console.warn("map error", e && e.error ? e.error.message : e);
 });
 
@@ -575,12 +981,40 @@ function applyUnderlays() {
     map.setPaintProperty(id, "raster-opacity", $("o-geo").value / 100);
   }
   for (const k of ["lidar", "hist", "aerial", "dare", "geo"]) $(`o-${k}-v`).textContent = $(`o-${k}`).value + "%";
+  applyDtm();
 }
 
-function applyTerrain() {
+// Live DTM: below zoom 13 (and outside England) the EA's ready-shaded layer still shows
+let dtmTimer = null;
+function applyDtm() {
+  const live = $("lidar-src").value === "live", mode = $("dtm-mode").value;
+  $("dtm-controls").hidden = !live;
+  map.setLayerZoomRange("u-lidar", 0, live ? DTM_MIN_Z : 24);
+  vis("u-dtm", live && $("u-lidar").checked);
+  map.setPaintProperty("u-dtm", "raster-opacity", $("o-lidar").value / 100);
+  document.querySelectorAll("#dtm-controls [data-modes]").forEach(el => { el.hidden = !el.dataset.modes.split(" ").includes(mode); });
+  $("dtm-az-v").textContent = `${$("dtm-az").value}°`;
+  $("dtm-el-v").textContent = `${$("dtm-el").value}°`;
+  $("dtm-ex-v").textContent = `${$("dtm-ex").value}×`;
+  $("dtm-rad-v").textContent = `${$("dtm-rad").value} m`;
+  // re-shade from the heights already in memory, once the slider settles
+  clearTimeout(dtmTimer);
+  dtmTimer = setTimeout(() => {
+    const tiles = [`dtm://{z}/{x}/{y}?${dtmQuery()}`], src = map.getSource("dtm");
+    if (src && src.tiles[0] !== tiles[0]) src.setTiles(tiles);
+  }, 200);
+  dtmStatus();
+}
+
+const terrainSourceId = () => $("t-1m").checked ? "terrain-1m" : "terrain";
+function setTerrainSource() {
   const on = $("u-terrain").checked;
   $("terrain-controls").hidden = !on;
-  map.setTerrain(on ? { source: "terrain", exaggeration: +$("t-exag").value } : null);
+  map.setTerrain(on ? { source: terrainSourceId(), exaggeration: +$("t-exag").value } : null);
+}
+function applyTerrain() {
+  const on = $("u-terrain").checked;
+  setTerrainSource();
   // back to a flat, north-up map when 3D is switched off
   map.easeTo(on ? { pitch: +$("t-tilt").value, bearing: +$("t-rot").value, duration: 800 }
                : { pitch: 0, bearing: 0, duration: 800 });
@@ -601,7 +1035,7 @@ function applyTerrainSliders(ev) {
   else if (ev.target.id === "t-zoom") map.setZoom(v);
   else if (ev.target.id === "t-exag") {
     $("t-exag-v").textContent = `${v.toFixed(1)}×`;
-    if ($("u-terrain").checked) map.setTerrain({ source: "terrain", exaggeration: v });
+    if ($("u-terrain").checked) map.setTerrain({ source: terrainSourceId(), exaggeration: v });
   }
 }
 
@@ -727,6 +1161,12 @@ document.querySelectorAll('input[name="base"]').forEach(el => el.addEventListene
 ["u-lidar", "u-hist", "u-aerial", "u-dare", "u-geo", "hist-edition"].forEach(id => $(id).addEventListener("change", applyUnderlays));
 ["o-lidar", "o-hist", "o-aerial", "o-dare", "o-geo"].forEach(id => $(id).addEventListener("input", applyUnderlays));
 $("u-terrain").addEventListener("change", applyTerrain);
+$("t-1m").addEventListener("change", setTerrainSource);
+["lidar-src", "dtm-mode"].forEach(id => $(id).addEventListener("change", applyDtm));
+["dtm-az", "dtm-el", "dtm-ex", "dtm-rad"].forEach(id => $(id).addEventListener("input", applyDtm));
+map.on("zoomend", dtmStatus);
+$("panel").addEventListener("change", saveState);
+$("panel").addEventListener("input", (ev) => { if (ev.target.type === "range") saveState(); });
 ["t-tilt", "t-rot", "t-zoom", "t-exag"].forEach(id => $(id).addEventListener("input", applyTerrainSliders));
 map.on("move", syncTerrainSliders);
 ["o-sam", "o-aim"].forEach(id => $(id).addEventListener("change", applyOverlays));
@@ -831,6 +1271,7 @@ function popupHtml(layer, p) {
       `target="_blank" rel="noopener">Search Pleiades for ${esc(modern)}</a></p>`;
   }
   if (layer === "roads" && p._margary) html += `<button class="route-btn" data-road="${esc(p._margary)}">Zoom to whole route</button>`;
+  if (layer === "roads") html += `<button class="profile-btn">Elevation profile</button>`;
   return html + "</div>";
 }
 
@@ -840,6 +1281,11 @@ function showPopup(layer, feature, lngLat) {
   popup = new maplibregl.Popup({ maxWidth: "380px" }).setLngLat(lngLat).setHTML(popupHtml(layer, feature.properties)).addTo(map);
   const btn = popup.getElement().querySelector(".route-btn");
   if (btn) btn.addEventListener("click", () => zoomToRoute(btn.dataset.road));
+  const prof = popup.getElement().querySelector(".profile-btn");
+  // the clicked geometry is clipped to a vector tile; the id leads back to the whole segment
+  const whole = layer === "roads" && data.roads.features[feature.id];
+  if (prof && whole && whole.geometry) prof.addEventListener("click", () => showProfile(whole));
+  else if (prof) prof.remove();
 }
 
 function wireClicks() {
@@ -864,6 +1310,144 @@ function wireClicks() {
     map.on("mouseleave", id, () => map.getCanvas().style.cursor = "");
   }
 }
+
+// ---------------------------------------------------------------------------
+// Elevation profile along a road segment (ADR 0015)
+// ---------------------------------------------------------------------------
+const haversine = ([lon1, lat1], [lon2, lat2]) => {
+  const r = Math.PI / 180, a = Math.sin((lat2 - lat1) * r / 2) ** 2 +
+    Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin((lon2 - lon1) * r / 2) ** 2;
+  return 2 * 6371008.8 * Math.asin(Math.sqrt(a));
+};
+let profileRun = 0, profileSamples = [];
+
+async function showProfile(feature) {
+  const run = ++profileRun, p = feature.properties;
+  if (popup) popup.remove();
+  const parts = feature.geometry.type === "MultiLineString" ? feature.geometry.coordinates : [feature.geometry.coordinates];
+  let length = 0;
+  for (const line of parts) for (let i = 1; i < line.length; i++) length += haversine(line[i - 1], line[i]);
+  // one sample every ~5 m (fewer on long segments), at zoom 15 (~3 m cells) unless that needs too many tiles
+  const step = Math.max(5, length / 1500);
+  const samples = [];
+  let d = 0;
+  for (const line of parts) {
+    for (let i = 1; i < line.length; i++) {
+      const seg = haversine(line[i - 1], line[i]);
+      for (let t = 0; t < seg; t += step) {
+        const f = t / seg;
+        samples.push({ d: d + t, lon: line[i - 1][0] + f * (line[i][0] - line[i - 1][0]), lat: line[i - 1][1] + f * (line[i][1] - line[i - 1][1]) });
+      }
+      d += seg;
+    }
+  }
+  const last = parts[parts.length - 1], end = last[last.length - 1];
+  samples.push({ d, lon: end[0], lat: end[1] });
+
+  let z = 15, tiles;
+  const tileOf = (s, z) => {
+    const size = 2 * MERC / 2 ** z, fx = (lonMerc(s.lon) + MERC) / size, fy = (MERC - latMerc(s.lat)) / size;
+    return { x: Math.floor(fx), y: Math.floor(fy), px: (fx - Math.floor(fx)) * 256 - 0.5, py: (fy - Math.floor(fy)) * 256 - 0.5 };
+  };
+  for (; ; z--) {
+    tiles = new Set(samples.map(s => { const t = tileOf(s, z); return `${t.x}/${t.y}`; }));
+    if (tiles.size <= 60 || z === DTM_MIN_Z) break;
+  }
+  $("profile").hidden = false;
+  $("profile-title").textContent = TITLE_FIELDS.roads(p);
+  $("profile-stats").textContent = `${(length / 1000).toFixed(2)} km`;
+  $("profile-svg").innerHTML = "";
+  $("profile-note").textContent = `Fetching heights: 0 of ${tiles.size} tiles…`;
+  let done = 0, eaShare = 0;
+  const heights = new Map();
+  await Promise.all([...tiles].map(async (k) => {
+    const [x, y] = k.split("/").map(Number);
+    try {
+      const r = await demHeights(z, x, y);
+      heights.set(k, r.h); eaShare += r.eaShare;
+    } catch (err) { heights.set(k, null); }
+    if (run === profileRun) $("profile-note").textContent = `Fetching heights: ${++done} of ${tiles.size} tiles…`;
+  }));
+  if (run !== profileRun) return;   // another profile was asked for meanwhile
+  for (const s of samples) {
+    const t = tileOf(s, z), h = heights.get(`${t.x}/${t.y}`);
+    s.h = h ? sampleGrid(h, 256, 256, t.px, t.py) : NaN;
+  }
+  profileSamples = samples.filter(s => Number.isFinite(s.h));
+  const cell = (2 * MERC / 2 ** z / 256 * Math.cos(samples[0].lat * Math.PI / 180)).toFixed(1);
+  eaShare /= tiles.size;
+  $("profile-note").textContent = (eaShare > 0.99 ? `EA LiDAR Composite DTM 1 m, resampled to ${cell} m cells` :
+    eaShare > 0 ? `Mostly EA LiDAR 1 m (resampled to ${cell} m); coarser Mapzen terrain where there's no EA survey` :
+      "Mapzen terrain (no EA LiDAR here, so it is much coarser)") + ` · one sample every ${step.toFixed(0)} m`;
+  drawProfile();
+}
+
+function profileStats(s) {
+  let up = 0, down = 0, steep = 0, steepAt = 0;
+  // climb and fall with a 1 m dead band, so small ups and downs from noise don't accumulate
+  let ref = s[0].h;
+  for (const v of s) {
+    if (v.h > ref + 1) { up += v.h - ref; ref = v.h; } else if (v.h < ref - 1) { down += ref - v.h; ref = v.h; }
+  }
+  // steepest sustained gradient over 100 m
+  for (let i = 0, j = 0; i < s.length; i++) {
+    while (j < s.length - 1 && s[j].d - s[i].d < 100) j++;
+    if (s[j].d - s[i].d < 100) break;
+    const g = Math.abs(s[j].h - s[i].h) / (s[j].d - s[i].d);
+    if (g > steep) { steep = g; steepAt = (s[i].d + s[j].d) / 2; }
+  }
+  return { up, down, steep, steepAt };
+}
+
+function drawProfile() {
+  const s = profileSamples, svg = $("profile-svg");
+  if (s.length < 2) { svg.innerHTML = ""; $("profile-note").textContent = "No heights found along this segment."; return; }
+  const W = svg.clientWidth, H = svg.clientHeight, L = 42, R = 8, T = 6, B = 18;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  let lo = Math.min(...s.map(v => v.h)), hi = Math.max(...s.map(v => v.h));
+  const padH = Math.max(2, (hi - lo) * 0.08); lo -= padH; hi += padH;
+  const dmax = s[s.length - 1].d;
+  const X = (d) => L + d / dmax * (W - L - R), Y = (h) => T + (hi - h) / (hi - lo) * (H - T - B);
+  const nice = (span, n) => { const r = span / n, p = 10 ** Math.floor(Math.log10(r)); return [1, 2, 5, 10].map(m => m * p).find(v => v >= r); };
+  const hs = nice(hi - lo, 4), ds = nice(dmax, 6);
+  let g = "";
+  for (let v = Math.ceil(lo / hs) * hs; v <= hi; v += hs)
+    g += `<line class="grid" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L - 4}" y="${Y(v) + 3}" text-anchor="end">${Math.round(v)} m</text>`;
+  for (let v = 0; v <= dmax; v += ds)
+    g += `<text x="${X(v)}" y="${H - 4}" text-anchor="middle">${ds < 1000 ? Math.round(v) + " m" : v / 1000 + " km"}</text>`;
+  const path = s.map((v, i) => `${i ? "L" : "M"}${X(v.d).toFixed(1)},${Y(v.h).toFixed(1)}`).join("");
+  svg.innerHTML = g + `<path class="area" d="${path}L${X(dmax)},${H - B}L${L},${H - B}Z"/><path class="line" d="${path}"/>` +
+    `<line class="cursor" y1="${T}" y2="${H - B}" visibility="hidden"/><text class="readout" x="${W - R}" y="${T + 10}" text-anchor="end"></text>`;
+  const st = profileStats(s);
+  $("profile-stats").textContent = `${(dmax / 1000).toFixed(2)} km · ${Math.round(Math.min(...s.map(v => v.h)))}–${Math.round(Math.max(...s.map(v => v.h)))} m · ` +
+    `climbs ${Math.round(st.up)} m, falls ${Math.round(st.down)} m` + (st.steep ? ` · steepest 100 m: ${(st.steep * 100).toFixed(1)}% (1 in ${Math.round(1 / st.steep)})` : "");
+}
+
+function profileHover(ev) {
+  const s = profileSamples, svg = $("profile-svg");
+  if (s.length < 2) return;
+  const r = svg.getBoundingClientRect(), L = 42, R = 8, dmax = s[s.length - 1].d;
+  const d = Math.max(0, Math.min(dmax, (ev.clientX - r.left - L) / (r.width - L - R) * dmax));
+  let i = 0; while (i < s.length - 1 && s[i + 1].d < d) i++;
+  const v = s[i], x = L + v.d / dmax * (r.width - L - R);
+  const cur = svg.querySelector(".cursor"), out = svg.querySelector(".readout");
+  cur.setAttribute("x1", x); cur.setAttribute("x2", x); cur.setAttribute("visibility", "visible");
+  out.textContent = `${(v.d / 1000).toFixed(2)} km · ${v.h.toFixed(1)} m`;
+  const pt = { type: "FeatureCollection", features: [{ type: "Feature", geometry: { type: "Point", coordinates: [v.lon, v.lat] }, properties: {} }] };
+  if (!map.getSource("profile-pt")) {
+    map.addSource("profile-pt", { type: "geojson", data: pt });
+    map.addLayer({ id: "profile-pt", type: "circle", source: "profile-pt",
+      paint: { "circle-radius": 6, "circle-color": "#00b7ff", "circle-stroke-color": "#ffffff", "circle-stroke-width": 2 } });
+  } else map.getSource("profile-pt").setData(pt);
+}
+function closeProfile() {
+  profileRun++; profileSamples = [];
+  $("profile").hidden = true;
+  if (map.getSource("profile-pt")) map.getSource("profile-pt").setData({ type: "FeatureCollection", features: [] });
+}
+["pointermove", "pointerdown"].forEach(t => $("profile-svg").addEventListener(t, profileHover));   // mouse and touch
+$("profile-close").addEventListener("click", closeProfile);
+window.addEventListener("resize", () => { if (!$("profile").hidden) drawProfile(); });
 
 // ---------------------------------------------------------------------------
 // Route highlight
