@@ -185,12 +185,12 @@
 
     <section>
       <h2>Underlays</h2>
-      <label class="row"><input type="checkbox" id="u-lidar" checked> LiDAR hillshade <span class="note">(England; Scotland from zoom 11)</span></label>
+      <label class="row"><input type="checkbox" id="u-lidar" checked> LiDAR hillshade <span class="note">(England; Wales from zoom 10; Scotland from 11)</span></label>
       <div class="slider-row"><input type="range" id="o-lidar" min="0" max="100" value="60"><output id="o-lidar-v">60%</output></div>
       <div class="sub">
         <select id="lidar-src" aria-label="LiDAR source">
           <option value="wms">Ready-shaded by the EA (fast)</option>
-          <option value="live">Live 1 m DTM, adjustable (England, zoom 13+)</option>
+          <option value="live">Live 1 m DTM, adjustable (England zoom 13+, Wales 10+)</option>
         </select>
       </div>
       <div id="dtm-controls" hidden>
@@ -236,7 +236,7 @@
         <div class="slider-row"><span class="note" style="width:62px">Rotation</span><input type="range" id="t-rot" min="-180" max="180" value="0"><output id="t-rot-v">0°</output></div>
         <div class="slider-row"><span class="note" style="width:62px">Altitude</span><input type="range" id="t-zoom" min="5" max="18" step="0.1" value="12"><output id="t-zoom-v">z12</output></div>
         <div class="slider-row"><span class="note" style="width:62px">Relief</span><input type="range" id="t-exag" min="1" max="5" step="0.1" value="1.5"><output id="t-exag-v">1.5×</output></div>
-        <label class="row sub"><input type="checkbox" id="t-1m" checked> 1 m EA heights in England <span class="note">(zoom 13+, slower)</span></label>
+        <label class="row sub"><input type="checkbox" id="t-1m" checked> 1 m LiDAR heights, England and Wales <span class="note">(zoom 13+, slower)</span></label>
       </div>
     </section>
 
@@ -344,33 +344,81 @@ maplibregl.addProtocol("retry", async (params, abortController) =>
   ({ data: await fetchRetry(params.url.replace(/^retry:\/\//, "https://"), abortController.signal) }));
 
 // ---------------------------------------------------------------------------
-// Live 1 m DTM (England), ADR 0015
+// Live 1 m DTM: England from the EA's WCS (ADR 0015), Wales from DataMapWales' COG (ADR 0017)
 // ---------------------------------------------------------------------------
-// The EA's WCS returns raw heights (float32 GeoTIFF) and allows cross-origin requests, so
-// tiles are fetched in Web Mercator, scaled to 256 px plus a margin, and shaded here. That
-// gives an adjustable sun, other visualisations and 1 m heights for the 3D terrain.
+// Raw heights are fetched, resampled onto Web Mercator tiles with a margin, and shaded here.
+// That gives an adjustable sun, other visualisations and 1 m heights for the 3D terrain.
 const EA_WCS = "https://environment.data.gov.uk/spatialdata/lidar-composite-digital-terrain-model-dtm-1m/wcs" +
   "?service=WCS&version=2.0.1&request=GetCoverage&format=image/tiff&geotiff:compression=Deflate" +
   "&CoverageId=13787b9a-26a4-4775-8523-806d13af58fc__Lidar_Composite_Elevation_DTM_1m" +
   "&subsettingCrs=http://www.opengis.net/def/crs/EPSG/0/3857&outputCrs=http://www.opengis.net/def/crs/EPSG/0/3857";
-const DTM_MIN_Z = 13, DTM_MAX_Z = 17;
-const DTM_PAD = 16;                  // margin in pixels round each 256 px tile, for gradients, blur and horizons
+const WALES_COG = "https://dmwproductionblob.blob.core.windows.net/cogs/lidar/wales_dtm_32bit_cog.tif";
+// DataMapWales allows cross-origin reads from the live site only; for local testing a CORS proxy
+// can stand in for it (?wales-cog=http://localhost:…, honoured on localhost only)
+const walesCogUrl = (location.hostname === "localhost" && new URLSearchParams(location.search).get("wales-cog")) || WALES_COG;
+const DTM_MIN_Z = 13, DTM_MAX_Z = 17;   // England (each tile is a request to the EA)
+const WALES_MIN_Z = 10;                 // Wales (the COG has overviews, so zoomed-out tiles are cheap)
+const DTM_PAD = 16;                     // margin in pixels round each 256 px tile, for gradients, blur and horizons
 const DTM_GRID = 256 + 2 * DTM_PAD;
-const DTM_CONCURRENCY = 6;           // requests in flight to the EA at once
-const DTM_CACHE_TILES = 160;         // decoded tiles kept in memory (~330 KB each)
+const DTM_CACHE_TILES = 128;            // tiles of heights kept in memory (~330 KB each)
 const EA_BOUNDS = [-6.5, 49.8, 2.0, 55.9];
+const WALES_BOUNDS = [-5.55, 51.32, -2.63, 53.47];   // the Welsh COG's extent
 const AWS_TERRARIUM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/";
-const MERC = 20037508.342789244, EARTH_R = 6378137;
+const MERC = 20037508.342789244, EARTH_R = 6378137, RAD = Math.PI / 180;
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const abortError = () => new DOMException("tile no longer needed", "AbortError");
 
 const tileBox = (z, x, y) => { const s = 2 * MERC / 2 ** z; return { minx: -MERC + x * s, maxy: MERC - y * s, size: s }; };
 const mercLat = (my) => (2 * Math.atan(Math.exp(my / EARTH_R)) - Math.PI / 2) * 180 / Math.PI;
 const mercLon = (mx) => mx / EARTH_R * 180 / Math.PI;
 const lonMerc = (lon) => lon * Math.PI / 180 * EARTH_R;
 const latMerc = (lat) => EARTH_R * Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
-function tileInEngland(z, x, y) {
+function tileLonLat(z, x, y) {   // [west, south, east, north]
   const b = tileBox(z, x, y);
-  return mercLon(b.minx + b.size) > EA_BOUNDS[0] && mercLon(b.minx) < EA_BOUNDS[2] &&
-    mercLat(b.maxy) > EA_BOUNDS[1] && mercLat(b.maxy - b.size) < EA_BOUNDS[3];
+  return [mercLon(b.minx), mercLat(b.maxy - b.size), mercLon(b.minx + b.size), mercLat(b.maxy)];
+}
+const overlaps = (t, B) => t[2] > B[0] && t[0] < B[2] && t[3] > B[1] && t[1] < B[3];
+const tileInEngland = (z, x, y) => overlaps(tileLonLat(z, x, y), EA_BOUNDS);
+const tileInWales = (z, x, y) => overlaps(tileLonLat(z, x, y), WALES_BOUNDS);
+// West of the Dee and the Wye there's no England, so gaps in the Welsh data (the sea) aren't
+// worth one of the EA's rate-limited requests
+function tileWestOfEngland(z, x, y) {
+  const [, s, e, n] = tileLonLat(z, x, y);
+  return s > 51.35 && (e < -3.35 || (e < -3.1 && n < 53.28));
+}
+const tileWanted = (z, x, y, walesOnly) =>
+  (z >= WALES_MIN_Z && tileInWales(z, x, y)) || (!walesOnly && z >= DTM_MIN_Z && tileInEngland(z, x, y));
+
+// WGS84 lon/lat → British National Grid easting/northing: Helmert to OSGB36, then the OS
+// Transverse Mercator. Good to a few metres, and the same transform the roads were converted with.
+function wgsToBng(lon, lat) {
+  let a = 6378137, b = 6356752.3142, e2 = 1 - b * b / (a * a);
+  let p = lat * RAD, l = lon * RAD, sp = Math.sin(p), cp = Math.cos(p);
+  let nu = a / Math.sqrt(1 - e2 * sp * sp);
+  const x1 = nu * cp * Math.cos(l), y1 = nu * cp * Math.sin(l), z1 = nu * (1 - e2) * sp;
+  const tx = -446.448, ty = 125.157, tz = -542.060, s = 20.4894e-6;
+  const rx = -0.1502 / 3600 * RAD, ry = -0.2470 / 3600 * RAD, rz = -0.8421 / 3600 * RAD;
+  const x2 = tx + (1 + s) * x1 - rz * y1 + ry * z1;
+  const y2 = ty + rz * x1 + (1 + s) * y1 - rx * z1;
+  const z2 = tz - ry * x1 + rx * y1 + (1 + s) * z1;
+  a = 6377563.396; b = 6356256.909; e2 = 1 - b * b / (a * a);   // Airy 1830
+  const pp = Math.hypot(x2, y2);
+  p = Math.atan2(z2, pp * (1 - e2));
+  for (let i = 0; i < 6; i++) { const s2 = Math.sin(p); nu = a / Math.sqrt(1 - e2 * s2 * s2); p = Math.atan2(z2 + e2 * nu * s2, pp); }
+  l = Math.atan2(y2, x2);
+  const F0 = 0.9996012717, p0 = 49 * RAD, l0 = -2 * RAD, E0 = 400000, N0 = -100000;
+  const n = (a - b) / (a + b), n2 = n * n, n3 = n2 * n;
+  const sinp = Math.sin(p), cosp = Math.cos(p), tanp = Math.tan(p), t2 = tanp * tanp;
+  nu = a * F0 / Math.sqrt(1 - e2 * sinp * sinp);
+  const rho = a * F0 * (1 - e2) / Math.pow(1 - e2 * sinp * sinp, 1.5), eta2 = nu / rho - 1;
+  const dp = p - p0, ps = p + p0;
+  const M = b * F0 * ((1 + n + 1.25 * n2 + 1.25 * n3) * dp - (3 * n + 3 * n2 + 2.625 * n3) * Math.sin(dp) * Math.cos(ps)
+    + (1.875 * n2 + 1.875 * n3) * Math.sin(2 * dp) * Math.cos(2 * ps) - (35 / 24) * n3 * Math.sin(3 * dp) * Math.cos(3 * ps));
+  const c3 = cosp ** 3, c5 = cosp ** 5, dl = l - l0;
+  const I = M + N0, II = nu / 2 * sinp * cosp, III = nu / 24 * sinp * c3 * (5 - t2 + 9 * eta2);
+  const IIIA = nu / 720 * sinp * c5 * (61 - 58 * t2 + t2 * t2);
+  const IV = nu * cosp, V = nu / 6 * c3 * (nu / rho - t2), VI = nu / 120 * c5 * (5 - 18 * t2 + t2 * t2 + 14 * eta2 - 58 * t2 * eta2);
+  return [E0 + IV * dl + V * dl ** 3 + VI * dl ** 5, I + II * dl ** 2 + III * dl ** 4 + IIIA * dl ** 6];
 }
 
 // Minimal GeoTIFF reader for the WCS output: float32, tiled or stripped, deflate or none
@@ -426,49 +474,296 @@ function sampleGrid(data, W, H, fc, fr) {
   return data[(ay < 0.5 ? r0 : r1) * W + (ax < 0.5 ? c0 : c1)];
 }
 
-// Shared queue: at most DTM_CONCURRENCY requests to the EA, and a queued tile that nobody
-// wants any more (the map moved on) is dropped before it is requested
-let dtmActive = 0, dtmInFlight = 0;
-const dtmQueue = [];
-const dtmSlot = () => new Promise(r => { if (dtmActive < DTM_CONCURRENCY) { dtmActive++; r(); } else dtmQueue.push(r); });
-const dtmRelease = () => { const next = dtmQueue.shift(); if (next) next(); else dtmActive--; };
-const dtmCache = new Map();
+// --- England: the EA's WCS ---------------------------------------------------
+// The WCS rate-limits: after ~15 requests a minute it answers 429, without a CORS header, so the
+// browser sees only a network error. Now and then it never answers at all. So tiles are fetched
+// in 4×4 blocks, a few at a time, each with a timeout; and after a failure every request waits,
+// longer each time. One tile takes 1.7 s, a 2×2 block 2.8 s and a 4×4 block 6.3 s (3.2 MB), so
+// a screen at any zoom is 2–6 requests instead of 20–30, which leaves room under the limit to pan.
+const EA_N = 4, EA_CONCURRENCY = 3, EA_TIMEOUT_MS = 15000, EA_TRIES = 6, EA_BLOCK_CACHE = 8;
+const EA_BG = 256 * EA_N + 2 * DTM_PAD;   // a block's grid: N×N tiles plus the margin
+let eaActive = 0, eaInFlight = 0, eaPauseUntil = 0, eaBackoff = 0;
+const eaQueue = [], eaBlocks = new Map();
+const eaSlot = () => new Promise(r => { if (eaActive < EA_CONCURRENCY) { eaActive++; r(); } else eaQueue.push(r); });
+const eaRelease = () => { const next = eaQueue.shift(); if (next) next(); else eaActive--; };
 
-async function loadDtm(z, x, y, entry) {
-  await dtmSlot();
-  let started = false;
-  try {
-    if (entry.waiters === 0) throw new DOMException("tile no longer needed", "AbortError");
-    started = true; dtmInFlight++; dtmStatus();
-    const b = tileBox(z, x, y), res = b.size / 256, pad = DTM_PAD * res;
-    const coslat = Math.cos(mercLat(b.maxy - b.size / 2) * Math.PI / 180);
-    const scale = Math.min(1, 1 / coslat / res);   // native cells are 1 m on the ground
-    const url = EA_WCS + `&subset=X(${(b.minx - pad).toFixed(2)},${(b.minx + b.size + pad).toFixed(2)})` +
-      `&subset=Y(${(b.maxy - b.size - pad).toFixed(2)},${(b.maxy + pad).toFixed(2)})&scaleFactor=${scale.toFixed(6)}`;
-    const t = await decodeTiff(await fetchRetry(url));
-    const h = new Float32Array(DTM_GRID * DTM_GRID);
-    let valid = 0;
-    for (let j = 0; j < DTM_GRID; j++) {
-      const fr = (b.maxy + pad - (j + 0.5) * res - t.y0) / t.dy - 0.5;
-      for (let i = 0; i < DTM_GRID; i++) {
-        const v = sampleGrid(t.data, t.W, t.H, (b.minx - pad + (i + 0.5) * res - t.x0) / t.dx - 0.5, fr);
-        h[j * DTM_GRID + i] = v;
-        if (!Number.isNaN(v)) valid++;
-      }
-    }
-    return { z, h, resM: res * coslat, empty: valid === 0 };
-  } finally { if (started) dtmInFlight--; dtmRelease(); dtmStatus(); }
+async function fetchEa(url, wanted) {
+  let lastError;
+  for (let attempt = 0; attempt < EA_TRIES; attempt++) {
+    const wait = eaPauseUntil - Date.now();
+    if (wait > 0) { dtmStatus(); await sleep(wait); }
+    if (!wanted()) throw abortError();
+    try {
+      const r = await fetch(url, { signal: AbortSignal.timeout(EA_TIMEOUT_MS) });
+      if (r.ok) {
+        const buf = await r.arrayBuffer(), magic = new Uint8Array(buf, 0, 2);
+        if (magic[0] === magic[1] && (magic[0] === 0x49 || magic[0] === 0x4d)) { eaBackoff = 0; return buf; }
+        lastError = new Error("WCS answered without a TIFF");
+      } else lastError = new Error(`HTTP ${r.status}`);
+    } catch (err) { lastError = err; }
+    eaBackoff = Math.min(30000, Math.max(2000, eaBackoff * 2));
+    eaPauseUntil = Math.max(eaPauseUntil, Date.now() + eaBackoff * (0.75 + Math.random() / 2));
+  }
+  throw lastError;
 }
 
-// Heights for one tile (DTM_GRID² with margin), shared by the shading, the 3D terrain and profiles
-function dtmTile(z, x, y, signal) {
-  const key = `${z}/${x}/${y}`;
+// One N×N block of tiles at zoom z, as heights on an EA_BG² grid. Dropped before it's requested if
+// none of the tiles that asked for it is still wanted (the map moved on).
+function eaBlock(z, bx, by) {
+  const key = `${z}/${bx}/${by}`;
+  let blk = eaBlocks.get(key);
+  if (blk) { eaBlocks.delete(key); eaBlocks.set(key, blk); return blk; }
+  blk = { askers: new Set() };
+  const wanted = () => [...blk.askers].some(e => e.waiters > 0);
+  blk.promise = (async () => {
+    await eaSlot();
+    let started = false;
+    try {
+      if (!wanted()) throw abortError();
+      started = true; eaInFlight++; dtmStatus();
+      const b = tileBox(z, EA_N * bx, EA_N * by), res = b.size / 256, pad = DTM_PAD * res, span = EA_N * b.size;
+      const coslat = Math.cos(mercLat(b.maxy - span / 2) * RAD);
+      const scale = Math.min(1, 1 / coslat / res);   // native cells are 1 m on the ground
+      const url = EA_WCS + `&subset=X(${(b.minx - pad).toFixed(2)},${(b.minx + span + pad).toFixed(2)})` +
+        `&subset=Y(${(b.maxy - span - pad).toFixed(2)},${(b.maxy + pad).toFixed(2)})&scaleFactor=${scale.toFixed(6)}`;
+      const t = await decodeTiff(await fetchEa(url, wanted));
+      const h = new Float32Array(EA_BG * EA_BG);
+      for (let j = 0; j < EA_BG; j++) {
+        const fr = (b.maxy + pad - (j + 0.5) * res - t.y0) / t.dy - 0.5;
+        for (let i = 0; i < EA_BG; i++)
+          h[j * EA_BG + i] = sampleGrid(t.data, t.W, t.H, (b.minx - pad + (i + 0.5) * res - t.x0) / t.dx - 0.5, fr);
+      }
+      return h;
+    } finally { if (started) eaInFlight--; eaRelease(); dtmStatus(); }
+  })().catch(err => { if (eaBlocks.get(key) === blk) eaBlocks.delete(key); throw err; });
+  eaBlocks.set(key, blk);
+  if (eaBlocks.size > EA_BLOCK_CACHE) eaBlocks.delete(eaBlocks.keys().next().value);
+  return blk;
+}
+
+// One tile's heights (DTM_GRID², with margin) cut from its block
+async function eaGrid(z, x, y, entry) {
+  for (let attempt = 0; ; attempt++) {
+    const blk = eaBlock(z, Math.floor(x / EA_N), Math.floor(y / EA_N));
+    blk.askers.add(entry);
+    try {
+      const g = await blk.promise, G = DTM_GRID, ox = (x % EA_N) * 256, oy = (y % EA_N) * 256, h = new Float32Array(G * G);
+      for (let j = 0; j < G; j++) h.set(g.subarray((oy + j) * EA_BG + ox, (oy + j) * EA_BG + ox + G), j * G);
+      return h;
+    } catch (err) {
+      // the block was dropped just as this tile asked for it: ask again
+      if (err.name !== "AbortError" || entry.waiters === 0 || attempt >= 2) throw err;
+    } finally { blk.askers.delete(entry); }
+  }
+}
+
+// --- Wales: DataMapWales' cloud-optimised GeoTIFF -----------------------------
+// A 48.6 GB BigTIFF on Azure: 1 m float32 heights on the British National Grid, 256 px deflate
+// tiles, six overviews (2–64 m). Only the header, the parts of the tile index that are needed, and
+// the tiles under the view are read, with HTTP range requests.
+let walesInFlight = 0;
+async function fetchRange(start, end) {
+  let lastError;
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    if (attempt) await sleep(RETRY_DELAYS_MS[attempt - 1] * (0.75 + Math.random() / 2));
+    walesInFlight++; dtmStatus();
+    try {
+      // no-store: the browser's HTTP cache lets only one request per URL through at a time, which
+      // queued every range read of the one big file behind the last (decoded tiles are cached here)
+      const r = await fetch(walesCogUrl, { headers: { Range: `bytes=${start}-${end}` }, cache: "no-store",
+        signal: AbortSignal.timeout(EA_TIMEOUT_MS) });
+      if (r.status === 206) return new Uint8Array(await r.arrayBuffer());
+      lastError = new Error(`HTTP ${r.status}`);
+    } catch (err) { lastError = err; }
+    finally { walesInFlight--; dtmStatus(); }
+  }
+  throw lastError;
+}
+
+let cogPromise = null;
+const cogInfo = () => cogPromise || (cogPromise = fetchRange(0, 65535).then(parseCog).catch(err => { cogPromise = null; throw err; }));
+function parseCog(u8) {
+  const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength), le = dv.getUint16(0) === 0x4949;
+  if (dv.getUint16(2, le) !== 43) throw new Error("expected a BigTIFF");
+  const big = (o) => Number(dv.getBigUint64(o, le));
+  const SIZE = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 11: 4, 12: 8, 16: 8 };
+  const num = (t, k = 0) => t.type === 3 ? dv.getUint16(t.at + 2 * k, le) : t.type === 4 ? dv.getUint32(t.at + 4 * k, le)
+    : t.type === 16 ? big(t.at + 8 * k) : t.type === 12 ? dv.getFloat64(t.at + 8 * k, le) : dv.getUint8(t.at + k);
+  const ifds = [];
+  for (let ifd = big(8); ifd && ifd + 8 <= u8.length;) {
+    const n = big(ifd), tag = {};
+    for (let i = 0; i < n; i++) {
+      const p = ifd + 8 + i * 20, type = dv.getUint16(p + 2, le), count = big(p + 4);
+      tag[dv.getUint16(p, le)] = { type, count, size: SIZE[type], at: SIZE[type] * count <= 8 ? p + 12 : big(p + 12) };
+    }
+    ifds.push(tag);
+    ifd = big(ifd + 8 + n * 20);
+  }
+  const t0 = ifds[0], sx = num(t0[33550], 0), sy = num(t0[33550], 1);
+  const x0 = num(t0[33922], 3) - num(t0[33922], 0) * sx, y0 = num(t0[33922], 4) + num(t0[33922], 1) * sy;
+  const nodata = +new TextDecoder().decode(u8.subarray(t0[42113].at, t0[42113].at + t0[42113].count)).replace(/\0+$/, "");
+  const W0 = num(t0[256]), H0 = num(t0[257]);
+  const levels = ifds.map(t => {
+    if ((t[317] ? num(t[317]) : 1) !== 1 || num(t[258]) !== 32 || num(t[339]) !== 3) throw new Error("unexpected COG layout");
+    const W = num(t[256]), H = num(t[257]), TW = num(t[322]), TH = num(t[323]);
+    return { W, H, TW, TH, across: Math.ceil(W / TW), down: Math.ceil(H / TH), comp: num(t[259]),
+      offs: t[324], counts: t[325], cellX: W0 * sx / W, cellY: H0 * sy / H };
+  });
+  return { x0, y0, nodata, le, levels };
+}
+
+// The tile index (offsets and byte counts) is read in blocks of 8,192 entries (64 KB of offsets,
+// about 11 rows of 1 m tiles) as needed: one round trip to Azure costs far more than the bytes
+const IDX_BLOCK = 8192, cogIdx = new Map();
+async function idxEntries(cog, li, which, from, to) {
+  const t = cog.levels[li][which], out = [];
+  for (let blk = Math.floor(from / IDX_BLOCK); blk <= Math.floor(to / IDX_BLOCK); blk++) {
+    const key = `${li}/${which}/${blk}`;
+    if (!cogIdx.has(key)) {
+      const first = blk * IDX_BLOCK, last = Math.min(t.count, first + IDX_BLOCK) - 1;
+      const p = fetchRange(t.at + first * t.size, t.at + (last + 1) * t.size - 1);
+      p.catch(() => cogIdx.delete(key));
+      cogIdx.set(key, p);
+      if (cogIdx.size > 64) cogIdx.delete(cogIdx.keys().next().value);
+    }
+    const bytes = await cogIdx.get(key), dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    for (let i = Math.max(from, blk * IDX_BLOCK); i <= Math.min(to, blk * IDX_BLOCK + IDX_BLOCK - 1); i++) {
+      const o = (i - blk * IDX_BLOCK) * t.size;
+      out.push(t.size === 8 ? Number(dv.getBigUint64(o, cog.le)) : dv.getUint32(o, cog.le));
+    }
+  }
+  return out;
+}
+
+// Decoded COG tiles (Float32Array 256², NaN for no data; null for an empty tile), kept LRU.
+// Requests are gathered for a moment, so every map tile on screen shares the reads: each row's
+// tiles sit next to each other in the file, so a run of them is one range request.
+const cogTiles = new Map(), COG_TILE_CACHE = 240, cogPending = new Map();
+let cogFlushTimer = null;
+function cogTile(cog, li, row, col) {
+  const key = `${li}/${row}/${col}`;
+  let p = cogTiles.get(key);
+  if (p) { cogTiles.delete(key); cogTiles.set(key, p); return p; }   // most recently used last
+  let settle;
+  p = new Promise((resolve, reject) => { settle = { resolve, reject }; });
+  p.catch(() => { if (cogTiles.get(key) === p) cogTiles.delete(key); });
+  cogTiles.set(key, p);
+  while (cogTiles.size > COG_TILE_CACHE) cogTiles.delete(cogTiles.keys().next().value);
+  const rk = `${li}/${row}`;
+  if (!cogPending.has(rk)) cogPending.set(rk, new Map());
+  cogPending.get(rk).set(col, settle);
+  if (!cogFlushTimer) cogFlushTimer = setTimeout(() => { cogFlushTimer = null; cogFlush(cog); }, 15);
+  return p;
+}
+function cogFlush(cog) {
+  const batch = [...cogPending]; cogPending.clear();
+  for (const [rk, cols] of batch) cogReadRow(cog, ...rk.split("/").map(Number), cols)
+    .catch(err => { for (const s of cols.values()) s.reject(err); });
+}
+async function cogReadRow(cog, li, row, cols) {
+  const L = cog.levels[li], need = [...cols.keys()].sort((a, b) => a - b), first = need[0], last = need[need.length - 1];
+  const i0 = row * L.across + first, i1 = row * L.across + last;
+  const [offs, counts] = await Promise.all([idxEntries(cog, li, "offs", i0, i1), idxEntries(cog, li, "counts", i0, i1)]);
+  const off = (c) => offs[c - first], len = (c) => counts[c - first];
+  const decode = async (c, bytes) => {
+    const raw = L.comp === 8 ? await inflate(bytes) : bytes;
+    const f = cog.le ? new Float32Array(raw.slice().buffer, 0, L.TW * L.TH)
+      : Float32Array.from({ length: L.TW * L.TH }, (_, i) => new DataView(raw.buffer, raw.byteOffset).getFloat32(4 * i));
+    for (let i = 0; i < f.length; i++) if (f[i] === cog.nodata || f[i] < -1000) f[i] = NaN;
+    cols.get(c).resolve(f);
+  };
+  // runs of wanted tiles that lie next to each other in the file (GDAL leaves an 8-byte
+  // leader/trailer between tiles); a skipped tile or two in between is cheaper to read than a round trip
+  const runs = [];
+  for (const c of need) {
+    if (!len(c)) { cols.get(c).resolve(null); continue; }   // empty tile: all no data
+    const r = runs[runs.length - 1];
+    if (r && c - r.end <= 3 && off(c) > off(r.end) && off(c) - (off(r.end) + len(r.end)) <= 3 * 100000) { r.end = c; r.cols.push(c); }
+    else runs.push({ start: c, end: c, cols: [c] });
+  }
+  await Promise.all(runs.map(async (r) => {
+    try {
+      const base = off(r.start), bytes = await fetchRange(base, off(r.end) + len(r.end) - 1);
+      await Promise.all(r.cols.map(c => decode(c, bytes.subarray(off(c) - base, off(c) - base + len(c)))));
+    } catch (err) { for (const c of r.cols) cols.get(c).reject(err); }
+  }));
+}
+
+// One map tile's heights (DTM_GRID², with margin) from the Welsh COG, or null outside it
+async function walesGrid(z, x, y) {
+  const cog = await cogInfo(), b = tileBox(z, x, y), res = b.size / 256, G = DTM_GRID, P = DTM_PAD;
+  const resM = res * Math.cos(mercLat(b.maxy - b.size / 2) * RAD);
+  let li = 0;   // the coarsest overview whose cells are still no bigger than the tile's pixels
+  while (li + 1 < cog.levels.length && cog.levels[li + 1].cellX <= resM) li++;
+  const L = cog.levels[li];
+  // BNG position of every 16th pixel corner; pixels in between are interpolated (< 1 mm error)
+  const S = 16, K = G / S + 1, cc = new Float64Array(K * K), rr = new Float64Array(K * K);
+  let cmin = Infinity, cmax = -Infinity, rmin = Infinity, rmax = -Infinity;
+  for (let j = 0; j < K; j++) for (let i = 0; i < K; i++) {
+    const [E, N] = wgsToBng(mercLon(b.minx + (i * S - P) * res), mercLat(b.maxy - (j * S - P) * res));
+    const c = (E - cog.x0) / L.cellX - 0.5, r = (cog.y0 - N) / L.cellY - 0.5;
+    cc[j * K + i] = c; rr[j * K + i] = r;
+    cmin = Math.min(cmin, c); cmax = Math.max(cmax, c); rmin = Math.min(rmin, r); rmax = Math.max(rmax, r);
+  }
+  const tc0 = Math.max(0, Math.floor(cmin / L.TW)), tc1 = Math.min(L.across - 1, Math.floor((cmax + 1) / L.TW));
+  const tr0 = Math.max(0, Math.floor(rmin / L.TH)), tr1 = Math.min(L.down - 1, Math.floor((rmax + 1) / L.TH));
+  if (tc0 > tc1 || tr0 > tr1) return null;
+  const rows = await Promise.all(Array.from({ length: tr1 - tr0 + 1 }, (_, k) =>
+    Promise.all(Array.from({ length: tc1 - tc0 + 1 }, (_, m) => cogTile(cog, li, tr0 + k, tc0 + m)))));
+  const at = (r, c) => {
+    if (r < 0 || c < 0 || r >= L.H || c >= L.W) return NaN;
+    const tr = Math.floor(r / L.TH), tc = Math.floor(c / L.TW);
+    if (tr < tr0 || tr > tr1 || tc < tc0 || tc > tc1) return NaN;
+    const t = rows[tr - tr0][tc - tc0];
+    return t ? t[(r - tr * L.TH) * L.TW + c - tc * L.TW] : NaN;
+  };
+  const h = new Float32Array(G * G);
+  let valid = 0;
+  for (let j = 0; j < G; j++) {
+    const pj = j + 0.5, cj = Math.min(K - 2, Math.floor(pj / S)), fy = pj / S - cj;
+    for (let i = 0; i < G; i++) {
+      const pi = i + 0.5, ci = Math.min(K - 2, Math.floor(pi / S)), fx = pi / S - ci, q = cj * K + ci;
+      const w00 = (1 - fx) * (1 - fy), w01 = fx * (1 - fy), w10 = (1 - fx) * fy, w11 = fx * fy;
+      const c = cc[q] * w00 + cc[q + 1] * w01 + cc[q + K] * w10 + cc[q + K + 1] * w11;
+      const r = rr[q] * w00 + rr[q + 1] * w01 + rr[q + K] * w10 + rr[q + K + 1] * w11;
+      const c0 = Math.floor(c), r0 = Math.floor(r), ax = c - c0, ay = r - r0;
+      let v = at(r0, c0) * (1 - ax) * (1 - ay) + at(r0, c0 + 1) * ax * (1 - ay) + at(r0 + 1, c0) * (1 - ax) * ay + at(r0 + 1, c0 + 1) * ax * ay;
+      if (Number.isNaN(v)) v = at(ay < 0.5 ? r0 : r0 + 1, ax < 0.5 ? c0 : c0 + 1);   // next to a gap: nearest cell
+      h[j * G + i] = v;
+      if (!Number.isNaN(v)) valid++;
+    }
+  }
+  return valid ? h : null;
+}
+
+// --- Heights for one tile, from whichever source covers it --------------------
+// Wales from the COG; England (and any gaps left near the border) from the EA. walesOnly skips the
+// EA: the ready-shaded EA layer already covers England then.
+const dtmCache = new Map();
+async function loadHeights(z, x, y, entry, walesOnly) {
+  const b = tileBox(z, x, y), G = DTM_GRID;
+  const resM = b.size / 256 * Math.cos(mercLat(b.maxy - b.size / 2) * RAD);
+  let h = z >= WALES_MIN_Z && tileInWales(z, x, y) ? await walesGrid(z, x, y) : null;
+  const gaps = () => { let n = 0; for (let i = 0; i < h.length; i++) if (Number.isNaN(h[i])) n++; return n; };
+  if (!walesOnly && z >= DTM_MIN_Z && tileInEngland(z, x, y) && !(h && tileWestOfEngland(z, x, y)) && (!h || gaps())) {
+    if (entry.waiters === 0) throw abortError();
+    const ea = await eaGrid(z, x, y, entry);
+    if (!h) h = ea;
+    else for (let i = 0; i < h.length; i++) if (Number.isNaN(h[i])) h[i] = ea[i];
+  }
+  if (!h) h = new Float32Array(G * G).fill(NaN);
+  return { z, h, resM, empty: gaps() === G * G };
+}
+
+// Shared by the shading, the 3D terrain and profiles; several callers can wait on one tile
+function dtmTile(z, x, y, signal, walesOnly = false, attempt = 0) {
+  const key = `${z}/${x}/${y}${walesOnly ? "/w" : ""}`;
   let e = dtmCache.get(key);
   if (e) { dtmCache.delete(key); dtmCache.set(key, e); }   // most recently used last
   else {
-    e = { waiters: 0 };
-    e.promise = loadDtm(z, x, y, e);
-    e.promise.catch(() => dtmCache.delete(key));
+    e = { waiters: 1 };   // counted before loading starts, which checks it
+    e.promise = loadHeights(z, x, y, e, walesOnly).catch(err => { if (dtmCache.get(key) === e) dtmCache.delete(key); throw err; });
+    e.waiters--;
     dtmCache.set(key, e);
     if (dtmCache.size > DTM_CACHE_TILES) dtmCache.delete(dtmCache.keys().next().value);
   }
@@ -479,11 +774,15 @@ function dtmTile(z, x, y, signal) {
     const onAbort = () => finish(reject, new DOMException("tile request aborted", "AbortError"));
     if (signal?.aborted) return onAbort();
     signal?.addEventListener("abort", onAbort, { once: true });
-    e.promise.then(v => finish(resolve, v), err => finish(reject, err));
+    e.promise.then(v => finish(resolve, v), err => {
+      // dropped because nobody wanted it just before this caller asked: start it again
+      if (err.name === "AbortError" && !signal?.aborted && attempt < 2) finish(resolve, dtmTile(z, x, y, signal, walesOnly, attempt + 1));
+      else finish(reject, err);
+    });
   });
 }
 
-// Mapzen/AWS terrarium heights: the fallback outside the EA survey, and below zoom 13
+// Mapzen/AWS terrarium heights: the fallback outside the surveys, and below zoom 13
 const awsCache = new Map();
 function awsTile(z, x, y) {
   const key = `${z}/${x}/${y}`;
@@ -511,23 +810,24 @@ async function awsHeights(z, x, y) {
   return out;
 }
 
-// 256² heights for a tile: EA 1 m DTM where surveyed, AWS terrain elsewhere. eaShare is 0-1.
+// 256² heights for a tile: LiDAR (EA or Welsh Government) where surveyed, AWS terrain elsewhere.
+// lidarShare is 0-1.
 async function demHeights(z, x, y, signal) {
-  let h = null, ea = 0;
-  if (z >= DTM_MIN_Z && tileInEngland(z, x, y)) {
+  let h = null, n = 0;
+  if (tileWanted(z, x, y, false)) {
     const t = await dtmTile(Math.min(z, DTM_MAX_Z), x, y, signal);
     if (!t.empty) {
       h = new Float32Array(65536);
       for (let j = 0; j < 256; j++) h.set(t.h.subarray((j + DTM_PAD) * DTM_GRID + DTM_PAD, (j + DTM_PAD) * DTM_GRID + DTM_PAD + 256), j * 256);
     }
   }
-  if (h) for (let i = 0; i < 65536; i++) if (!Number.isNaN(h[i])) ea++;
-  if (!h || ea < 65536) {
+  if (h) for (let i = 0; i < 65536; i++) if (!Number.isNaN(h[i])) n++;
+  if (!h || n < 65536) {
     const a = await awsHeights(z, x, y);
     if (!h) h = a;
     else for (let i = 0; i < 65536; i++) if (Number.isNaN(h[i])) h[i] = a[i];
   }
-  return { h, eaShare: ea / 65536 };
+  return { h, lidarShare: n / 65536 };
 }
 
 async function toPng(rgba, w = 256, h = 256) {
@@ -626,32 +926,56 @@ function shadeTile(t, o) {
   return rgba;
 }
 
+// MapLibre never asks again for a tile that failed, which left holes once the EA had refused a
+// tile through every retry. Failures are noted, and once the map settles and the EA's back-off
+// has passed, the tiles are requested afresh (loaded tiles come straight from memory).
+let dtmEpoch = 0, dtmFailed = false, dtmRecoverTimer = null;
+const noteFailure = (err) => { if (err?.name !== "AbortError") dtmFailed = true; };
+function dtmRecover() {
+  if (!dtmFailed || dtmRecoverTimer) return;
+  const wait = eaPauseUntil - Date.now();
+  if (wait > 0) { dtmRecoverTimer = setTimeout(() => { dtmRecoverTimer = null; dtmRecover(); }, wait + 250); return; }
+  dtmFailed = false; dtmEpoch++;
+  applyDtm();
+  map.getSource("terrain-1m")?.setTiles([`dem1m://{z}/{x}/{y}?e=${dtmEpoch}`]);
+}
+
 maplibregl.addProtocol("dtm", async (params, abortController) => {
-  const [, z, x, y, q] = params.url.match(/^dtm:\/\/(\d+)\/(\d+)\/(\d+)\?(.*)$/);
-  if (!tileInEngland(+z, +x, +y)) return { data: await blank() };
-  const t = await dtmTile(+z, +x, +y, abortController.signal);
-  return { data: t.empty ? await blank() : await toPng(shadeTile(t, Object.fromEntries(new URLSearchParams(q)))) };
+  const m = params.url.match(/^dtm:\/\/(\d+)\/(\d+)\/(\d+)\?(.*)$/), [z, x, y] = m.slice(1, 4).map(Number);
+  const o = Object.fromEntries(new URLSearchParams(m[4])), walesOnly = o.only === "wales";
+  if (!tileWanted(z, x, y, walesOnly)) return { data: await blank() };
+  try {
+    const t = await dtmTile(z, x, y, abortController.signal, walesOnly);
+    return { data: t.empty ? await blank() : await toPng(shadeTile(t, o)) };
+  } catch (err) { noteFailure(err); throw err; }
 });
 
-// 3D terrain: terrarium-encoded tiles, 1 m EA heights from zoom 13 in England
+// 3D terrain: terrarium-encoded tiles, 1 m LiDAR heights from zoom 13 in England and Wales
 maplibregl.addProtocol("dem1m", async (params, abortController) => {
-  const [z, x, y] = params.url.match(/(\d+)\/(\d+)\/(\d+)$/).slice(1).map(Number);
-  if (z < DTM_MIN_Z) return { data: await fetchRetry(`${AWS_TERRARIUM}${z}/${x}/${y}.png`, abortController.signal) };
-  const { h } = await demHeights(z, x, y, abortController.signal);
-  const rgba = new Uint8ClampedArray(256 * 256 * 4);
-  for (let i = 0; i < 65536; i++) {
-    const v = Math.max(0, Math.min(65535.99, h[i] + 32768)), fl = Math.floor(v);
-    rgba[4 * i] = fl >> 8; rgba[4 * i + 1] = fl & 255; rgba[4 * i + 2] = Math.floor((v - fl) * 256); rgba[4 * i + 3] = 255;
-  }
-  return { data: await toPng(rgba) };
+  const [z, x, y] = params.url.match(/^dem1m:\/\/(\d+)\/(\d+)\/(\d+)/).slice(1).map(Number);
+  try {
+    if (z < DTM_MIN_Z) return { data: await fetchRetry(`${AWS_TERRARIUM}${z}/${x}/${y}.png`, abortController.signal) };
+    const { h } = await demHeights(z, x, y, abortController.signal);
+    const rgba = new Uint8ClampedArray(256 * 256 * 4);
+    for (let i = 0; i < 65536; i++) {
+      const v = Math.max(0, Math.min(65535.99, h[i] + 32768)), fl = Math.floor(v);
+      rgba[4 * i] = fl >> 8; rgba[4 * i + 1] = fl & 255; rgba[4 * i + 2] = Math.floor((v - fl) * 256); rgba[4 * i + 3] = 255;
+    }
+    return { data: await toPng(rgba) };
+  } catch (err) { noteFailure(err); throw err; }
 });
 
 function dtmStatus() {
   const el = document.getElementById("dtm-status");
   if (!el || typeof map === "undefined") return;
-  if (map.getZoom() < DTM_MIN_Z) el.textContent = `Zoom in to ${DTM_MIN_Z}+ for the live DTM; the ready-shaded layer shows until then.`;
-  else if (dtmInFlight || dtmQueue.length) el.textContent = `Fetching heights from the EA: ${dtmInFlight + dtmQueue.length} tile${dtmInFlight + dtmQueue.length > 1 ? "s" : ""}…`;
-  else el.textContent = "EA LiDAR Composite DTM 1 m, shaded in your browser (England only).";
+  const z = map.getZoom(), ea = eaInFlight + eaQueue.length, wait = Math.ceil((eaPauseUntil - Date.now()) / 1000);
+  const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+  if (z < WALES_MIN_Z) el.textContent = `Zoom in for the live DTM (Wales from zoom ${WALES_MIN_Z}, England from ${DTM_MIN_Z}); the ready-shaded layer shows until then.`;
+  else if (ea && wait > 0) el.textContent = `The EA is limiting requests: waiting ${wait} s, then fetching ${plural(ea, "block")} of heights…`;
+  else if (ea || walesInFlight) el.textContent = "Fetching heights: " +
+    [ea && `${plural(ea, "block")} from the EA`, walesInFlight && "Wales"].filter(Boolean).join(", ") + "…";
+  else if (z < DTM_MIN_Z) el.textContent = `Wales is live from zoom ${WALES_MIN_Z}; England from ${DTM_MIN_Z} (ready-shaded until then).`;
+  else el.textContent = "1 m DTM shaded in your browser: EA (England) and Welsh Government (Wales).";
 }
 
 // Historic England ArcGIS Online feature services: no tiles, so the features in view are
@@ -780,6 +1104,10 @@ function saveState() {
 })();
 const dtmQuery = () => new URLSearchParams({ mode: document.getElementById("dtm-mode").value,
   ...Object.fromEntries(["az", "el", "ex", "rad"].map(k => [k, document.getElementById("dtm-" + k).value])) }).toString();
+// Live: everything, shaded as set. Ready-shaded: the EA's own layer covers England, so the live
+// layer fills in Wales only, shaded like the EA's (the Welsh hillshades aren't published as tiles).
+const dtmTilesUrl = () => "dtm://{z}/{x}/{y}?" + (document.getElementById("lidar-src").value === "live" ? dtmQuery()
+  : "mode=hs&az=315&el=45&ex=1&rad=15&only=wales") + `&e=${dtmEpoch}`;
 
 const style = {
   version: 8,
@@ -813,10 +1141,11 @@ const style = {
       attribution: "Terrain: Mapzen terrain tiles (AWS Open Data); United Kingdom terrain data © Environment Agency copyright and/or database right 2015; EU-DEM produced using Copernicus data; SRTM and GMTED2010 courtesy of the U.S. Geological Survey" },
     "terrain-1m": { type: "raster-dem", encoding: "terrarium", tileSize: 256, maxzoom: DTM_MAX_Z,
       tiles: ["dem1m://{z}/{x}/{y}"],
-      attribution: "Terrain: EA LiDAR Composite DTM 1 m, contains Environment Agency information © Environment Agency and/or database right; elsewhere Mapzen terrain tiles (AWS Open Data; EU-DEM produced using Copernicus data; SRTM and GMTED2010 courtesy of the U.S. Geological Survey)" },
-    "dtm": { type: "raster", tiles: [`dtm://{z}/{x}/{y}?${dtmQuery()}`], tileSize: 256,
-      minzoom: DTM_MIN_Z, maxzoom: DTM_MAX_Z, bounds: EA_BOUNDS,
-      attribution: "LiDAR (live DTM): Contains Environment Agency information © Environment Agency and/or database right" },
+      attribution: "Terrain: EA LiDAR Composite DTM 1 m, contains Environment Agency information © Environment Agency and/or database right; Welsh Government LiDAR DTM via DataMapWales, © Crown copyright (OGL); elsewhere Mapzen terrain tiles (AWS Open Data; EU-DEM produced using Copernicus data; SRTM and GMTED2010 courtesy of the U.S. Geological Survey)" },
+    "dtm": { type: "raster", tiles: [dtmTilesUrl()], tileSize: 256,
+      minzoom: WALES_MIN_Z, maxzoom: DTM_MAX_Z, bounds: EA_BOUNDS,
+      attribution: "LiDAR (live DTM): Contains Environment Agency information © Environment Agency and/or database right; " +
+        'Wales: Welsh Government LiDAR via <a href="https://datamap.gov.wales/" target="_blank">DataMapWales</a>, © Crown copyright (OGL)' },
   },
   layers: [
     { id: "base-light", type: "raster", source: "light" },
@@ -1009,13 +1338,13 @@ function applyUnderlays() {
   applyDtm();
 }
 
-// Live DTM: below zoom 13 (and outside England) the EA's ready-shaded layer still shows
+// Live DTM: below zoom 13 the EA's ready-shaded layer still shows in England
 let dtmTimer = null;
 function applyDtm() {
   const live = $("lidar-src").value === "live", mode = $("dtm-mode").value;
   $("dtm-controls").hidden = !live;
   map.setLayerZoomRange("u-lidar", 0, live ? DTM_MIN_Z : 24);
-  vis("u-dtm", live && $("u-lidar").checked);
+  vis("u-dtm", $("u-lidar").checked);
   map.setPaintProperty("u-dtm", "raster-opacity", $("o-lidar").value / 100);
   document.querySelectorAll("#dtm-controls [data-modes]").forEach(el => { el.hidden = !el.dataset.modes.split(" ").includes(mode); });
   $("dtm-az-v").textContent = `${$("dtm-az").value}°`;
@@ -1025,7 +1354,7 @@ function applyDtm() {
   // re-shade from the heights already in memory, once the slider settles
   clearTimeout(dtmTimer);
   dtmTimer = setTimeout(() => {
-    const tiles = [`dtm://{z}/{x}/{y}?${dtmQuery()}`], src = map.getSource("dtm");
+    const tiles = [dtmTilesUrl()], src = map.getSource("dtm");
     if (src && src.tiles[0] !== tiles[0]) src.setTiles(tiles);
   }, 200);
   dtmStatus();
@@ -1190,6 +1519,7 @@ $("t-1m").addEventListener("change", setTerrainSource);
 ["lidar-src", "dtm-mode"].forEach(id => $(id).addEventListener("change", applyDtm));
 ["dtm-az", "dtm-el", "dtm-ex", "dtm-rad"].forEach(id => $(id).addEventListener("input", applyDtm));
 map.on("zoomend", dtmStatus);
+map.on("idle", dtmRecover);
 $("panel").addEventListener("change", saveState);
 $("panel").addEventListener("input", (ev) => { if (ev.target.type === "range") saveState(); });
 ["t-tilt", "t-rot", "t-zoom", "t-exag"].forEach(id => $(id).addEventListener("input", applyTerrainSliders));
@@ -1213,9 +1543,9 @@ const PRESETS = {
   lidar: { note: "LiDAR hillshade under the roads and sites: the plainest view.", set: {} },
   maps: { note: "The OS 6-inch map of c.1890–1910 blended over the LiDAR.",
     set: { "u-hist": "1", "o-hist": "85", "o-lidar": "45" } },   // the map is drawn under the LiDAR
-  heritage: { note: "Local relief model from the live 1 m DTM (England, zoom 13+), with scheduled monuments and Roman aerial mapping. Zoom in to see the features.",
+  heritage: { note: "Local relief model from the live 1 m DTM (England from zoom 13, Wales from 10), with scheduled monuments and Roman aerial mapping. Zoom in to see the features.",
     set: { "lidar-src": "live", "dtm-mode": "lrm", "o-lidar": "85", "o-sam": "1", "o-aim": "1" } },
-  "3d": { note: "Tilted 3D terrain from 1 m heights (England), lit from the north-west. Use the sliders under 3D terrain to fly around.",
+  "3d": { note: "Tilted 3D terrain from 1 m heights (England and Wales), lit from the north-west. Use the sliders under 3D terrain to fly around.",
     set: { "u-terrain": "1", "t-exag": "2", "lidar-src": "live", "o-lidar": "80" } },
 };
 const presetValue = (name, id) => PRESETS[name].set[id] ?? stateDefaults.get(id);
@@ -1427,13 +1757,13 @@ async function showProfile(feature) {
   $("profile-stats").textContent = `${(length / 1000).toFixed(2)} km`;
   $("profile-svg").innerHTML = "";
   $("profile-note").textContent = `Fetching heights: 0 of ${tiles.size} tiles…`;
-  let done = 0, eaShare = 0;
+  let done = 0, lidarShare = 0;
   const heights = new Map();
   await Promise.all([...tiles].map(async (k) => {
     const [x, y] = k.split("/").map(Number);
     try {
       const r = await demHeights(z, x, y);
-      heights.set(k, r.h); eaShare += r.eaShare;
+      heights.set(k, r.h); lidarShare += r.lidarShare;
     } catch (err) { heights.set(k, null); }
     if (run === profileRun) $("profile-note").textContent = `Fetching heights: ${++done} of ${tiles.size} tiles…`;
   }));
@@ -1444,10 +1774,10 @@ async function showProfile(feature) {
   }
   profileSamples = samples.filter(s => Number.isFinite(s.h));
   const cell = (2 * MERC / 2 ** z / 256 * Math.cos(samples[0].lat * Math.PI / 180)).toFixed(1);
-  eaShare /= tiles.size;
-  $("profile-note").textContent = (eaShare > 0.99 ? `EA LiDAR Composite DTM 1 m, resampled to ${cell} m cells` :
-    eaShare > 0 ? `Mostly EA LiDAR 1 m (resampled to ${cell} m); coarser Mapzen terrain where there's no EA survey` :
-      "Mapzen terrain (no EA LiDAR here, so it is much coarser)") + ` · one sample every ${step.toFixed(0)} m`;
+  lidarShare /= tiles.size;
+  $("profile-note").textContent = (lidarShare > 0.99 ? `1 m LiDAR DTM (EA / Welsh Government), resampled to ${cell} m cells` :
+    lidarShare > 0 ? `Mostly 1 m LiDAR (resampled to ${cell} m); coarser Mapzen terrain where there's no survey` :
+      "Mapzen terrain (no LiDAR here, so it is much coarser)") + ` · one sample every ${step.toFixed(0)} m`;
   drawProfile();
 }
 

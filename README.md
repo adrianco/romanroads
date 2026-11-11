@@ -48,14 +48,17 @@ Then open http://localhost:8765.
   **3D terrain** to show its sliders: **Tilt** (0–85°), **Rotation**,
   **Altitude** (zoom) and **Relief** (vertical exaggeration, 1–5×). The
   sliders follow the map as you move it, and turning 3D off returns to a flat,
-  north-up view. In England the 3D terrain uses the EA's 1 m heights from
-  zoom 13.
-- **Live LiDAR (England):** under LiDAR hillshade, switch the source from
-  *Ready-shaded by the EA* to *Live 1 m DTM*. From zoom 13 your browser
-  fetches raw 1 m heights from the EA and shades them itself, so you can move
+  north-up view. In England and Wales the 3D terrain uses 1 m LiDAR heights
+  from zoom 13.
+- **Live LiDAR (England and Wales):** under LiDAR hillshade, switch the source
+  from *Ready-shaded by the EA* to *Live 1 m DTM*. Your browser fetches raw 1 m
+  heights (England from the EA from zoom 13, Wales from DataMapWales from zoom
+  10) and shades them itself, so you can move
   the sun, raise the exaggeration, or change the visualisation:
   multi-direction hillshade, slope, **local relief model** (best for aggers and
-  low earthworks) or sky-view factor. It's slower than the ready-shaded layer.
+  low earthworks) or sky-view factor. It's slower than the ready-shaded layer,
+  and the EA limits how many requests it answers a minute: if the status line
+  says it's waiting, the tiles follow when it lets them.
 - **Elevation profile:** click a road, then *Elevation profile*, to chart the
   ground along that segment, with its climb, fall and steepest 100 m. Move
   along the chart to see where you are on the map.
@@ -109,10 +112,11 @@ Then open http://localhost:8765.
       live: raw heights from the EA's WCS shaded in the browser with an
       adjustable sun, multi-direction hillshade, slope, local relief model or
       sky-view factor ([ADR 0015](docs/adr/0015-live-dtm.md), issue #3).
+    - **Wales** (from zoom 10): the Welsh Government's 1 m DTM, read a piece
+      at a time from DataMapWales' cloud-optimised GeoTIFF and shaded in the
+      browser, with the same options ([ADR 0017](docs/adr/0017-wales-cog-and-ea-limits.md)).
     - **Scotland** (from zoom 11): DTMs from the Scottish Remote Sensing
       Portal, shaded on the fly by its server.
-    - **Wales:** not yet. The Welsh hillshades aren't available in any form a
-      web page can use ([ADR 0006](docs/adr/0006-lidar-hillshade.md)).
   - Historic OS maps: National Library of Scotland, 6-inch 2nd edition (GB)
     and other editions
   - Aerial imagery: Esri World Imagery
@@ -186,6 +190,7 @@ A blog post records the development process over two days. [Dev.to blog](https:/
 - Data: Digital Britannia v1 © Roman Roads Research Association / Mike Haken (CC BY-NC 4.0)
 - LiDAR (England): contains Environment Agency information © Environment Agency and/or database right
 - Live DTM idea: [LiDAR Lens](https://lidarlens.sarsen.org/) by Tim Daw ([MIT](https://github.com/TimDaw37/lidar-lens)); the shading here is written separately, with the multi-direction hillshade following GDAL
+- LiDAR (Wales): Welsh Government LiDAR, via DataMapWales, © Crown copyright (OGL). Thanks to the DataMapWales team for enabling cross-origin access
 - LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the Scottish Remote Sensing Portal (OGL)
 - Historic maps: National Library of Scotland
 - Roman Empire map: Digital Atlas of the Roman Empire, Johan Åhlfeldt (CC BY 4.0)

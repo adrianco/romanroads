@@ -21,3 +21,4 @@ context, decision, and consequences. Status is `Accepted` unless noted.
 | [0014](0014-pleiades-matching.md) | Pleiades links matched at build time: fuzzy Roman/modern-name match within 2 km (issue #1) |
 | [0015](0015-live-dtm.md) | Live 1 m EA DTM shaded in the browser (adjustable sun, multi-direction, slope, LRM, sky-view), 1 m 3D terrain, road elevation profiles, share links (issue #3) |
 | [0016](0016-view-presets.md) | Four view presets (LiDAR, Old maps, Earthworks, 3D); detailed settings and legend collapsed |
+| [0017](0017-wales-cog-and-ea-limits.md) | Wales: live 1 m DTM range-read from DataMapWales' COG; EA requests in 4×4 blocks with timeouts, back-off and recovery from its rate limit (issue #3) |
