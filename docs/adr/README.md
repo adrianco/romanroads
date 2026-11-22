@@ -10,7 +10,7 @@ context, decision, and consequences. Status is `Accepted` unless noted.
 | [0003](0003-category-normalisation.md) | Normalise messy category values, write cleaned values back for display |
 | [0004](0004-follow-author-qgis-styles.md) | Symbology follows the author's embedded QGIS `layer_styles` |
 | [0005](0005-maplibre-and-base-maps.md) | MapLibre GL JS with Esri Canvas / OSM base maps (CARTO rejected: needs a key) |
-| [0006](0006-lidar-hillshade.md) | LiDAR hillshade: EA WMS (England), SRSP server-side shading (Scotland); Wales blocked by provider |
+| [0006](0006-lidar-hillshade.md) | LiDAR hillshade: EA WMS (England), SRSP server-side shading (Scotland); Wales blocked by provider. Wales superseded by 0017, Scotland by 0019 |
 | [0007](0007-nls-historic-maps.md) | NLS historic OS 6-inch via the seamless `6inchsecond` tileset |
 | [0008](0008-aerial-imagery.md) | Aerial imagery from Esri World Imagery |
 | [0009](0009-label-glyphs.md) | Label glyphs from MapLibre demotiles (Noto Sans Regular) |
@@ -24,3 +24,4 @@ context, decision, and consequences. Status is `Accepted` unless noted.
 | [0017](0017-wales-cog-and-ea-limits.md) | Wales: live 1 m DTM range-read from DataMapWales' COG; EA requests in 4×4 blocks with timeouts, back-off and recovery from its rate limit (issue #3) |
 | [0018](0018-postcode-search.md) | Postcode search through postcodes.io (full postcodes, districts, partial codes); only real postcode areas are sent |
 | [0019](0019-scotland-lidar-from-s3.md) | Scotland: LiDAR range-read from the portal's open-data bucket and shaded in the browser; AWS terrain tiles between and zoomed out (the server-side shading broke) |
+| [0020](0020-zoom-readout.md) | Show the map's zoom level under the zoom buttons; every zoom quoted to users is a map zoom (code thresholds stay in tile zoom) |

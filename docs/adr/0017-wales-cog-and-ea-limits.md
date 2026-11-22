@@ -2,6 +2,7 @@
 
 **Status:** Accepted (issue #3, phase 2). Supersedes the Wales section of
 [0006](0006-lidar-hillshade.md); amends [0015](0015-live-dtm.md).
+Zooms here are tile zooms; the panel quotes them one lower, as map zooms ([0020](0020-zoom-readout.md)).
 
 ## Context
 - **Wales.** The Welsh Government's 1 m DTM is published by DataMapWales as one
@@ -152,3 +153,7 @@ Verified on localhost (a CORS proxy for the COG):
   gone.
 - At zoom 9.5 around Chester, the border is seamless.
 - At zoom 16 in Blaenau Ffestiniog, the live layer takes over.
+
+Later fix (2026-11-22, with [0019](0019-scotland-lidar-from-s3.md)): the EA cut-out asked for
+static Welsh tiles outside Wales (e.g. `tiles/wales/9/247/164`), which don't exist and filled the
+console with 404s. It now asks only for tiles that overlap the COG's extent.

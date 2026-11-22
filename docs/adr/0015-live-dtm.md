@@ -1,6 +1,6 @@
 # 0015 — Live 1 m DTM: shading in the browser, 1 m 3D terrain, road profiles
 
-**Status:** Accepted (issue #3, phase 1: England)
+**Status:** Accepted (issue #3, phase 1: England). Zooms here are tile zooms; the panel quotes them one lower, as map zooms ([0020](0020-zoom-readout.md)).
 
 ## Context
 Issue #3 pointed to [LiDAR Lens](https://lidarlens.sarsen.org/) (Tim Daw,
