@@ -113,3 +113,42 @@
 - **Rate limit:** the EA's limit is undocumented and per IP. Heavy use from one
   network (an office or a class) will meet it sooner. A shared caching relay
   would help, if it's ever needed.
+
+## Addendum (2026-11-22): zoomed out, tone and the overlap with England
+After this went live, three things showed up with the default ready-shaded view.
+- **Wales disappeared when zoomed out.** It started at map zoom 9, while England
+  shows from zoom 5. Streaming the COG further out isn't practical: the 64 m
+  overview is 14.4 MB for all of Wales, and the file doesn't skip empty tiles.
+  - **Fix:** `scripts/wales_overview.py` reads that overview once, shades it on
+    its own grid and averages it into 48 static tiles for zooms 6–9
+    (`docs/tiles/wales`, 1 MB in all, including transparent ones so none is
+    missing). They're drawn below map zoom 9, where the live layer takes over.
+- **A lighter grey than England.** The EA's tiles put flat ground at mid-grey
+  (128 in the Fens), which is a sun 30° up, not 45°. Their hills span 23–204
+  (5th–95th percentile) at tile zoom 11.
+  - **Fix:** the ready-shaded Welsh layer and the static tiles now use a sun at
+    30° and 2× exaggeration.
+  - **Measured:**
+
+    | Where | Zoom | Welsh tiles | EA tiles |
+    |---|---|---|---|
+    | Hills | 11 | 33–206 | 23–204 |
+    | Hills | 13 | 0–215 | 5–216 |
+    | Static tiles | 8 | 56/122/183 | 53/119/175 (Clun) |
+- **A darker patch around the Dee and Chester.** The EA's composite also covers
+  the Dee, Chester and a strip of north-east Wales. Two 60%-opaque hillshades
+  stacked there come out darker.
+  - **Fix:** the EA's ready-shaded tiles (which already pass through our
+    `retry://` loader) are cut out wherever there's Welsh data.
+    - **From tile zoom 10:** exactly, from the Welsh heights for the same tile,
+      which the live layer loads anyway.
+    - **Further out:** from the static zoom-9 tiles' alpha, about one screen
+      pixel at those zooms.
+  - An earlier, 190 m mask used at every zoom left a stepped band along the
+    edge of the Welsh data; the exact cut removed it.
+
+Verified on localhost (a CORS proxy for the COG):
+- At zoom 7, Wales is shaded, its tone matches England, and the Dee patch is
+  gone.
+- At zoom 9.5 around Chester, the border is seamless.
+- At zoom 16 in Blaenau Ffestiniog, the live layer takes over.

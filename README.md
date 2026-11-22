@@ -38,8 +38,11 @@ Then open http://localhost:8765.
 
   Everything else is under **All layers and settings**.
 - **Search** (top of the panel): a modern place name (`Housesteads`), a Roman
-  name (`Vercovicium`) or a road number (`RR2`, `2a`). Road results zoom to the
-  whole route.
+  name (`Vercovicium`), a road number (`RR2`, `2a`) or a postcode (`LD7 1AA`,
+  or a district such as `LD7`). Road results zoom to the whole route; a postcode
+  flies to the spot and drops a pin. Postcodes are looked up through
+  [postcodes.io](https://postcodes.io/), and nothing else you type leaves the
+  browser ([ADR 0018](docs/adr/0018-postcode-search.md)).
 - **Click** any road or site for a popup with every attribute and clickable
   links. Clicking a road highlights its entire Margary route in blue.
 - **Underlays:** tick LiDAR hillshade, historic OS maps (choose the edition),
@@ -112,9 +115,11 @@ Then open http://localhost:8765.
       live: raw heights from the EA's WCS shaded in the browser with an
       adjustable sun, multi-direction hillshade, slope, local relief model or
       sky-view factor ([ADR 0015](docs/adr/0015-live-dtm.md), issue #3).
-    - **Wales** (from zoom 10): the Welsh Government's 1 m DTM, read a piece
-      at a time from DataMapWales' cloud-optimised GeoTIFF and shaded in the
-      browser, with the same options ([ADR 0017](docs/adr/0017-wales-cog-and-ea-limits.md)).
+    - **Wales:** the Welsh Government's 1 m DTM, read a piece at a time from
+      DataMapWales' cloud-optimised GeoTIFF and shaded in the browser, with
+      the same options and in the same tone as the EA's layer. Zoomed out
+      (below zoom 9) it comes from small tiles pre-rendered by
+      `scripts/wales_overview.py` ([ADR 0017](docs/adr/0017-wales-cog-and-ea-limits.md)).
     - **Scotland** (from zoom 11): DTMs from the Scottish Remote Sensing
       Portal, shaded on the fly by its server.
   - Historic OS maps: National Library of Scotland, 6-inch 2nd edition (GB)
@@ -155,6 +160,8 @@ Why each source was chosen, and why others were rejected, is in
 ```
 data/digital-britannia_v1.gpkg   source GeoPackage (EPSG:27700)
 scripts/process.py               GeoPackage -> per-layer GeoJSON (EPSG:4326)
+scripts/wales_overview.py        Welsh DTM 64 m overview -> zoomed-out hillshade tiles
+docs/tiles/wales/                those tiles (zooms 6-9)
 requirements.txt                 pinned Python dependencies
 docs/index.html                  the viewer (single page, MapLibre GL JS)
 docs/data/*.geojson              processed layers + manifest.json (itinere.geojson = Britain subset)
@@ -194,6 +201,7 @@ A blog post records the development process over two days. [Dev.to blog](https:/
 - LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the Scottish Remote Sensing Portal (OGL)
 - Historic maps: National Library of Scotland
 - Roman Empire map: Digital Atlas of the Roman Empire, Johan Åhlfeldt (CC BY 4.0)
+- Postcodes: postcodes.io; contains Ordnance Survey data © Crown copyright and database right; contains Royal Mail data © Royal Mail copyright and database right; contains National Statistics data © Crown copyright and database right; contains NRS data © Crown copyright and database right
 - Places: Pleiades, Copyright © The Contributors (CC BY 3.0), https://pleiades.stoa.org
 - Comparison roads: Itiner-e static version 2024, Brughmans, de Soto, Pažout & Bjerregaard Vahlstrup (CC BY 4.0), https://doi.org/10.5281/zenodo.17122148
 - Geology: contains British Geological Survey materials © UKRI

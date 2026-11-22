@@ -69,6 +69,9 @@
   #results div:last-child { border-bottom: 0; }
   #results div:hover, #results div.active { background: var(--chip); }
   #results small { color: var(--muted); display: block; }
+  #results div.none { cursor: default; color: var(--muted); }
+  .pc-marker { width: 18px; height: 18px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+    background: #1565c0; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); margin-bottom: 6px; }
 
   #period-label { font-weight: 600; }
   .legend-item { display: flex; align-items: center; gap: 8px; padding: 1px 0; }
@@ -168,7 +171,7 @@
 
     <section>
       <div id="search-wrap">
-        <input id="search" type="search" placeholder="Search place, Roman name or road (e.g. RR2)" autocomplete="off">
+        <input id="search" type="search" placeholder="Place, Roman name, road (RR2) or postcode" autocomplete="off">
         <div id="results"></div>
       </div>
     </section>
@@ -287,6 +290,9 @@
       Some categories are normalised for display; see
       <a href="https://github.com/adrianco/romanroads/blob/main/docs/ERRATA.md" target="_blank" rel="noopener">errata</a>.
       Place links: <a href="https://pleiades.stoa.org/" target="_blank" rel="noopener">Pleiades</a>, © the contributors, CC BY 3.0.
+      Postcodes: <a href="https://postcodes.io/" target="_blank" rel="noopener">postcodes.io</a>; contains Ordnance Survey data
+      © Crown copyright and database right; contains Royal Mail data © Royal Mail copyright and database right; contains
+      National Statistics data © Crown copyright and database right; contains NRS data © Crown copyright and database right.
     </section>
   </div>
 </aside>
@@ -340,8 +346,69 @@ async function fetchRetry(url, signal) {
   }
   throw lastError;
 }
-maplibregl.addProtocol("retry", async (params, abortController) =>
-  ({ data: await fetchRetry(params.url.replace(/^retry:\/\//, "https://"), abortController.signal) }));
+maplibregl.addProtocol("retry", async (params, abortController) => {
+  const url = params.url.replace(/^retry:\/\//, "https://"), data = await fetchRetry(url, abortController.signal);
+  return { data: url.startsWith(EA_WMS.split("?")[0]) ? await maskEaTile(data, url) : data };
+});
+
+// The EA's composite also covers the Dee, Chester and a strip of north-east Wales, and two
+// part-transparent hillshades stacked there come out darker. So wherever there's Welsh data the
+// EA's ready-shaded tiles are cut out: from zoom 10 exactly, using the Welsh heights for the same
+// tile (which the live layer loads anyway); further out, where the pre-rendered Welsh zoom-9
+// tiles are opaque (~190 m pixels, about one screen pixel at those zooms).
+const walesMask = new Map();
+function walesMaskTile(x, y) {
+  const key = `${x}/${y}`;
+  if (!walesMask.has(key)) walesMask.set(key, fetch(`tiles/wales/9/${key}.png`)
+    .then(r => (r.ok ? r.blob() : null))
+    .then(async (blob) => {
+      if (!blob) return null;
+      const bmp = await createImageBitmap(blob, { premultiplyAlpha: "none", colorSpaceConversion: "none" });
+      const c = new OffscreenCanvas(256, 256), ctx = c.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(bmp, 0, 0);
+      const d = ctx.getImageData(0, 0, 256, 256).data, a = new Uint8Array(65536);
+      for (let i = 0; i < 65536; i++) a[i] = d[4 * i + 3];
+      return a;
+    }).catch(() => null));
+  return walesMask.get(key);
+}
+async function maskEaTile(buf, url) {
+  const [minx, miny, maxx, maxy] = decodeURIComponent(url.match(/[?&]bbox=([^&]+)/)[1]).split(",").map(Number);
+  if (!overlaps([mercLon(minx), mercLat(miny), mercLon(maxx), mercLat(maxy)], WALES_BOUNDS)) return buf;
+  const z = Math.round(Math.log2(2 * MERC / (maxx - minx)));
+  if (z >= WALES_MIN_Z) {
+    const s = 2 * MERC / 2 ** z, x = Math.round((minx + MERC) / s), y = Math.round((MERC - maxy) / s);
+    let t;
+    try { t = await dtmTile(Math.min(z, DTM_MAX_Z), x, y, null, true); } catch { return buf; }
+    if (t.empty) return buf;
+    const cut = new Uint8Array(65536);
+    for (let j = 0; j < 256; j++) for (let i = 0; i < 256; i++)
+      cut[j * 256 + i] = Number.isNaN(t.h[(j + DTM_PAD) * DTM_GRID + i + DTM_PAD]) ? 0 : 1;
+    return cutTile(buf, cut);
+  }
+  const size = 2 * MERC / 2 ** 9, tiles = new Map();
+  const tx0 = Math.floor((minx + MERC) / size), tx1 = Math.floor((maxx + MERC) / size);
+  const ty0 = Math.floor((MERC - maxy) / size), ty1 = Math.floor((MERC - miny) / size);
+  for (let tx = tx0; tx <= tx1; tx++) for (let ty = ty0; ty <= ty1; ty++) tiles.set(`${tx}/${ty}`, await walesMaskTile(tx, ty));
+  if (![...tiles.values()].some(Boolean)) return buf;
+  const welsh = (fx, fy) => {
+    const tx = Math.floor(fx), ty = Math.floor(fy), a = tiles.get(`${tx}/${ty}`);
+    return !!a && a[Math.min(255, Math.floor((fy - ty) * 256)) * 256 + Math.min(255, Math.floor((fx - tx) * 256))] > 0;
+  };
+  const step = (maxx - minx) / 256, cut = new Uint8Array(65536);
+  for (let j = 0; j < 256; j++) for (let i = 0; i < 256; i++)
+    cut[j * 256 + i] = welsh((minx + (i + 0.5) * step + MERC) / size, (MERC - (maxy - (j + 0.5) * step)) / size) ? 1 : 0;
+  return cutTile(buf, cut);
+}
+async function cutTile(buf, cut) {
+  if (!cut.some(Boolean)) return buf;
+  const bmp = await createImageBitmap(new Blob([buf]), { premultiplyAlpha: "none", colorSpaceConversion: "none" });
+  const c = new OffscreenCanvas(256, 256), ctx = c.getContext("2d", { willReadFrequently: true });
+  ctx.drawImage(bmp, 0, 0);
+  const img = ctx.getImageData(0, 0, 256, 256);
+  for (let i = 0; i < 65536; i++) if (cut[i]) img.data[4 * i + 3] = 0;
+  return toPng(img.data);
+}
 
 // ---------------------------------------------------------------------------
 // Live 1 m DTM: England from the EA's WCS (ADR 0015), Wales from DataMapWales' COG (ADR 0017)
@@ -1105,9 +1172,12 @@ function saveState() {
 const dtmQuery = () => new URLSearchParams({ mode: document.getElementById("dtm-mode").value,
   ...Object.fromEntries(["az", "el", "ex", "rad"].map(k => [k, document.getElementById("dtm-" + k).value])) }).toString();
 // Live: everything, shaded as set. Ready-shaded: the EA's own layer covers England, so the live
-// layer fills in Wales only, shaded like the EA's (the Welsh hillshades aren't published as tiles).
+// layer fills in Wales only, shaded to match the EA's tiles: their flat ground is mid-grey (128, a
+// sun 30° up) and their hills span 23–204 (5th–95th percentile) at zoom 11, which 2× exaggeration
+// matches (33–206 on Welsh hills; 0–215 against their 5–216 at zoom 13).
+const WALES_READY = "mode=hs&az=315&el=30&ex=2&rad=15";
 const dtmTilesUrl = () => "dtm://{z}/{x}/{y}?" + (document.getElementById("lidar-src").value === "live" ? dtmQuery()
-  : "mode=hs&az=315&el=45&ex=1&rad=15&only=wales") + `&e=${dtmEpoch}`;
+  : WALES_READY + "&only=wales") + `&e=${dtmEpoch}`;
 
 const style = {
   version: 8,
@@ -1123,6 +1193,11 @@ const style = {
     "lidar": { type: "raster", tiles: [retry(EA_WMS)], tileSize: 256, minzoom: 6, maxzoom: 19,
       bounds: [-6.5, 49.8, 2.0, 55.9],
       attribution: "LiDAR: Contains Environment Agency information © Environment Agency and/or database right" },
+    // Wales zoomed out (map zoom < 9): tiles pre-rendered from the COG's 64 m overview by
+    // scripts/wales_overview.py, in the same tone; the live layer takes over from zoom 9
+    "lidar-wales": { type: "raster", tiles: ["tiles/wales/{z}/{x}/{y}.png"], tileSize: 256, minzoom: 6, maxzoom: 9,
+      bounds: WALES_BOUNDS,
+      attribution: 'LiDAR (Wales): Welsh Government LiDAR via <a href="https://datamap.gov.wales/" target="_blank">DataMapWales</a>, © Crown copyright (OGL)' },
     "lidar-scot": { type: "raster", tiles: [retry(SCOT_WMS)], tileSize: 256, minzoom: 11, maxzoom: 19,
       bounds: [-8.9, 54.6, -0.7, 60.9],
       attribution: 'LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the <a href="https://remotesensingdata.gov.scot/" target="_blank">Scottish Remote Sensing Portal</a> (OGL)' },
@@ -1165,6 +1240,8 @@ for (const ed of NLS_EDITIONS) {
     layout: { visibility: "none" }, paint: { "raster-opacity": 0.8 } });
 }
 style.layers.push({ id: "u-lidar", type: "raster", source: "lidar", paint: { "raster-opacity": 0.6 } });
+style.layers.push({ id: "u-lidar-wales", type: "raster", source: "lidar-wales", maxzoom: WALES_MIN_Z - 1,
+  paint: { "raster-opacity": 0.6 } });
 // GeoServer's shading is paler than the EA's; pull its highlights down to match across the border
 style.layers.push({ id: "u-lidar-scot", type: "raster", source: "lidar-scot",
   paint: { "raster-opacity": 0.6, "raster-brightness-max": 0.8, "raster-contrast": 0.2 } });
@@ -1317,7 +1394,7 @@ function applyBase() {
 }
 
 function applyUnderlays() {
-  for (const id of ["u-lidar", "u-lidar-scot"]) {
+  for (const id of ["u-lidar", "u-lidar-wales", "u-lidar-scot"]) {
     vis(id, $("u-lidar").checked);
     map.setPaintProperty(id, "raster-opacity", $("o-lidar").value / 100);
   }
@@ -1956,16 +2033,85 @@ function search(q) {
   return scored.slice(0, 25).map(x => x[1]);
 }
 
+// Postcodes, through postcodes.io (ADR 0018): a full postcode ("LD7 1AA"), a district ("LD7")
+// or the start of one ("LD7 1") is looked up as you type, and shown above the local matches.
+// Only strings that start with a real postcode area are sent, so road numbers (RR2, MC39) aren't.
+const POSTCODES_API = "https://api.postcodes.io";
+const PC_AREAS = new Set(("AB AL B BA BB BD BH BL BN BR BS BT CA CB CF CH CM CO CR CT CV CW DA DD DE DG DH DL DN DT " +
+  "DY E EC EH EN EX FK FY G GL GU HA HD HG HP HR HS HU HX IG IP IV KA KT KW KY L LA LD LE LL LN LS LU M ME MK ML N NE NG " +
+  "NN NP NR NW OL OX PA PE PH PL PO PR RG RH RM S SA SE SG SK SL SM SN SO SP SR SS ST SW SY TA TD TF TN TQ TR TS TW UB W " +
+  "WA WC WD WF WN WR WS WV YO ZE").split(" "));
+function postcodeQuery(q) {
+  const t = q.trim().toUpperCase().replace(/\s+/g, " ");
+  const m = t.match(/^([A-Z]{1,2})(\d[A-Z\d]?)(?: ?(\d)([A-Z]{0,2}))?$/);
+  if (!m || !PC_AREAS.has(m[1])) return null;
+  const out = m[1] + m[2];
+  if (m[3] === undefined) return { kind: "outcode", out };
+  if (m[4].length === 2) return { kind: "full", code: `${out} ${m[3]}${m[4]}` };
+  return { kind: "partial", code: `${out} ${m[3]}${m[4]}` };
+}
+const pcCache = new Map();
+async function pcGet(path) {
+  if (!pcCache.has(path)) {
+    const p = fetch(POSTCODES_API + path).then(r => r.json()).then(j => (j.status === 200 ? j.result : null));
+    p.catch(() => pcCache.delete(path));
+    pcCache.set(path, p);
+  }
+  return pcCache.get(path);
+}
+const placeOf = (r) => [r.parish && !/unparished/i.test(r.parish) ? r.parish : null, r.admin_district]
+  .filter((v, i, a) => v && a.indexOf(v) === i).join(", ");
+// Result entries for a postcode-shaped query (none if it isn't one)
+async function postcodeResults(q) {
+  const pq = postcodeQuery(q);
+  if (!pq) return [];
+  const entry = (label, sub, lon, lat, zoom) => ({ kind: "postcode", label, sub, center: [lon, lat], zoom });
+  if (pq.kind === "full") {
+    const r = await pcGet(`/postcodes/${encodeURIComponent(pq.code)}`);
+    if (r && r.longitude != null) return [entry(r.postcode, `Postcode · ${placeOf(r)}`, r.longitude, r.latitude, 16)];
+    const t = await pcGet(`/terminated_postcodes/${encodeURIComponent(pq.code)}`);
+    if (t && t.longitude != null) return [entry(t.postcode, `Postcode, no longer in use (${t.year_terminated})`, t.longitude, t.latitude, 16)];
+    return [{ kind: "none", label: `${pq.code}: postcode not found`, sub: "Check the postcode, or search a place name" }];
+  }
+  const list = [];
+  if (pq.kind === "outcode") {
+    const r = await pcGet(`/outcodes/${encodeURIComponent(pq.out)}`);
+    if (r && r.longitude != null) list.push(entry(r.outcode, `Postcode district · ${(r.admin_district || []).slice(0, 3).join(", ")}`,
+      r.longitude, r.latitude, 13));
+  }
+  // the first few full postcodes that start this way; each is looked up when chosen
+  const codes = (await pcGet(`/postcodes/${encodeURIComponent(pq.kind === "outcode" ? pq.out : pq.code)}/autocomplete`)) || [];
+  for (const c of codes.slice(0, pq.kind === "outcode" ? 4 : 8)) list.push({ kind: "postcode", label: c, sub: "Postcode", code: c });
+  return list;
+}
+
+let pcMarker = null;
+async function choosePostcode(e) {
+  if (!e.center) {   // from the autocomplete list: look it up now
+    const [full] = await postcodeResults(e.code);
+    if (!full || !full.center) return;
+    e = full;
+  }
+  input.value = e.label;
+  if (pcMarker) pcMarker.remove();
+  const el = document.createElement("div");
+  el.className = "pc-marker"; el.title = e.label;
+  pcMarker = new maplibregl.Marker({ element: el, anchor: "bottom" }).setLngLat(e.center).addTo(map);
+  map.flyTo({ center: e.center, zoom: Math.max(map.getZoom(), e.zoom), offset: panelOffset() });
+}
+
 const input = $("search"), results = $("results");
-let current = [], active = -1;
+let current = [], active = -1, searchSeq = 0;
 function renderResults() {
   if (!current.length) { results.style.display = "none"; return; }
   results.innerHTML = current.map((e, i) =>
-    `<div data-i="${i}" class="${i === active ? "active" : ""}">${esc(e.label)}<small>${esc(e.sub)}</small></div>`).join("");
+    `<div data-i="${i}" class="${i === active ? "active" : ""}${e.kind === "none" ? " none" : ""}">${esc(e.label)}<small>${esc(e.sub)}</small></div>`).join("");
   results.style.display = "block";
 }
 function choose(e) {
+  if (!e || e.kind === "none") return;
   results.style.display = "none";
+  if (e.kind === "postcode") { choosePostcode(e); return; }
   input.value = e.label;
   if (e.kind === "road") { zoomToRoute(e.key); return; }
   const c = e.feature.geometry.coordinates;
@@ -1973,8 +2119,33 @@ function choose(e) {
   map.flyTo({ center: c, zoom: Math.max(map.getZoom(), 13), offset: panelOffset() });
   map.once("moveend", () => showPopup(e.layer, e.feature, c));
 }
-input.addEventListener("input", () => { current = search(input.value); active = -1; renderResults(); });
-input.addEventListener("keydown", (ev) => {
+// Local matches show at once; postcode matches are added when postcodes.io answers (if the
+// text hasn't changed meanwhile)
+let pcTimer = null, pcPending = null;
+input.addEventListener("input", () => {
+  const q = input.value, seq = ++searchSeq;
+  current = search(q); active = -1; renderResults();
+  clearTimeout(pcTimer);
+  if (!q.trim()) { if (pcMarker) { pcMarker.remove(); pcMarker = null; } pcPending = null; return; }
+  if (!postcodeQuery(q)) { pcPending = null; return; }
+  pcPending = new Promise(resolve => {
+    pcTimer = setTimeout(async () => {
+      let pcs = [];
+      try { pcs = await postcodeResults(q); }
+      catch { pcs = [{ kind: "none", label: "Postcode lookup unavailable", sub: "postcodes.io didn't answer; try again" }]; }
+      if (seq === searchSeq) { current = pcs.concat(search(q)); active = -1; renderResults(); }
+      resolve();
+    }, 200);
+  });
+});
+input.addEventListener("keydown", async (ev) => {
+  if (ev.key === "Enter" && pcPending) {   // Enter before the postcode answer arrived: wait for it
+    ev.preventDefault();
+    const seq = searchSeq;
+    await pcPending;
+    if (seq === searchSeq) choose(current.find(e => e.kind !== "none"));
+    return;
+  }
   if (!current.length) return;
   if (ev.key === "ArrowDown") { active = Math.min(active + 1, current.length - 1); renderResults(); ev.preventDefault(); }
   else if (ev.key === "ArrowUp") { active = Math.max(active - 1, 0); renderResults(); ev.preventDefault(); }
