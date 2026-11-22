@@ -69,6 +69,8 @@
   #results div:last-child { border-bottom: 0; }
   #results div:hover, #results div.active { background: var(--chip); }
   #results small { color: var(--muted); display: block; }
+  .zoom-readout { background: #fff; color: #333; font: 11px/1.4 system-ui, sans-serif; padding: 2px 4px;
+    border-radius: 4px; box-shadow: 0 0 0 2px rgba(0,0,0,.1); text-align: center; min-width: 29px; }
   #results div.none { cursor: default; color: var(--muted); }
   .pc-marker { width: 18px; height: 18px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
     background: #1565c0; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); margin-bottom: 6px; }
@@ -188,12 +190,12 @@
 
     <section>
       <h2>Underlays</h2>
-      <label class="row"><input type="checkbox" id="u-lidar" checked> LiDAR hillshade <span class="note">(England; Wales from zoom 10; Scotland from 11)</span></label>
+      <label class="row"><input type="checkbox" id="u-lidar" checked> LiDAR hillshade <span class="note">(England; Wales; Scotland from zoom 10)</span></label>
       <div class="slider-row"><input type="range" id="o-lidar" min="0" max="100" value="60"><output id="o-lidar-v">60%</output></div>
       <div class="sub">
         <select id="lidar-src" aria-label="LiDAR source">
           <option value="wms">Ready-shaded by the EA (fast)</option>
-          <option value="live">Live 1 m DTM, adjustable (England zoom 13+, Wales 10+)</option>
+          <option value="live">Live 1 m DTM, adjustable (England zoom 12+, Wales 9+)</option>
         </select>
       </div>
       <div id="dtm-controls" hidden>
@@ -239,14 +241,14 @@
         <div class="slider-row"><span class="note" style="width:62px">Rotation</span><input type="range" id="t-rot" min="-180" max="180" value="0"><output id="t-rot-v">0°</output></div>
         <div class="slider-row"><span class="note" style="width:62px">Altitude</span><input type="range" id="t-zoom" min="5" max="18" step="0.1" value="12"><output id="t-zoom-v">z12</output></div>
         <div class="slider-row"><span class="note" style="width:62px">Relief</span><input type="range" id="t-exag" min="1" max="5" step="0.1" value="1.5"><output id="t-exag-v">1.5×</output></div>
-        <label class="row sub"><input type="checkbox" id="t-1m" checked> 1 m LiDAR heights, England and Wales <span class="note">(zoom 13+, slower)</span></label>
+        <label class="row sub"><input type="checkbox" id="t-1m" checked> 1 m LiDAR heights, England and Wales <span class="note">(zoom 12+, slower)</span></label>
       </div>
     </section>
 
     <section>
       <h2>Heritage overlays</h2>
       <label class="row"><input type="checkbox" id="o-sam"> Scheduled monuments</label>
-      <div class="sub note" id="o-sam-status">England from zoom 11 · Scotland &amp; Wales from zoom 10</div>
+      <div class="sub note" id="o-sam-status">England from zoom 11 · Scotland &amp; Wales from zoom 9</div>
       <label class="row"><input type="checkbox" id="o-aim"> Aerial mapping: Roman features <span class="note">(HE, England)</span></label>
       <div class="sub note" id="o-aim-status">from zoom 14</div>
     </section>
@@ -1032,16 +1034,19 @@ maplibregl.addProtocol("dem1m", async (params, abortController) => {
   } catch (err) { noteFailure(err); throw err; }
 });
 
+// Tile zoom thresholds, as the map zoom they're reached at (shown in the zoom readout)
+const mapZoomFor = (tileZ) => tileZ - 1;
 function dtmStatus() {
   const el = document.getElementById("dtm-status");
   if (!el || typeof map === "undefined") return;
-  const z = map.getZoom(), ea = eaInFlight + eaQueue.length, wait = Math.ceil((eaPauseUntil - Date.now()) / 1000);
+  // z: the tile zoom being loaded
+  const z = Math.round(map.getZoom() + 1), ea = eaInFlight + eaQueue.length, wait = Math.ceil((eaPauseUntil - Date.now()) / 1000);
   const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
-  if (z < WALES_MIN_Z) el.textContent = `Zoom in for the live DTM (Wales from zoom ${WALES_MIN_Z}, England from ${DTM_MIN_Z}); the ready-shaded layer shows until then.`;
+  if (z < WALES_MIN_Z) el.textContent = `Zoom in for the live DTM (Wales from zoom ${mapZoomFor(WALES_MIN_Z)}, England from ${mapZoomFor(DTM_MIN_Z)}); the ready-shaded layer shows until then.`;
   else if (ea && wait > 0) el.textContent = `The EA is limiting requests: waiting ${wait} s, then fetching ${plural(ea, "block")} of heights…`;
   else if (ea || walesInFlight) el.textContent = "Fetching heights: " +
     [ea && `${plural(ea, "block")} from the EA`, walesInFlight && "Wales"].filter(Boolean).join(", ") + "…";
-  else if (z < DTM_MIN_Z) el.textContent = `Wales is live from zoom ${WALES_MIN_Z}; England from ${DTM_MIN_Z} (ready-shaded until then).`;
+  else if (z < DTM_MIN_Z) el.textContent = `Wales is live from zoom ${mapZoomFor(WALES_MIN_Z)}; England from ${mapZoomFor(DTM_MIN_Z)} (ready-shaded until then).`;
   else el.textContent = "1 m DTM shaded in your browser: EA (England) and Welsh Government (Wales).";
 }
 
@@ -1053,7 +1058,7 @@ const DYNAMIC = [
   { id: "he-sam", minzoom: 11, max: 2000, toggle: "o-sam", status: "o-sam-status",
     url: HE_ARCGIS + "National_Heritage_List_for_England_NHLE_v02_VIEW/FeatureServer/6/query",
     where: "1=1", fields: "ListEntry,Name,SchedDate,AmendDate,hyperlink",
-    idle: "England from zoom 11 · Scotland & Wales from zoom 10" },
+    idle: "England from zoom 11 · Scotland & Wales from zoom 9" },
   { id: "he-aim", minzoom: 14, max: 2000, toggle: "o-aim", status: "o-aim-status",
     url: HE_ARCGIS + "HE_AIM_data/FeatureServer/0/query",
     where: "PERIOD LIKE '%ROMAN%'", fields: "LAYER,PERIOD,MONUMENT_TYPE,EVIDENCE_1,SOURCE_1,EVIDENCE_2,SOURCE_2,HER_NO,HE_UID,project",
@@ -1264,6 +1269,19 @@ const map = new maplibregl.Map({
 map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: DATA_CREDIT }), "bottom-right");
 map.addControl(new maplibregl.NavigationControl(), "top-right");
 map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
+// The map's zoom level, as in the URL (#zoom/lat/lon); the panel quotes thresholds in the same
+// numbers. (MapLibre loads 256 px raster tiles one level up: tile zoom = round(map zoom + 1).)
+map.addControl({
+  onAdd(m) {
+    const el = document.createElement("div");
+    el.className = "maplibregl-ctrl zoom-readout";
+    el.title = "Map zoom level (also in the page address)";
+    const show = () => { el.textContent = `Zoom ${m.getZoom().toFixed(1)}`; };
+    m.on("zoom", show); show();
+    return el;
+  },
+  onRemove() {},
+}, "top-right");   // under the zoom buttons: the panel can cover the bottom-left corner
 
 // ---------------------------------------------------------------------------
 // Data layers
@@ -1620,7 +1638,7 @@ const PRESETS = {
   lidar: { note: "LiDAR hillshade under the roads and sites: the plainest view.", set: {} },
   maps: { note: "The OS 6-inch map of c.1890–1910 blended over the LiDAR.",
     set: { "u-hist": "1", "o-hist": "85", "o-lidar": "45" } },   // the map is drawn under the LiDAR
-  heritage: { note: "Local relief model from the live 1 m DTM (England from zoom 13, Wales from 10), with scheduled monuments and Roman aerial mapping. Zoom in to see the features.",
+  heritage: { note: "Local relief model from the live 1 m DTM (England from zoom 12, Wales from 9), with scheduled monuments and Roman aerial mapping. Zoom in to see the features.",
     set: { "lidar-src": "live", "dtm-mode": "lrm", "o-lidar": "85", "o-sam": "1", "o-aim": "1" } },
   "3d": { note: "Tilted 3D terrain from 1 m heights (England and Wales), lit from the north-west. Use the sliders under 3D terrain to fly around.",
     set: { "u-terrain": "1", "t-exag": "2", "lidar-src": "live", "o-lidar": "80" } },

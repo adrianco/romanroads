@@ -52,11 +52,11 @@ Then open http://localhost:8765.
   **Altitude** (zoom) and **Relief** (vertical exaggeration, 1–5×). The
   sliders follow the map as you move it, and turning 3D off returns to a flat,
   north-up view. In England and Wales the 3D terrain uses 1 m LiDAR heights
-  from zoom 13.
+  from zoom 12.
 - **Live LiDAR (England and Wales):** under LiDAR hillshade, switch the source
   from *Ready-shaded by the EA* to *Live 1 m DTM*. Your browser fetches raw 1 m
-  heights (England from the EA from zoom 13, Wales from DataMapWales from zoom
-  10) and shades them itself, so you can move
+  heights (England from the EA from zoom 12, Wales from DataMapWales from zoom
+  9) and shades them itself, so you can move
   the sun, raise the exaggeration, or change the visualisation:
   multi-direction hillshade, slope, **local relief model** (best for aggers and
   low earthworks) or sky-view factor. It's slower than the ready-shaded layer,
@@ -70,6 +70,8 @@ Then open http://localhost:8765.
   many features are showing.
 - **Period slider:** shows only military sites occupied in the chosen period,
   coloured by their type in that period.
+- **Zoom level** is shown top right, under the zoom buttons. It's the same
+  number as in the URL, and the one the panel's "from zoom N" notes refer to.
 - The URL keeps the current view (`#zoom/lat/lon`) and every panel setting you
   change (`?lidar-src=live&dtm-mode=lrm`), so a link opens the same map.
 
@@ -120,7 +122,7 @@ Then open http://localhost:8765.
       the same options and in the same tone as the EA's layer. Zoomed out
       (below zoom 9) it comes from small tiles pre-rendered by
       `scripts/wales_overview.py` ([ADR 0017](docs/adr/0017-wales-cog-and-ea-limits.md)).
-    - **Scotland** (from zoom 11): DTMs from the Scottish Remote Sensing
+    - **Scotland** (from zoom 10): DTMs from the Scottish Remote Sensing
       Portal, shaded on the fly by its server.
   - Historic OS maps: National Library of Scotland, 6-inch 2nd edition (GB)
     and other editions
@@ -128,8 +130,8 @@ Then open http://localhost:8765.
   - Roman Empire map: the Digital Atlas of the Roman Empire (DARE), with Latin
     place names
   - Bedrock geology: BGS, 1:625k zoomed out and 1:50k zoomed in
-  - 3D terrain: tilts the view with real elevation (1 m EA heights in
-    England from zoom 13)
+  - 3D terrain: tilts the view with real elevation (1 m LiDAR heights in
+    England and Wales from zoom 12)
 - **Road elevation profiles** from the same 1 m heights, with climb, fall and
   the steepest 100 m.
 - **Heritage overlays:**
