@@ -56,8 +56,6 @@ def parse_header(b):
 
     def val(t, k=0):
         typ, _, at = t
-        if typ == 2:
-            return None
         return struct.unpack("<" + fmt[typ], b[at + size[typ] * k:at + size[typ] * (k + 1)])[0]
 
     t0 = ifds[0]

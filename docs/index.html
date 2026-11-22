@@ -317,26 +317,54 @@ const EA_WMS = "https://environment.data.gov.uk/spatialdata/lidar-composite-digi
 // through a "retry://" protocol that re-fetches with backoff (ADR 0006).
 const RETRY_DELAYS_MS = [400, 1200, 3000];
 const retry = (url) => url.replace(/^https:\/\//, "retry://");
-async function fetchRetry(url, signal) {
+// Run attempt() until it succeeds, waiting RETRY_DELAYS_MS (±25%) between tries
+async function withRetry(attempt, signal) {
   let lastError;
-  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
-    if (attempt) await new Promise(r => setTimeout(r, RETRY_DELAYS_MS[attempt - 1] * (0.75 + Math.random() / 2)));
+  for (let n = 0; n <= RETRY_DELAYS_MS.length; n++) {
+    if (n) await sleep(RETRY_DELAYS_MS[n - 1] * (0.75 + Math.random() / 2));
     if (signal?.aborted) throw new DOMException("tile request aborted", "AbortError");
-    try {
-      const r = await fetch(url, { signal });
-      if (r.ok) return await r.arrayBuffer();
-      lastError = new Error(`HTTP ${r.status}`);
-    } catch (err) {
+    try { return await attempt(); } catch (err) {
       if (err.name === "AbortError") throw err;   // tile no longer needed (map moved)
       lastError = err;
     }
   }
   throw lastError;
 }
+const fetchRetry = (url, signal) => withRetry(async () => {
+  const r = await fetch(url, { signal });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.arrayBuffer();
+}, signal);
 maplibregl.addProtocol("retry", async (params, abortController) => {
-  const url = params.url.replace(/^retry:\/\//, "https://"), data = await fetchRetry(url, abortController.signal);
-  return { data: url.startsWith(EA_WMS.split("?")[0]) ? await maskEaTile(data, url) : data };
+  const url = params.url.replace(/^retry:\/\//, "https://");
+  if (!url.startsWith(EA_WMS.split("?")[0])) return { data: await fetchRetry(url, abortController.signal) };
+  // EA tiles near the Scottish border are shared with Scotland's England mask (eaAlpha)
+  const t = eaTileOf(url);
+  const data = tileMayBeEngland(t.z, t.x, t.y) ? await eaWmsTile(t.z, t.x, t.y) : await fetchRetry(url, abortController.signal);
+  return { data: await maskEaTile(data, t) };
 });
+
+// Decode a PNG (ArrayBuffer or Blob) to its 256² RGBA bytes, exactly as stored
+async function pngPixels(src) {
+  const bmp = await createImageBitmap(src instanceof Blob ? src : new Blob([src]), { premultiplyAlpha: "none", colorSpaceConversion: "none" });
+  const ctx = new OffscreenCanvas(256, 256).getContext("2d", { willReadFrequently: true });
+  ctx.drawImage(bmp, 0, 0);
+  return ctx.getImageData(0, 0, 256, 256);
+}
+const alphaOf = (rgba) => { const a = new Uint8Array(65536); for (let i = 0; i < 65536; i++) a[i] = rgba[4 * i + 3]; return a; };
+
+// A promise cache: make() runs once per key, a rejected promise is forgotten so the next caller
+// tries again, and past max entries the oldest is dropped
+function cached(cache, key, max, make) {
+  let p = cache.get(key);
+  if (!p) {
+    p = make();
+    p.catch(() => { if (cache.get(key) === p) cache.delete(key); });
+    cache.set(key, p);
+    if (cache.size > max) cache.delete(cache.keys().next().value);
+  }
+  return p;
+}
 
 // The EA's composite also covers the Dee, Chester and a strip of north-east Wales, and two
 // part-transparent hillshades stacked there come out darker. So wherever there's Welsh data the
@@ -345,27 +373,21 @@ maplibregl.addProtocol("retry", async (params, abortController) => {
 // tiles are opaque (~190 m pixels, about one screen pixel at those zooms).
 const walesMask = new Map();
 function walesMaskTile(x, y) {
-  const key = `${x}/${y}`;
   if (!overlaps(tileLonLat(9, x, y), WALES_BOUNDS)) return null;   // no static tile there
-  if (!walesMask.has(key)) walesMask.set(key, fetch(`tiles/wales/9/${key}.png`)
+  return cached(walesMask, `${x}/${y}`, 256, () => fetch(`tiles/wales/9/${x}/${y}.png`)
     .then(r => (r.ok ? r.blob() : null))
-    .then(async (blob) => {
-      if (!blob) return null;
-      const bmp = await createImageBitmap(blob, { premultiplyAlpha: "none", colorSpaceConversion: "none" });
-      const c = new OffscreenCanvas(256, 256), ctx = c.getContext("2d", { willReadFrequently: true });
-      ctx.drawImage(bmp, 0, 0);
-      const d = ctx.getImageData(0, 0, 256, 256).data, a = new Uint8Array(65536);
-      for (let i = 0; i < 65536; i++) a[i] = d[4 * i + 3];
-      return a;
-    }).catch(() => null));
-  return walesMask.get(key);
+    .then(async (blob) => (blob ? alphaOf((await pngPixels(blob)).data) : null))
+    .catch(() => null));
 }
-async function maskEaTile(buf, url) {
+// z/x/y and Web Mercator box of an EA WMS tile, from its bbox parameter
+function eaTileOf(url) {
   const [minx, miny, maxx, maxy] = decodeURIComponent(url.match(/[?&]bbox=([^&]+)/)[1]).split(",").map(Number);
+  const z = Math.round(Math.log2(2 * MERC / (maxx - minx))), s = 2 * MERC / 2 ** z;
+  return { z, x: Math.round((minx + MERC) / s), y: Math.round((MERC - maxy) / s), minx, miny, maxx, maxy };
+}
+async function maskEaTile(buf, { z, x, y, minx, miny, maxx, maxy }) {
   if (!overlaps([mercLon(minx), mercLat(miny), mercLon(maxx), mercLat(maxy)], WALES_BOUNDS)) return buf;
-  const z = Math.round(Math.log2(2 * MERC / (maxx - minx)));
   if (z >= WALES_MIN_Z) {
-    const s = 2 * MERC / 2 ** z, x = Math.round((minx + MERC) / s), y = Math.round((MERC - maxy) / s);
     let t;
     try { t = await dtmTile(Math.min(z, DTM_MAX_Z), x, y, null, true); } catch { return buf; }
     if (t.empty) return buf;
@@ -374,13 +396,13 @@ async function maskEaTile(buf, url) {
       cut[j * 256 + i] = Number.isNaN(t.h[(j + DTM_PAD) * DTM_GRID + i + DTM_PAD]) ? 0 : 1;
     return cutTile(buf, cut);
   }
-  const size = 2 * MERC / 2 ** 9, tiles = new Map();
+  const size = 2 * MERC / 2 ** 9;
   const tx0 = Math.floor((minx + MERC) / size), tx1 = Math.floor((maxx + MERC) / size);
-  const ty0 = Math.floor((MERC - maxy) / size), ty1 = Math.floor((MERC - miny) / size);
-  for (let tx = tx0; tx <= tx1; tx++) for (let ty = ty0; ty <= ty1; ty++) tiles.set(`${tx}/${ty}`, await walesMaskTile(tx, ty));
-  if (![...tiles.values()].some(Boolean)) return buf;
+  const ty0 = Math.floor((MERC - maxy) / size), ty1 = Math.floor((MERC - miny) / size), nx = tx1 - tx0 + 1;
+  const tiles = await Promise.all(Array.from({ length: nx * (ty1 - ty0 + 1) }, (_, k) => walesMaskTile(tx0 + k % nx, ty0 + Math.floor(k / nx))));
+  if (!tiles.some(Boolean)) return buf;
   const welsh = (fx, fy) => {
-    const tx = Math.floor(fx), ty = Math.floor(fy), a = tiles.get(`${tx}/${ty}`);
+    const tx = Math.floor(fx), ty = Math.floor(fy), a = tiles[(ty - ty0) * nx + tx - tx0];
     return !!a && a[Math.min(255, Math.floor((fy - ty) * 256)) * 256 + Math.min(255, Math.floor((fx - tx) * 256))] > 0;
   };
   const step = (maxx - minx) / 256, cut = new Uint8Array(65536);
@@ -390,10 +412,7 @@ async function maskEaTile(buf, url) {
 }
 async function cutTile(buf, cut) {
   if (!cut.some(Boolean)) return buf;
-  const bmp = await createImageBitmap(new Blob([buf]), { premultiplyAlpha: "none", colorSpaceConversion: "none" });
-  const c = new OffscreenCanvas(256, 256), ctx = c.getContext("2d", { willReadFrequently: true });
-  ctx.drawImage(bmp, 0, 0);
-  const img = ctx.getImageData(0, 0, 256, 256);
+  const img = await pngPixels(buf);
   for (let i = 0; i < 65536; i++) if (cut[i]) img.data[4 * i + 3] = 0;
   return toPng(img.data);
 }
@@ -441,9 +460,9 @@ function tileWestOfEngland(z, x, y) {
   const [, s, e, n] = tileLonLat(z, x, y);
   return s > 51.35 && (e < -3.35 || (e < -3.1 && n < 53.28));
 }
-const tileWanted = (z, x, y, walesOnly) =>
+const tileWanted = (z, x, y, skipEa) =>
   (z >= WALES_MIN_Z && tileInWales(z, x, y)) || (z >= SCOT_MIN_Z && tileInScotland(z, x, y)) ||
-  (!walesOnly && z >= DTM_MIN_Z && tileInEngland(z, x, y));
+  (!skipEa && z >= DTM_MIN_Z && tileInEngland(z, x, y));
 
 // WGS84 lon/lat → British National Grid easting/northing: Helmert to OSGB36, then the OS
 // Transverse Mercator. Good to a few metres, and the same transform the roads were converted with.
@@ -477,21 +496,28 @@ function wgsToBng(lon, lat) {
   return [E0 + IV * dl + V * dl ** 3 + VI * dl ** 5, I + II * dl ** 2 + III * dl ** 4 + IIIA * dl ** 6];
 }
 
-// Minimal GeoTIFF reader for the WCS output: float32, tiled or stripped, deflate or none
+// TIFF helpers shared by the readers below: bytes per value of each field type, the k-th value of
+// a field stored at byte `at`, and GDAL's nodata text (tag 42113)
+const TIFF_SIZE = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 11: 4, 12: 8, 16: 8 };
+function tiffValue(dv, type, at, k, le) {
+  const o = at + TIFF_SIZE[type] * k;
+  return type === 3 ? dv.getUint16(o, le) : type === 4 ? dv.getUint32(o, le) : type === 16 ? Number(dv.getBigUint64(o, le))
+    : type === 11 ? dv.getFloat32(o, le) : type === 12 ? dv.getFloat64(o, le) : dv.getUint8(o);
+}
+const tiffText = (u8, at, count) => new TextDecoder().decode(u8.subarray(at, at + count)).replace(/\0+$/, "");
+
 async function inflate(bytes) {
   return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate"))).arrayBuffer());
 }
+// Minimal GeoTIFF reader for the WCS output: float32, tiled or stripped, deflate or none
 async function decodeTiff(buf) {
   const dv = new DataView(buf), le = dv.getUint16(0) === 0x4949;
-  const SIZE = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 11: 4, 12: 8, 16: 8 };
   const ifd = dv.getUint32(4, le), n = dv.getUint16(ifd, le), tag = {};
   for (let i = 0; i < n; i++) {
     const e = ifd + 2 + i * 12, id = dv.getUint16(e, le), type = dv.getUint16(e + 2, le), count = dv.getUint32(e + 4, le);
-    const at = SIZE[type] * count <= 4 ? e + 8 : dv.getUint32(e + 8, le);
-    if (type === 2) { tag[id] = new TextDecoder().decode(new Uint8Array(buf, at, count)).replace(/\0+$/, ""); continue; }
-    tag[id] = Array.from({ length: count }, (_, k) =>
-      type === 3 ? dv.getUint16(at + 2 * k, le) : type === 4 ? dv.getUint32(at + 4 * k, le)
-        : type === 11 ? dv.getFloat32(at + 4 * k, le) : type === 12 ? dv.getFloat64(at + 8 * k, le) : dv.getUint8(at + k));
+    const at = TIFF_SIZE[type] * count <= 4 ? e + 8 : dv.getUint32(e + 8, le);
+    if (type === 2) { tag[id] = tiffText(new Uint8Array(buf), at, count); continue; }
+    tag[id] = Array.from({ length: count }, (_, k) => tiffValue(dv, type, at, k, le));
   }
   const W = tag[256][0], H = tag[257][0], comp = tag[259]?.[0] ?? 1;
   if (tag[258][0] !== 32 || (tag[339]?.[0] ?? 1) !== 3) throw new Error("expected float32 heights");
@@ -617,24 +643,20 @@ async function eaGrid(z, x, y, entry) {
 // A 48.6 GB BigTIFF on Azure: 1 m float32 heights on the British National Grid, 256 px deflate
 // tiles, six overviews (2–64 m). Only the header, the parts of the tile index that are needed, and
 // the tiles under the view are read, with HTTP range requests.
-let walesInFlight = 0;
-async function fetchRange(start, end) {
-  let lastError;
-  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
-    if (attempt) await sleep(RETRY_DELAYS_MS[attempt - 1] * (0.75 + Math.random() / 2));
-    walesInFlight++; dtmStatus();
-    try {
-      // no-store: the browser's HTTP cache lets only one request per URL through at a time, which
-      // queued every range read of the one big file behind the last (decoded tiles are cached here)
-      const r = await fetch(walesCogUrl, { headers: { Range: `bytes=${start}-${end}` }, cache: "no-store",
-        signal: AbortSignal.timeout(EA_TIMEOUT_MS) });
-      if (r.status === 206) return new Uint8Array(await r.arrayBuffer());
-      lastError = new Error(`HTTP ${r.status}`);
-    } catch (err) { lastError = err; }
-    finally { walesInFlight--; dtmStatus(); }
-  }
-  throw lastError;
-}
+// A byte range of a remote file, with retries and a timeout. no-store: the browser's HTTP cache lets
+// only one request per URL through at a time, which queued every range read of one big file behind
+// the last (decoded blocks are cached here instead). inFlight counts reads per region for the status line.
+const inFlight = { wales: 0, scot: 0 };
+const rangeRead = (url, start, end, region) => withRetry(async () => {
+  inFlight[region]++; dtmStatus();
+  try {
+    const r = await fetch(url, { headers: { Range: `bytes=${start}-${end}` }, cache: "no-store", signal: AbortSignal.timeout(EA_TIMEOUT_MS) });
+    // S3 may answer a range covering the whole of a small file with 200; the 48 GB COG must not
+    if (r.status === 206 || (r.status === 200 && region === "scot")) return new Uint8Array(await r.arrayBuffer());
+    throw new Error(`HTTP ${r.status}`);
+  } finally { inFlight[region]--; dtmStatus(); }
+});
+const fetchRange = (start, end) => rangeRead(walesCogUrl, start, end, "wales");
 
 let cogPromise = null;
 const cogInfo = () => cogPromise || (cogPromise = fetchRange(0, 65535).then(parseCog).catch(err => { cogPromise = null; throw err; }));
@@ -642,22 +664,20 @@ function parseCog(u8) {
   const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength), le = dv.getUint16(0) === 0x4949;
   if (dv.getUint16(2, le) !== 43) throw new Error("expected a BigTIFF");
   const big = (o) => Number(dv.getBigUint64(o, le));
-  const SIZE = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 11: 4, 12: 8, 16: 8 };
-  const num = (t, k = 0) => t.type === 3 ? dv.getUint16(t.at + 2 * k, le) : t.type === 4 ? dv.getUint32(t.at + 4 * k, le)
-    : t.type === 16 ? big(t.at + 8 * k) : t.type === 12 ? dv.getFloat64(t.at + 8 * k, le) : dv.getUint8(t.at + k);
+  const num = (t, k = 0) => tiffValue(dv, t.type, t.at, k, le);
   const ifds = [];
   for (let ifd = big(8); ifd && ifd + 8 <= u8.length;) {
     const n = big(ifd), tag = {};
     for (let i = 0; i < n; i++) {
       const p = ifd + 8 + i * 20, type = dv.getUint16(p + 2, le), count = big(p + 4);
-      tag[dv.getUint16(p, le)] = { type, count, size: SIZE[type], at: SIZE[type] * count <= 8 ? p + 12 : big(p + 12) };
+      tag[dv.getUint16(p, le)] = { type, count, size: TIFF_SIZE[type], at: TIFF_SIZE[type] * count <= 8 ? p + 12 : big(p + 12) };
     }
     ifds.push(tag);
     ifd = big(ifd + 8 + n * 20);
   }
   const t0 = ifds[0], sx = num(t0[33550], 0), sy = num(t0[33550], 1);
   const x0 = num(t0[33922], 3) - num(t0[33922], 0) * sx, y0 = num(t0[33922], 4) + num(t0[33922], 1) * sy;
-  const nodata = +new TextDecoder().decode(u8.subarray(t0[42113].at, t0[42113].at + t0[42113].count)).replace(/\0+$/, "");
+  const nodata = +tiffText(u8, t0[42113].at, t0[42113].count);
   const W0 = num(t0[256]), H0 = num(t0[257]);
   const levels = ifds.map(t => {
     if ((t[317] ? num(t[317]) : 1) !== 1 || num(t[258]) !== 32 || num(t[339]) !== 3) throw new Error("unexpected COG layout");
@@ -674,15 +694,9 @@ const IDX_BLOCK = 8192, cogIdx = new Map();
 async function idxEntries(cog, li, which, from, to) {
   const t = cog.levels[li][which], out = [];
   for (let blk = Math.floor(from / IDX_BLOCK); blk <= Math.floor(to / IDX_BLOCK); blk++) {
-    const key = `${li}/${which}/${blk}`;
-    if (!cogIdx.has(key)) {
-      const first = blk * IDX_BLOCK, last = Math.min(t.count, first + IDX_BLOCK) - 1;
-      const p = fetchRange(t.at + first * t.size, t.at + (last + 1) * t.size - 1);
-      p.catch(() => cogIdx.delete(key));
-      cogIdx.set(key, p);
-      if (cogIdx.size > 64) cogIdx.delete(cogIdx.keys().next().value);
-    }
-    const bytes = await cogIdx.get(key), dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const first = blk * IDX_BLOCK, last = Math.min(t.count, first + IDX_BLOCK) - 1;
+    const bytes = await cached(cogIdx, `${li}/${which}/${blk}`, 64, () => fetchRange(t.at + first * t.size, t.at + (last + 1) * t.size - 1));
+    const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     for (let i = Math.max(from, blk * IDX_BLOCK); i <= Math.min(to, blk * IDX_BLOCK + IDX_BLOCK - 1); i++) {
       const o = (i - blk * IDX_BLOCK) * t.size;
       out.push(t.size === 8 ? Number(dv.getBigUint64(o, cog.le)) : dv.getUint32(o, cog.le));
@@ -745,50 +759,72 @@ async function cogReadRow(cog, li, row, cols) {
   }));
 }
 
-// One map tile's heights (DTM_GRID², with margin) from the Welsh COG, or null outside it
-async function walesGrid(z, x, y) {
-  const cog = await cogInfo(), b = tileBox(z, x, y), res = b.size / 256, G = DTM_GRID, P = DTM_PAD;
-  const resM = res * Math.cos(mercLat(b.maxy - b.size / 2) * RAD);
-  let li = 0;   // the coarsest overview whose cells are still no bigger than the tile's pixels
-  while (li + 1 < cog.levels.length && cog.levels[li + 1].cellX <= resM) li++;
-  const L = cog.levels[li];
-  // BNG position of every 16th pixel corner; pixels in between are interpolated (< 1 mm error)
-  const S = 16, K = G / S + 1, cc = new Float64Array(K * K), rr = new Float64Array(K * K);
-  let cmin = Infinity, cmax = -Infinity, rmin = Infinity, rmax = -Infinity;
+// --- Shared by the BNG readers (Wales, Scotland) ---------------------------------
+// The British National Grid position of every pixel of a map tile's DTM_GRID² grid. wgsToBng is
+// run for every 16th pixel corner only; pixels in between are interpolated (< 1 mm error).
+// eachPixel(fn) calls fn(index, E, N) in order; the box is the grid's extent in BNG.
+function bngLattice(z, x, y) {
+  const b = tileBox(z, x, y), res = b.size / 256, G = DTM_GRID, P = DTM_PAD;
+  const S = 16, K = G / S + 1, EE = new Float64Array(K * K), NN = new Float64Array(K * K);
+  let emin = Infinity, emax = -Infinity, nmin = Infinity, nmax = -Infinity;
   for (let j = 0; j < K; j++) for (let i = 0; i < K; i++) {
     const [E, N] = wgsToBng(mercLon(b.minx + (i * S - P) * res), mercLat(b.maxy - (j * S - P) * res));
-    const c = (E - cog.x0) / L.cellX - 0.5, r = (cog.y0 - N) / L.cellY - 0.5;
-    cc[j * K + i] = c; rr[j * K + i] = r;
-    cmin = Math.min(cmin, c); cmax = Math.max(cmax, c); rmin = Math.min(rmin, r); rmax = Math.max(rmax, r);
+    EE[j * K + i] = E; NN[j * K + i] = N;
+    emin = Math.min(emin, E); emax = Math.max(emax, E); nmin = Math.min(nmin, N); nmax = Math.max(nmax, N);
   }
-  const tc0 = Math.max(0, Math.floor(cmin / L.TW)), tc1 = Math.min(L.across - 1, Math.floor((cmax + 1) / L.TW));
-  const tr0 = Math.max(0, Math.floor(rmin / L.TH)), tr1 = Math.min(L.down - 1, Math.floor((rmax + 1) / L.TH));
-  if (tc0 > tc1 || tr0 > tr1) return null;
-  const rows = await Promise.all(Array.from({ length: tr1 - tr0 + 1 }, (_, k) =>
-    Promise.all(Array.from({ length: tc1 - tc0 + 1 }, (_, m) => cogTile(cog, li, tr0 + k, tc0 + m)))));
-  const at = (r, c) => {
-    if (r < 0 || c < 0 || r >= L.H || c >= L.W) return NaN;
-    const tr = Math.floor(r / L.TH), tc = Math.floor(c / L.TW);
-    if (tr < tr0 || tr > tr1 || tc < tc0 || tc > tc1) return NaN;
-    const t = rows[tr - tr0][tc - tc0];
-    return t ? t[(r - tr * L.TH) * L.TW + c - tc * L.TW] : NaN;
-  };
-  const h = new Float32Array(G * G);
-  let valid = 0;
-  for (let j = 0; j < G; j++) {
-    const pj = j + 0.5, cj = Math.min(K - 2, Math.floor(pj / S)), fy = pj / S - cj;
-    for (let i = 0; i < G; i++) {
-      const pi = i + 0.5, ci = Math.min(K - 2, Math.floor(pi / S)), fx = pi / S - ci, q = cj * K + ci;
-      const w00 = (1 - fx) * (1 - fy), w01 = fx * (1 - fy), w10 = (1 - fx) * fy, w11 = fx * fy;
-      const c = cc[q] * w00 + cc[q + 1] * w01 + cc[q + K] * w10 + cc[q + K + 1] * w11;
-      const r = rr[q] * w00 + rr[q + 1] * w01 + rr[q + K] * w10 + rr[q + K + 1] * w11;
-      const c0 = Math.floor(c), r0 = Math.floor(r), ax = c - c0, ay = r - r0;
-      let v = at(r0, c0) * (1 - ax) * (1 - ay) + at(r0, c0 + 1) * ax * (1 - ay) + at(r0 + 1, c0) * (1 - ax) * ay + at(r0 + 1, c0 + 1) * ax * ay;
-      if (Number.isNaN(v)) v = at(ay < 0.5 ? r0 : r0 + 1, ax < 0.5 ? c0 : c0 + 1);   // next to a gap: nearest cell
-      h[j * G + i] = v;
-      if (!Number.isNaN(v)) valid++;
+  const eachPixel = (fn) => {
+    for (let j = 0; j < G; j++) {
+      const pj = j + 0.5, cj = Math.min(K - 2, Math.floor(pj / S)), fy = pj / S - cj;
+      for (let i = 0; i < G; i++) {
+        const pi = i + 0.5, ci = Math.min(K - 2, Math.floor(pi / S)), fx = pi / S - ci, q = cj * K + ci;
+        const w00 = (1 - fx) * (1 - fy), w01 = fx * (1 - fy), w10 = (1 - fx) * fy, w11 = fx * fy;
+        fn(j * G + i, EE[q] * w00 + EE[q + 1] * w01 + EE[q + K] * w10 + EE[q + K + 1] * w11,
+          NN[q] * w00 + NN[q + 1] * w01 + NN[q + K] * w10 + NN[q + K + 1] * w11);
+      }
     }
-  }
+  };
+  return { emin, emax, nmin, nmax, eachPixel, resM: res * Math.cos(mercLat(b.maxy - b.size / 2) * RAD) };
+}
+// Bilinear sample of a blocked raster at fractional cell (c, r); next to a gap, the nearest cell.
+// at(r, c) gives one cell's height, NaN outside the data.
+function sampleCells(at, c, r) {
+  const c0 = Math.floor(c), r0 = Math.floor(r), ax = c - c0, ay = r - r0;
+  const v = at(r0, c0) * (1 - ax) * (1 - ay) + at(r0, c0 + 1) * ax * (1 - ay) + at(r0 + 1, c0) * (1 - ax) * ay + at(r0 + 1, c0 + 1) * ax * ay;
+  return Number.isNaN(v) ? at(ay < 0.5 ? r0 : r0 + 1, ax < 0.5 ? c0 : c0 + 1) : v;
+}
+// The coarsest level whose cells are no bigger than the tile's pixels
+function pickLevel(levels, resM) {
+  let li = 0;
+  while (li + 1 < levels.length && levels[li + 1].cellX <= resM) li++;
+  return li;
+}
+// A level's cell lookup, at(r, c), over the blocks read for one tile: blocks[(br - br0) * nbc + bc - bc0]
+function blockLookup(L, blocks, br0, bc0, nbc, nbr) {
+  return (r, c) => {
+    if (r < 0 || c < 0 || r >= L.H || c >= L.W) return NaN;
+    const br = Math.floor(r / L.TH), bc = Math.floor(c / L.TW);
+    if (br < br0 || bc < bc0 || br >= br0 + nbr || bc >= bc0 + nbc) return NaN;
+    const a = blocks[(br - br0) * nbc + bc - bc0];
+    return a ? a[(r - br * L.TH) * L.TW + c - bc * L.TW] ?? NaN : NaN;
+  };
+}
+
+// One map tile's heights (DTM_GRID², with margin) from the Welsh COG, or null outside it
+async function walesGrid(z, x, y) {
+  const cog = await cogInfo(), g = bngLattice(z, x, y), li = pickLevel(cog.levels, g.resM), L = cog.levels[li];
+  const tc0 = Math.max(0, Math.floor(((g.emin - cog.x0) / L.cellX - 0.5) / L.TW));
+  const tc1 = Math.min(L.across - 1, Math.floor(((g.emax - cog.x0) / L.cellX + 0.5) / L.TW));
+  const tr0 = Math.max(0, Math.floor(((cog.y0 - g.nmax) / L.cellY - 0.5) / L.TH));
+  const tr1 = Math.min(L.down - 1, Math.floor(((cog.y0 - g.nmin) / L.cellY + 0.5) / L.TH));
+  if (tc0 > tc1 || tr0 > tr1) return null;
+  const nbc = tc1 - tc0 + 1, nbr = tr1 - tr0 + 1;
+  const blocks = await Promise.all(Array.from({ length: nbc * nbr }, (_, k) => cogTile(cog, li, tr0 + Math.floor(k / nbc), tc0 + k % nbc)));
+  const at = blockLookup(L, blocks, tr0, tc0, nbc, nbr), h = new Float32Array(DTM_GRID * DTM_GRID);
+  let valid = 0;
+  g.eachPixel((k, E, N) => {
+    const v = h[k] = sampleCells(at, (E - cog.x0) / L.cellX - 0.5, (cog.y0 - N) / L.cellY - 0.5);
+    if (!Number.isNaN(v)) valid++;
+  });
   return valid ? h : null;
 }
 
@@ -805,7 +841,7 @@ const SCOT_OVERSAMPLE = 3;       // a file is read only if its cells are at leas
 const tileInScotland = (z, x, y) => overlaps(tileLonLat(z, x, y), SCOT_BOUNDS);
 // North of the Solway, leaving out Northern Ireland, Donegal and Man (Kintyre and Islay stay in).
 // England is cut out separately, wherever the EA's tiles have data.
-const inScotRegion = (lon, lat) => lat > 54.6 && !((lon < -5.95 && lat < 55.45) || (lon < -5.45 && lat < 55.25));
+const inScotRegion = (lon, lat) => lat > SCOT_BOUNDS[1] && !((lon < -5.95 && lat < 55.45) || (lon < -5.45 && lat < 55.25));
 
 // OS grid square (HY20, NS16NE, NG2104) → [minE, minN, maxE, maxN]
 function squareBox(sq) {
@@ -837,22 +873,7 @@ const scotIndex = () => scotIdxP || (scotIdxP = fetch("data/scot-lidar.json").th
   return files;
 }).catch(err => { scotIdxP = null; throw err; }));
 
-let scotInFlight = 0;
-async function s3Range(url, start, end) {
-  let lastError;
-  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
-    if (attempt) await sleep(RETRY_DELAYS_MS[attempt - 1] * (0.75 + Math.random() / 2));
-    scotInFlight++; dtmStatus();
-    try {
-      const r = await fetch(url, { headers: { Range: `bytes=${start}-${end}` }, cache: "no-store",
-        signal: AbortSignal.timeout(EA_TIMEOUT_MS) });
-      if (r.status === 206 || r.status === 200) return new Uint8Array(await r.arrayBuffer());
-      lastError = new Error(`HTTP ${r.status}`);
-    } catch (err) { lastError = err; }
-    finally { scotInFlight--; dtmStatus(); }
-  }
-  throw lastError;
-}
+const s3Range = (url, start, end) => rangeRead(url, start, end, "scot");
 
 // TIFF LZW (MSB-first codes, with the TIFF "early change" of code width)
 function lzwDecode(src, outLen) {
@@ -887,15 +908,7 @@ function lzwDecode(src, outLen) {
 
 // A file's header: its levels (full resolution, then overviews) with their tile or strip index
 const scotHeaders = new Map();
-function scotHeader(url) {
-  if (!scotHeaders.has(url)) {
-    const p = s3Range(url, 0, 65535).then(u8 => parseScotTiff(url, u8));
-    p.catch(() => scotHeaders.delete(url));
-    scotHeaders.set(url, p);
-    if (scotHeaders.size > 400) scotHeaders.delete(scotHeaders.keys().next().value);
-  }
-  return scotHeaders.get(url);
-}
+const scotHeader = (url) => cached(scotHeaders, url, 400, () => s3Range(url, 0, 65535).then(u8 => parseScotTiff(url, u8)));
 async function parseScotTiff(url, u8) {
   const more = async (end) => {   // the header reaches past what was read
     if (end <= u8.length) return;
@@ -904,8 +917,7 @@ async function parseScotTiff(url, u8) {
   };
   const dv = () => new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
   if (dv().getUint16(0) !== 0x4949) throw new Error("expected a little-endian TIFF");
-  const big = dv().getUint16(2, true) === 43;
-  const SIZE = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 11: 4, 12: 8, 16: 8 };
+  const big = dv().getUint16(2, true) === 43, SIZE = TIFF_SIZE;
   const word = (o, b) => b ? Number(dv().getBigUint64(o, true)) : dv().getUint32(o, true);
   const ifds = [];
   for (let ifd = word(big ? 8 : 4, big); ifd && ifds.length < 12;) {
@@ -925,18 +937,14 @@ async function parseScotTiff(url, u8) {
     if (!t) return null;
     await more(t.at + SIZE[t.type] * t.count);
     const d = dv(), out = new Array(t.count);
-    for (let k = 0; k < t.count; k++) {
-      const o = t.at + SIZE[t.type] * k;
-      out[k] = t.type === 3 ? d.getUint16(o, true) : t.type === 4 ? d.getUint32(o, true) : t.type === 16 ? Number(d.getBigUint64(o, true))
-        : t.type === 12 ? d.getFloat64(o, true) : t.type === 11 ? d.getFloat32(o, true) : d.getUint8(o);
-    }
+    for (let k = 0; k < t.count; k++) out[k] = tiffValue(d, t.type, t.at, k, true);
     return out;
   };
   const one = async (t, dflt) => (t ? (await values(t))[0] : dflt);
   const t0 = ifds[0], [sx, sy] = await values(t0[33550]), tie = await values(t0[33922]);
   const W0 = await one(t0[256]), H0 = await one(t0[257]);
   let nodata = -9999;
-  if (t0[42113]) { await more(t0[42113].at + t0[42113].count); nodata = +new TextDecoder().decode(u8.subarray(t0[42113].at, t0[42113].at + t0[42113].count)).replace(/\0+$/, ""); }
+  if (t0[42113]) { await more(t0[42113].at + t0[42113].count); nodata = +tiffText(u8, t0[42113].at, t0[42113].count); }
   const levels = [];
   for (const t of ifds) {
     if ((await one(t[254], 0)) & 4) continue;   // a transparency mask, not heights
@@ -1014,63 +1022,35 @@ async function scotReadBlocks({ hd, li, want }) {
 
 // One map tile's LiDAR heights (DTM_GRID², with margin) from the Scottish files, or null
 async function scotGrid(z, x, y) {
-  const files = await scotIndex(), b = tileBox(z, x, y), res = b.size / 256, G = DTM_GRID, P = DTM_PAD;
-  const resM = res * Math.cos(mercLat(b.maxy - b.size / 2) * RAD);
-  const S = 16, K = G / S + 1, EE = new Float64Array(K * K), NN = new Float64Array(K * K);
-  let emin = Infinity, emax = -Infinity, nmin = Infinity, nmax = -Infinity;
-  for (let j = 0; j < K; j++) for (let i = 0; i < K; i++) {
-    const [E, N] = wgsToBng(mercLon(b.minx + (i * S - P) * res), mercLat(b.maxy - (j * S - P) * res));
-    EE[j * K + i] = E; NN[j * K + i] = N;
-    emin = Math.min(emin, E); emax = Math.max(emax, E); nmin = Math.min(nmin, N); nmax = Math.max(nmax, N);
-  }
-  const hit = (bx) => bx[0] < emax && bx[2] > emin && bx[1] < nmax && bx[3] > nmin;
+  const files = await scotIndex(), g = bngLattice(z, x, y), resM = g.resM;
+  const hit = (bx) => bx[0] < g.emax && bx[2] > g.emin && bx[1] < g.nmax && bx[3] > g.nmin;
   const cands = files.filter(f => hit(f.box));
   if (!cands.length) return null;
   const used = (await Promise.all(cands.map(async (f) => {
     const hd = await scotHeader(f.url);
     if (!hit(hd.box)) return null;
-    let li = 0;   // the coarsest level whose cells are no bigger than the pixels
-    while (li + 1 < hd.levels.length && hd.levels[li + 1].cellX <= resM) li++;
-    const L = hd.levels[li];
+    const li = pickLevel(hd.levels, resM), L = hd.levels[li];
     if (L.cellX * SCOT_OVERSAMPLE < resM) return null;   // too fine to read at this zoom
-    const c0 = Math.max(0, Math.floor((emin - hd.x0) / L.cellX) - 1), c1 = Math.min(L.W - 1, Math.floor((emax - hd.x0) / L.cellX) + 1);
-    const r0 = Math.max(0, Math.floor((hd.y0 - nmax) / L.cellY) - 1), r1 = Math.min(L.H - 1, Math.floor((hd.y0 - nmin) / L.cellY) + 1);
+    const c0 = Math.max(0, Math.floor((g.emin - hd.x0) / L.cellX) - 1), c1 = Math.min(L.W - 1, Math.floor((g.emax - hd.x0) / L.cellX) + 1);
+    const r0 = Math.max(0, Math.floor((hd.y0 - g.nmax) / L.cellY) - 1), r1 = Math.min(L.H - 1, Math.floor((hd.y0 - g.nmin) / L.cellY) + 1);
     if (c0 > c1 || r0 > r1) return null;
-    const blocks = new Map(), waits = [];
-    for (let br = Math.floor(r0 / L.TH); br <= Math.floor(r1 / L.TH); br++)
-      for (let bc = Math.floor(c0 / L.TW); bc <= Math.floor(c1 / L.TW); bc++) {
-        const i = br * L.across + bc;
-        waits.push(scotBlock(hd, li, i).then(a => blocks.set(i, a)));
-      }
-    await Promise.all(waits);
-    return { hd, L, blocks, prio: f.prio };
+    const br0 = Math.floor(r0 / L.TH), bc0 = Math.floor(c0 / L.TW);
+    const nbr = Math.floor(r1 / L.TH) - br0 + 1, nbc = Math.floor(c1 / L.TW) - bc0 + 1;
+    const blocks = await Promise.all(Array.from({ length: nbr * nbc }, (_, k) =>
+      scotBlock(hd, li, (br0 + Math.floor(k / nbc)) * L.across + bc0 + k % nbc)));
+    return { hd, L, at: blockLookup(L, blocks, br0, bc0, nbc, nbr), prio: f.prio };
   }))).filter(Boolean).sort((a, b) => b.prio - a.prio);   // the top survey first
   if (!used.length) return null;
-  const at = (u, r, c) => {
-    const L = u.L;
-    if (r < 0 || c < 0 || r >= L.H || c >= L.W) return NaN;
-    const br = Math.floor(r / L.TH), bc = Math.floor(c / L.TW), a = u.blocks.get(br * L.across + bc);
-    return a ? a[(r - br * L.TH) * L.TW + c - bc * L.TW] ?? NaN : NaN;
-  };
-  const h = new Float32Array(G * G).fill(NaN);
+  const h = new Float32Array(DTM_GRID * DTM_GRID).fill(NaN);
   let valid = 0;
-  for (let j = 0; j < G; j++) {
-    const pj = j + 0.5, cj = Math.min(K - 2, Math.floor(pj / S)), fy = pj / S - cj;
-    for (let i = 0; i < G; i++) {
-      const pi = i + 0.5, ci = Math.min(K - 2, Math.floor(pi / S)), fx = pi / S - ci, q = cj * K + ci;
-      const w00 = (1 - fx) * (1 - fy), w01 = fx * (1 - fy), w10 = (1 - fx) * fy, w11 = fx * fy;
-      const E = EE[q] * w00 + EE[q + 1] * w01 + EE[q + K] * w10 + EE[q + K + 1] * w11;
-      const N = NN[q] * w00 + NN[q + 1] * w01 + NN[q + K] * w10 + NN[q + K + 1] * w11;
-      for (const u of used) {
-        const c = (E - u.hd.x0) / u.L.cellX - 0.5, r = (u.hd.y0 - N) / u.L.cellY - 0.5;
-        if (c < -0.5 || r < -0.5 || c > u.L.W - 0.5 || r > u.L.H - 0.5) continue;
-        const c0 = Math.floor(c), r0 = Math.floor(r), ax = c - c0, ay = r - r0;
-        let v = at(u, r0, c0) * (1 - ax) * (1 - ay) + at(u, r0, c0 + 1) * ax * (1 - ay) + at(u, r0 + 1, c0) * (1 - ax) * ay + at(u, r0 + 1, c0 + 1) * ax * ay;
-        if (Number.isNaN(v)) v = at(u, ay < 0.5 ? r0 : r0 + 1, ax < 0.5 ? c0 : c0 + 1);
-        if (!Number.isNaN(v)) { h[j * G + i] = v; valid++; break; }
-      }
+  g.eachPixel((k, E, N) => {
+    for (const u of used) {
+      const c = (E - u.hd.x0) / u.L.cellX - 0.5, r = (u.hd.y0 - N) / u.L.cellY - 0.5;
+      if (c < -0.5 || r < -0.5 || c > u.L.W - 0.5 || r > u.L.H - 0.5) continue;
+      const v = sampleCells(u.at, c, r);
+      if (!Number.isNaN(v)) { h[k] = v; valid++; break; }
     }
-  }
+  });
   return valid ? h : null;
 }
 
@@ -1080,25 +1060,13 @@ async function scotGrid(z, x, y) {
 // Solway (Cumbria) by Kielder to the Tweed (Berwick), with a margin.
 const ENGLAND_NORTH = [[-3.7, 54.5, -1, 55.02], [-3.1, 54.5, -1, 55.38], [-2.45, 54.5, -1, 55.85]];
 const tileMayBeEngland = (z, x, y) => { const t = tileLonLat(z, x, y); return ENGLAND_NORTH.some(B => overlaps(t, B)); };
-const eaAlphaCache = new Map();
-function eaAlpha(z, x, y) {
-  const key = `${z}/${x}/${y}`;
-  if (!eaAlphaCache.has(key)) {
-    const b = tileBox(z, x, y), url = EA_WMS.replace("{bbox-epsg-3857}", [b.minx, b.maxy - b.size, b.minx + b.size, b.maxy].join(","));
-    const p = fetchRetry(url).then(async (buf) => {
-      const bmp = await createImageBitmap(new Blob([buf]), { premultiplyAlpha: "none", colorSpaceConversion: "none" });
-      const c = new OffscreenCanvas(256, 256), ctx = c.getContext("2d", { willReadFrequently: true });
-      ctx.drawImage(bmp, 0, 0);
-      const d = ctx.getImageData(0, 0, 256, 256).data, a = new Uint8Array(65536);
-      for (let i = 0; i < 65536; i++) a[i] = d[4 * i + 3];
-      return a;
-    });
-    p.catch(() => eaAlphaCache.delete(key));
-    eaAlphaCache.set(key, p);
-    if (eaAlphaCache.size > 64) eaAlphaCache.delete(eaAlphaCache.keys().next().value);
-  }
-  return eaAlphaCache.get(key);
-}
+// The ready-shaded layer loads the same tiles (the retry protocol), so both share one request
+const eaWmsCache = new Map(), eaAlphaCache = new Map();
+const eaWmsTile = (z, x, y) => cached(eaWmsCache, `${z}/${x}/${y}`, 64, () => {
+  const b = tileBox(z, x, y);
+  return fetchRetry(EA_WMS.replace("{bbox-epsg-3857}", [b.minx, b.maxy - b.size, b.minx + b.size, b.maxy].join(",")));
+});
+const eaAlpha = (z, x, y) => cached(eaAlphaCache, `${z}/${x}/${y}`, 64, async () => alphaOf((await pngPixels(await eaWmsTile(z, x, y))).data));
 
 // The terrain tiles are smoother than LiDAR, so their shading flattens as the view zooms out. Their
 // heights are scaled up by this much (tile zoom → factor) to give the spread of tones of the EA's
@@ -1113,18 +1081,17 @@ async function scotFill(z, x, y) {
   const gy = (j) => (MERC - (b.maxy - (j - P + 0.5) * res)) / (2 * MERC) * n - 0.5;
   const tx0 = Math.floor(gx(0) / 256), tx1 = Math.floor((gx(G - 1) + 1) / 256);
   const ty0 = Math.max(0, Math.floor(gy(0) / 256)), ty1 = Math.min(2 ** zt - 1, Math.floor((gy(G - 1) + 1) / 256));
-  const tiles = new Map(), waits = [tileMayBeEngland(z, x, y) ? eaAlpha(z, x, y) : null];
-  for (let ty = ty0; ty <= ty1; ty++) for (let tx = tx0; tx <= tx1; tx++)
-    waits.push(awsTile(zt, tx, ty).then(t => tiles.set(`${tx}/${ty}`, t)));
-  const [ea] = await Promise.all(waits);
+  const nx = tx1 - tx0 + 1;
+  const [ea, ...tiles] = await Promise.all([tileMayBeEngland(z, x, y) ? eaAlpha(z, x, y) : null,
+    ...Array.from({ length: nx * (ty1 - ty0 + 1) }, (_, k) => awsTile(zt, tx0 + k % nx, ty0 + Math.floor(k / nx)))]);
   const terr = (px, py) => {
     px = Math.max(0, px); py = Math.max(0, Math.min(n - 1, py));
-    const tx = Math.floor(px / 256), ty = Math.floor(py / 256), t = tiles.get(`${tx}/${ty}`);
+    const tx = Math.floor(px / 256), ty = Math.floor(py / 256), t = tiles[(ty - ty0) * nx + tx - tx0];
     return t ? t[(py - ty * 256) * 256 + px - tx * 256] : NaN;
   };
   const fill = new Float32Array(G * G).fill(NaN), keep = new Uint8Array(G * G);
-  const lons = Array.from({ length: G }, (_, i) => mercLon(b.minx + (i - P + 0.5) * res));
-  const ex = SCOT_FILL_EX[z] ?? (z < 6 ? 2.4 : 1);
+  const lons = Array.from({ length: G }, (_, i) => mercLon(b.minx + (i - P + 0.5) * res)), gxs = Array.from({ length: G }, (_, i) => gx(i));
+  const ex = SCOT_FILL_EX[z] ?? 1;
   let england = false, any = false;
   for (let j = 0; j < G; j++) {
     const lat = mercLat(b.maxy - (j - P + 0.5) * res), fr = gy(j), r0 = Math.floor(fr), ay = fr - r0;
@@ -1133,7 +1100,7 @@ async function scotFill(z, x, y) {
       if (ea && ea[ej * 256 + Math.max(0, Math.min(255, i - P))] > 0) { england = true; continue; }
       if (!inScotRegion(lons[i], lat)) continue;
       keep[j * G + i] = 1;
-      const fc = gx(i), c0 = Math.floor(fc), ax = fc - c0;
+      const fc = gxs[i], c0 = Math.floor(fc), ax = fc - c0;
       const v = terr(c0, r0) * (1 - ax) * (1 - ay) + terr(c0 + 1, r0) * ax * (1 - ay) + terr(c0, r0 + 1) * (1 - ax) * ay + terr(c0 + 1, r0 + 1) * ax * ay;
       if (v > 0) { fill[j * G + i] = v * ex; any = true; }
     }
@@ -1143,54 +1110,48 @@ async function scotFill(z, x, y) {
 
 // --- Heights for one tile, from whichever source covers it --------------------
 // Wales from the COG; Scotland from its LiDAR files; England (and any gaps left near the borders)
-// from the EA. walesOnly skips the EA: the ready-shaded EA layer already covers England then.
-// h is LiDAR only (NaN elsewhere); fill is Scotland's terrain-tile heights where it has no LiDAR,
-// used only for shading.
+// from the EA. skipEa leaves the EA out: the ready-shaded EA layer already covers England then.
+// h is LiDAR only (NaN elsewhere), for 3D and profiles. hs is for shading: in Scotland, h with
+// the gaps filled from the terrain tiles (null where there's no such fill).
 const dtmCache = new Map();
-async function loadHeights(z, x, y, entry, walesOnly) {
+const fillGaps = (h, src) => { for (let i = 0; i < h.length; i++) if (Number.isNaN(h[i])) h[i] = src[i]; return h; };
+const countValid = (h) => { let n = 0; for (let i = 0; i < h.length; i++) if (!Number.isNaN(h[i])) n++; return n; };
+async function loadHeights(z, x, y, entry, skipEa) {
   const b = tileBox(z, x, y), G = DTM_GRID;
   const resM = b.size / 256 * Math.cos(mercLat(b.maxy - b.size / 2) * RAD);
   let h = z >= WALES_MIN_Z && tileInWales(z, x, y) ? await walesGrid(z, x, y) : null;
   let fill = null, england = true;
   if (z >= SCOT_MIN_Z && tileInScotland(z, x, y)) {
+    if (entry.waiters === 0) throw abortError();
     const [lidar, sc] = await Promise.all([z >= SCOT_LIDAR_MIN_Z ? scotGrid(z, x, y) : null, scotFill(z, x, y)]);
     england = sc.england || tileLonLat(z, x, y)[1] < SCOT_BOUNDS[1];
     if (lidar) {
       for (let i = 0; i < lidar.length; i++) if (!sc.keep[i]) lidar[i] = NaN;   // England keeps the EA's
-      if (!h) h = lidar;
-      else for (let i = 0; i < h.length; i++) if (Number.isNaN(h[i])) h[i] = lidar[i];
+      h = h ? fillGaps(h, lidar) : lidar;
     }
-    if (sc.fill) {
-      fill = sc.fill;
-      if (h) for (let i = 0; i < h.length; i++) if (!Number.isNaN(h[i])) fill[i] = NaN;
-    }
+    fill = sc.fill;
   }
-  const gaps = () => { let n = 0; for (let i = 0; i < h.length; i++) if (Number.isNaN(h[i])) n++; return n; };
-  if (!walesOnly && england && z >= DTM_MIN_Z && tileInEngland(z, x, y) && !(h && tileWestOfEngland(z, x, y)) && (!h || gaps())) {
+  if (!skipEa && england && z >= DTM_MIN_Z && tileInEngland(z, x, y) && !(h && tileWestOfEngland(z, x, y)) && (!h || countValid(h) < h.length)) {
     if (entry.waiters === 0) throw abortError();
     const ea = await eaGrid(z, x, y, entry);
-    if (!h) h = ea;
-    else for (let i = 0; i < h.length; i++) if (Number.isNaN(h[i])) h[i] = ea[i];
+    h = h ? fillGaps(h, ea) : ea;
   }
   if (!h) h = new Float32Array(G * G).fill(NaN);
-  if (fill && !walesOnly) for (let i = 0; i < h.length; i++) if (!Number.isNaN(h[i])) fill[i] = NaN;   // the EA filled some
-  const lidar = G * G - gaps();
-  return { z, h, resM, fill, empty: !lidar, blank: !lidar && !fill };
+  const lidar = countValid(h);
+  return { z, h, resM, hs: fill && fillGaps(h.slice(), fill), empty: !lidar, blank: !lidar && !fill };
 }
 
 // Shared by the shading, the 3D terrain and profiles; several callers can wait on one tile
-function dtmTile(z, x, y, signal, walesOnly = false, attempt = 0) {
-  const key = `${z}/${x}/${y}${walesOnly ? "/w" : ""}`;
+function dtmTile(z, x, y, signal, skipEa = false, attempt = 0) {
+  const key = `${z}/${x}/${y}${skipEa ? "/w" : ""}`;
   let e = dtmCache.get(key);
-  if (e) { dtmCache.delete(key); dtmCache.set(key, e); }   // most recently used last
+  if (e) { dtmCache.delete(key); dtmCache.set(key, e); e.waiters++; }   // most recently used last
   else {
     e = { waiters: 1 };   // counted before loading starts, which checks it
-    e.promise = loadHeights(z, x, y, e, walesOnly).catch(err => { if (dtmCache.get(key) === e) dtmCache.delete(key); throw err; });
-    e.waiters--;
+    e.promise = loadHeights(z, x, y, e, skipEa).catch(err => { if (dtmCache.get(key) === e) dtmCache.delete(key); throw err; });
     dtmCache.set(key, e);
     if (dtmCache.size > DTM_CACHE_TILES) dtmCache.delete(dtmCache.keys().next().value);
   }
-  e.waiters++;
   return new Promise((resolve, reject) => {
     let settled = false;
     const finish = (fn, v) => { if (settled) return; settled = true; e.waiters--; signal?.removeEventListener("abort", onAbort); fn(v); };
@@ -1199,7 +1160,7 @@ function dtmTile(z, x, y, signal, walesOnly = false, attempt = 0) {
     signal?.addEventListener("abort", onAbort, { once: true });
     e.promise.then(v => finish(resolve, v), err => {
       // dropped because nobody wanted it just before this caller asked: start it again
-      if (err.name === "AbortError" && !signal?.aborted && attempt < 2) finish(resolve, dtmTile(z, x, y, signal, walesOnly, attempt + 1));
+      if (err.name === "AbortError" && !signal?.aborted && attempt < 2) finish(resolve, dtmTile(z, x, y, signal, skipEa, attempt + 1));
       else finish(reject, err);
     });
   });
@@ -1209,20 +1170,11 @@ function dtmTile(z, x, y, signal, walesOnly = false, attempt = 0) {
 const awsCache = new Map();
 function awsTile(z, x, y) {
   const key = `${z}/${x}/${y}`;
-  if (!awsCache.has(key)) {
-    const p = fetchRetry(`${AWS_TERRARIUM}${key}.png`).then(async (buf) => {
-      const bmp = await createImageBitmap(new Blob([buf]), { colorSpaceConversion: "none", premultiplyAlpha: "none" });
-      const c = new OffscreenCanvas(256, 256), ctx = c.getContext("2d", { willReadFrequently: true });
-      ctx.drawImage(bmp, 0, 0);
-      const px = ctx.getImageData(0, 0, 256, 256).data, h = new Float32Array(65536);
-      for (let i = 0; i < 65536; i++) h[i] = px[4 * i] * 256 + px[4 * i + 1] + px[4 * i + 2] / 256 - 32768;
-      return h;
-    });
-    p.catch(() => awsCache.delete(key));
-    awsCache.set(key, p);
-    if (awsCache.size > 256) awsCache.delete(awsCache.keys().next().value);
-  }
-  return awsCache.get(key);
+  return cached(awsCache, key, 256, async () => {
+    const px = (await pngPixels(await fetchRetry(`${AWS_TERRARIUM}${key}.png`))).data, h = new Float32Array(65536);
+    for (let i = 0; i < 65536; i++) h[i] = px[4 * i] * 256 + px[4 * i + 1] + px[4 * i + 2] / 256 - 32768;
+    return h;
+  });
 }
 async function awsHeights(z, x, y) {
   if (z <= 15) return awsTile(z, x, y);
@@ -1233,10 +1185,10 @@ async function awsHeights(z, x, y) {
   return out;
 }
 
-// 256² heights for a tile: LiDAR (EA or Welsh Government) where surveyed, AWS terrain elsewhere.
-// lidarShare is 0-1.
+// 256² heights for a tile: LiDAR (EA, Welsh Government or Scottish surveys) where surveyed, AWS
+// terrain elsewhere. lidarShare is 0-1.
 async function demHeights(z, x, y, signal) {
-  let h = null, n = 0;
+  let h = null;
   if (tileWanted(z, x, y, false)) {
     const t = await dtmTile(Math.min(z, DTM_MAX_Z), x, y, signal);
     if (!t.empty) {
@@ -1244,12 +1196,8 @@ async function demHeights(z, x, y, signal) {
       for (let j = 0; j < 256; j++) h.set(t.h.subarray((j + DTM_PAD) * DTM_GRID + DTM_PAD, (j + DTM_PAD) * DTM_GRID + DTM_PAD + 256), j * 256);
     }
   }
-  if (h) for (let i = 0; i < 65536; i++) if (!Number.isNaN(h[i])) n++;
-  if (!h || n < 65536) {
-    const a = await awsHeights(z, x, y);
-    if (!h) h = a;
-    else for (let i = 0; i < 65536; i++) if (Number.isNaN(h[i])) h[i] = a[i];
-  }
+  const n = h ? countValid(h) : 0;
+  if (n < 65536) h = h ? fillGaps(h, await awsHeights(z, x, y)) : await awsHeights(z, x, y);
   return { h, lidarShare: n / 65536 };
 }
 
@@ -1365,18 +1313,16 @@ function dtmRecover() {
 
 maplibregl.addProtocol("dtm", async (params, abortController) => {
   const m = params.url.match(/^dtm:\/\/(\d+)\/(\d+)\/(\d+)\?(.*)$/), [z, x, y] = m.slice(1, 4).map(Number);
-  const o = Object.fromEntries(new URLSearchParams(m[4])), walesOnly = o.only === "wales";
-  if (!tileWanted(z, x, y, walesOnly)) return { data: await blank() };
+  const o = Object.fromEntries(new URLSearchParams(m[4])), skipEa = o.ea === "0";
+  if (!tileWanted(z, x, y, skipEa)) return { data: await blank() };
   try {
-    const t = await dtmTile(z, x, y, abortController.signal, walesOnly);
+    const t = await dtmTile(z, x, y, abortController.signal, skipEa);
     if (t.blank) return { data: await blank() };
-    // Scotland's terrain-tile heights fill the gaps in its LiDAR, for shading only
-    if (t.fill && !t.hs) { t.hs = t.h.slice(); for (let i = 0; i < t.hs.length; i++) if (Number.isNaN(t.hs[i])) t.hs[i] = t.fill[i]; }
-    return { data: await toPng(shadeTile(t.fill ? { ...t, h: t.hs } : t, o)) };
+    return { data: await toPng(shadeTile(t.hs ? { ...t, h: t.hs } : t, o)) };   // hs: Scotland's gaps filled from terrain
   } catch (err) { noteFailure(err); throw err; }
 });
 
-// 3D terrain: terrarium-encoded tiles, 1 m LiDAR heights from zoom 13 in England and Wales
+// 3D terrain: terrarium-encoded tiles, LiDAR heights from tile zoom 13 (England, Wales, Scottish surveys)
 maplibregl.addProtocol("dem1m", async (params, abortController) => {
   const [z, x, y] = params.url.match(/^dem1m:\/\/(\d+)\/(\d+)\/(\d+)/).slice(1).map(Number);
   try {
@@ -1393,7 +1339,14 @@ maplibregl.addProtocol("dem1m", async (params, abortController) => {
 
 // Tile zoom thresholds, as the map zoom they're reached at (shown in the zoom readout)
 const mapZoomFor = (tileZ) => tileZ - 1;
+// Called on every read starting and finishing, so the text is rewritten at most once a frame
+let dtmStatusQueued = false;
 function dtmStatus() {
+  if (dtmStatusQueued) return;
+  dtmStatusQueued = true;
+  requestAnimationFrame(() => { dtmStatusQueued = false; showDtmStatus(); });
+}
+function showDtmStatus() {
   const el = document.getElementById("dtm-status");
   if (!el || typeof map === "undefined") return;
   // z: the tile zoom being loaded
@@ -1401,8 +1354,8 @@ function dtmStatus() {
   const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
   const when = `Wales from zoom ${mapZoomFor(WALES_MIN_Z)}, England from ${mapZoomFor(DTM_MIN_Z)}, Scottish LiDAR from ${mapZoomFor(SCOT_LIDAR_MIN_Z)}`;
   if (ea && wait > 0) el.textContent = `The EA is limiting requests: waiting ${wait} s, then fetching ${plural(ea, "block")} of heights…`;
-  else if (ea || walesInFlight || scotInFlight) el.textContent = "Fetching heights: " +
-    [ea && `${plural(ea, "block")} from the EA`, walesInFlight && "Wales", scotInFlight && "Scotland"].filter(Boolean).join(", ") + "…";
+  else if (ea || inFlight.wales || inFlight.scot) el.textContent = "Fetching heights: " +
+    [ea && `${plural(ea, "block")} from the EA`, inFlight.wales && "Wales", inFlight.scot && "Scotland"].filter(Boolean).join(", ") + "…";
   else if (z < DTM_MIN_Z) el.textContent = `Live LiDAR: ${when}. Until then England and Wales are ready-shaded, and Scotland is shaded from coarser terrain.`;
   else el.textContent = "LiDAR shaded in your browser: EA (England), Welsh Government (Wales) and Scottish surveys where they exist (coarser terrain between).";
 }
@@ -1410,7 +1363,6 @@ function dtmStatus() {
 // Historic England ArcGIS Online feature services: no tiles, so the features in view are
 // queried on demand once zoomed in (see loadDynamic)
 const HE_ARCGIS = "https://services-eu1.arcgis.com/ZOdPfBS3aqqDYPUQ/arcgis/rest/services/";
-const ENGLAND_BBOX = [-6.5, 49.8, 2.0, 55.9];
 const DYNAMIC = [
   { id: "he-sam", minzoom: 11, max: 2000, toggle: "o-sam", status: "o-sam-status",
     url: HE_ARCGIS + "National_Heritage_List_for_England_NHLE_v02_VIEW/FeatureServer/6/query",
@@ -1534,12 +1486,13 @@ function saveState() {
 const dtmQuery = () => new URLSearchParams({ mode: document.getElementById("dtm-mode").value,
   ...Object.fromEntries(["az", "el", "ex", "rad"].map(k => [k, document.getElementById("dtm-" + k).value])) }).toString();
 // Live: everything, shaded as set. Ready-shaded: the EA's own layer covers England, so the live
-// layer fills in Wales only, shaded to match the EA's tiles: their flat ground is mid-grey (128, a
+// layer leaves the EA out (ea=0) and fills in Wales and Scotland, shaded to match the EA's tiles: their flat ground is mid-grey (128, a
 // sun 30° up) and their hills span 23–204 (5th–95th percentile) at zoom 11, which 2× exaggeration
 // matches (33–206 on Welsh hills; 0–215 against their 5–216 at zoom 13).
-const WALES_READY = "mode=hs&az=315&el=30&ex=2&rad=15";
+// scripts/wales_overview.py shades the zoomed-out Welsh tiles with the same sun and exaggeration.
+const READY_SHADED = "mode=hs&az=315&el=30&ex=2&rad=15";
 const dtmTilesUrl = () => "dtm://{z}/{x}/{y}?" + (document.getElementById("lidar-src").value === "live" ? dtmQuery()
-  : WALES_READY + "&only=wales") + `&e=${dtmEpoch}`;
+  : READY_SHADED + "&ea=0") + `&e=${dtmEpoch}`;
 
 const style = {
   version: 8,
@@ -1553,7 +1506,7 @@ const style = {
       tiles: ["https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
       attribution: "Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community" },
     "lidar": { type: "raster", tiles: [retry(EA_WMS)], tileSize: 256, minzoom: 6, maxzoom: 19,
-      bounds: [-6.5, 49.8, 2.0, 55.9],
+      bounds: EA_BOUNDS,
       attribution: "LiDAR: Contains Environment Agency information © Environment Agency and/or database right" },
     // Wales zoomed out (map zoom < 9): tiles pre-rendered from the COG's 64 m overview by
     // scripts/wales_overview.py, in the same tone; the live layer takes over from zoom 9
@@ -1566,7 +1519,7 @@ const style = {
       tiles: [wms("https://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/wms", "GBR_BGS_625k_BLT")] },
     "geo-50k": { type: "raster", tileSize: 256, minzoom: 11, maxzoom: 19, attribution: BGS_ATTR,
       tiles: [wms("https://map.bgs.ac.uk/arcgis/services/BGS_Detailed_Geology/MapServer/WMSServer", "BGS.50k.Bedrock")] },
-    "sam-scot": { type: "raster", tileSize: 256, minzoom: 10, maxzoom: 19, bounds: [-8.9, 54.6, -0.7, 60.9], attribution: HES_ATTR,
+    "sam-scot": { type: "raster", tileSize: 256, minzoom: 10, maxzoom: 19, bounds: SCOT_BOUNDS, attribution: HES_ATTR,
       tiles: [wms("https://inspire.hes.scot/arcgis/services/HES/HES_Designations/MapServer/WMSServer", "2")] },
     "sam-wales": { type: "raster", tileSize: 256, minzoom: 10, maxzoom: 19, bounds: [-5.7, 51.3, -2.6, 53.5], attribution: CADW_ATTR,
       tiles: [wms("https://datamap.gov.wales/geoserver/ows", "geonode:wom_scheduled_monument")] },
@@ -1846,8 +1799,8 @@ const pending = {};
 async function loadDynamic(d) {
   const on = $(d.toggle).checked, z = map.getZoom();
   const b = map.getBounds();
-  const inEngland = b.getEast() > ENGLAND_BBOX[0] && b.getWest() < ENGLAND_BBOX[2] &&
-    b.getNorth() > ENGLAND_BBOX[1] && b.getSouth() < ENGLAND_BBOX[3];
+  const inEngland = b.getEast() > EA_BOUNDS[0] && b.getWest() < EA_BOUNDS[2] &&
+    b.getNorth() > EA_BOUNDS[1] && b.getSouth() < EA_BOUNDS[3];
   if (pending[d.id]) pending[d.id].abort();
   if (!on || z < d.minzoom || !inEngland) {
     map.getSource(d.id).setData({ type: "FeatureCollection", features: [] });
@@ -2418,8 +2371,7 @@ function postcodeQuery(q) {
   if (!m || !PC_AREAS.has(m[1])) return null;
   const out = m[1] + m[2];
   if (m[3] === undefined) return { kind: "outcode", out };
-  if (m[4].length === 2) return { kind: "full", code: `${out} ${m[3]}${m[4]}` };
-  return { kind: "partial", code: `${out} ${m[3]}${m[4]}` };
+  return { kind: m[4].length === 2 ? "full" : "partial", code: `${out} ${m[3]}${m[4]}` };
 }
 const pcCache = new Map();
 async function pcGet(path) {
