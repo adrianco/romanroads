@@ -122,8 +122,12 @@ Then open http://localhost:8765.
       the same options and in the same tone as the EA's layer. Zoomed out
       (below zoom 9) it comes from small tiles pre-rendered by
       `scripts/wales_overview.py` ([ADR 0017](docs/adr/0017-wales-cog-and-ea-limits.md)).
-    - **Scotland** (from zoom 10): DTMs from the Scottish Remote Sensing
-      Portal, shaded on the fly by its server.
+    - **Scotland:** the Scottish Remote Sensing Portal's surveys, range-read
+      from its open-data bucket and shaded in the browser in the same tone
+      (from zoom 13–15, depending on the survey). Everywhere else in Scotland,
+      and when zoomed out, it's shaded from the AWS terrain tiles (~30 m), so
+      the whole country is shaded. `scripts/scotland_index.py` lists the files
+      ([ADR 0019](docs/adr/0019-scotland-lidar-from-s3.md)).
   - Historic OS maps: National Library of Scotland, 6-inch 2nd edition (GB)
     and other editions
   - Aerial imagery: Esri World Imagery
@@ -131,7 +135,7 @@ Then open http://localhost:8765.
     place names
   - Bedrock geology: BGS, 1:625k zoomed out and 1:50k zoomed in
   - 3D terrain: tilts the view with real elevation (1 m LiDAR heights in
-    England and Wales from zoom 12)
+    England and Wales from zoom 12, Scottish surveys from 13)
 - **Road elevation profiles** from the same 1 m heights, with climb, fall and
   the steepest 100 m.
 - **Heritage overlays:**
@@ -163,6 +167,7 @@ Why each source was chosen, and why others were rejected, is in
 data/digital-britannia_v1.gpkg   source GeoPackage (EPSG:27700)
 scripts/process.py               GeoPackage -> per-layer GeoJSON (EPSG:4326)
 scripts/wales_overview.py        Welsh DTM 64 m overview -> zoomed-out hillshade tiles
+scripts/scotland_index.py        Scottish LiDAR bucket listing -> docs/data/scot-lidar.json
 docs/tiles/wales/                those tiles (zooms 6-9)
 requirements.txt                 pinned Python dependencies
 docs/index.html                  the viewer (single page, MapLibre GL JS)
@@ -200,7 +205,7 @@ A blog post records the development process over two days. [Dev.to blog](https:/
 - LiDAR (England): contains Environment Agency information © Environment Agency and/or database right
 - Live DTM idea: [LiDAR Lens](https://lidarlens.sarsen.org/) by Tim Daw ([MIT](https://github.com/TimDaw37/lidar-lens)); the shading here is written separately, with the multi-direction hillshade following GDAL
 - LiDAR (Wales): Welsh Government LiDAR, via DataMapWales, © Crown copyright (OGL). Thanks to the DataMapWales team for enabling cross-origin access
-- LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the Scottish Remote Sensing Portal (OGL)
+- LiDAR (Scotland): © Crown copyright Scottish Government, SEPA, Fugro, Historic Environment Scotland and partners, via the Scottish Remote Sensing Portal (OGL); elsewhere in Scotland, Mapzen terrain tiles (AWS Open Data; EU-DEM produced using Copernicus data; SRTM courtesy of the U.S. Geological Survey)
 - Historic maps: National Library of Scotland
 - Roman Empire map: Digital Atlas of the Roman Empire, Johan Åhlfeldt (CC BY 4.0)
 - Postcodes: postcodes.io; contains Ordnance Survey data © Crown copyright and database right; contains Royal Mail data © Royal Mail copyright and database right; contains National Statistics data © Crown copyright and database right; contains NRS data © Crown copyright and database right

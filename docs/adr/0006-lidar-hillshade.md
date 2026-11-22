@@ -1,6 +1,7 @@
 # 0006 — LiDAR hillshade: England (EA), Scotland (SRSP); Wales not possible yet
 
 **Status:** Accepted. Wales superseded by [0017](0017-wales-cog-and-ea-limits.md): DataMapWales added CORS to its COG.
+Scotland superseded by [0019](0019-scotland-lidar-from-s3.md): the portal's new server ignores `SLD_BODY`.
 
 Originally: England and Scotland are live; Wales is blocked by the
 provider (see below).

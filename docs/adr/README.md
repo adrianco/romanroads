@@ -23,3 +23,4 @@ context, decision, and consequences. Status is `Accepted` unless noted.
 | [0016](0016-view-presets.md) | Four view presets (LiDAR, Old maps, Earthworks, 3D); detailed settings and legend collapsed |
 | [0017](0017-wales-cog-and-ea-limits.md) | Wales: live 1 m DTM range-read from DataMapWales' COG; EA requests in 4×4 blocks with timeouts, back-off and recovery from its rate limit (issue #3) |
 | [0018](0018-postcode-search.md) | Postcode search through postcodes.io (full postcodes, districts, partial codes); only real postcode areas are sent |
+| [0019](0019-scotland-lidar-from-s3.md) | Scotland: LiDAR range-read from the portal's open-data bucket and shaded in the browser; AWS terrain tiles between and zoomed out (the server-side shading broke) |
